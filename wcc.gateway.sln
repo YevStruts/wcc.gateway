@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wcc.gateway.api", "wcc.gate
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wcc.gateway.kernel", "wcc.gateway.kernel\wcc.gateway.kernel.csproj", "{18C0051F-85CA-4785-AC43-2573E634DC85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wcc.gateway", "wcc.gateway\wcc.gateway.csproj", "{AB650996-6B95-4479-BB60-6F0E06191BC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wcc.gateway.data", "wcc.gateway.data\wcc.gateway.data.csproj", "{973727C1-7DD4-4A88-806C-4B51A8BE9415}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{18C0051F-85CA-4785-AC43-2573E634DC85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18C0051F-85CA-4785-AC43-2573E634DC85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18C0051F-85CA-4785-AC43-2573E634DC85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB650996-6B95-4479-BB60-6F0E06191BC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB650996-6B95-4479-BB60-6F0E06191BC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB650996-6B95-4479-BB60-6F0E06191BC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB650996-6B95-4479-BB60-6F0E06191BC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

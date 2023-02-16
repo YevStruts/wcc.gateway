@@ -9,6 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["wcc.gateway.api/wcc.gateway.api.csproj", "wcc.gateway.api/"]
 COPY ["wcc.gateway.kernel/wcc.gateway.kernel.csproj", "wcc.gateway.kernel/"]
+COPY ["wcc.gateway.data/wcc.gateway.data.csproj", "wcc.gateway.data/"]
+COPY ["wcc.gateway/wcc.gateway.csproj", "wcc.gateway/"]
 RUN dotnet restore "wcc.gateway.api/wcc.gateway.api.csproj"
 COPY . .
 WORKDIR "/src/wcc.gateway.api"

@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\wcc.gateway.data\wcc.gateway.data.csproj" />
-    <ProjectReference Include="..\wcc.gateway\wcc.gateway.csproj" />
-  </ItemGroup>
-
 </Project>
