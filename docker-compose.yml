@@ -1,8 +1,11 @@
-version: '3.4'
+version: "3.8"
 
 services:
-  webapp:
-    image: mcr.microsoft.com/dotnet/samples:aspnetapp
+  app:
+    container_name: wcc.gateway
+    image: wcc.gateway.i
+    build:
+      context: .
     ports:
       - 80
       - 443
