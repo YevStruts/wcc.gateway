@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
+﻿using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.api.Models.Discord;
 
 namespace wcc.gateway.api.Controllers

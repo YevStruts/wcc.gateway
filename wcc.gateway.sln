@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wcc.gateway", "wcc.gateway\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wcc.gateway.data", "wcc.gateway.data\wcc.gateway.data.csproj", "{973727C1-7DD4-4A88-806C-4B51A8BE9415}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wcc.gateway.integrations", "wcc.gateway.integrations\wcc.gateway.integrations.csproj", "{AFE31DC2-5942-4418-8239-EEC0A9B0CD58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{973727C1-7DD4-4A88-806C-4B51A8BE9415}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE31DC2-5942-4418-8239-EEC0A9B0CD58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE31DC2-5942-4418-8239-EEC0A9B0CD58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE31DC2-5942-4418-8239-EEC0A9B0CD58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE31DC2-5942-4418-8239-EEC0A9B0CD58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

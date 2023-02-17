@@ -10,6 +10,7 @@ WORKDIR /src
 COPY ["wcc.gateway.api/wcc.gateway.api.csproj", "wcc.gateway.api/"]
 COPY ["wcc.gateway.kernel/wcc.gateway.kernel.csproj", "wcc.gateway.kernel/"]
 COPY ["wcc.gateway.data/wcc.gateway.data.csproj", "wcc.gateway.data/"]
+COPY ["wcc.gateway.integrations/wcc.gateway.integrations.csproj", "wcc.gateway.integrations/"]
 COPY ["wcc.gateway/wcc.gateway.csproj", "wcc.gateway/"]
 RUN dotnet restore "wcc.gateway.api/wcc.gateway.api.csproj"
 COPY . .

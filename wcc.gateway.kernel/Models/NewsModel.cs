@@ -1,4 +1,4 @@
-﻿namespace wcc.gateway.api.Models
+﻿namespace wcc.gateway.kernel.Models
 {
     public class NewsModel
     {

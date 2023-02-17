@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\wcc.gateway.data\wcc.gateway.data.csproj" />
+    <ProjectReference Include="..\wcc.gateway.integrations\wcc.gateway.integrations.csproj" />
     <ProjectReference Include="..\wcc.gateway\wcc.gateway.csproj" />
   </ItemGroup>
 

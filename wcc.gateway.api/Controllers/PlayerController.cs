@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.api.Models;
-using wcc.gateway.kernel.Helpers;
+using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
 {
@@ -9,20 +11,18 @@ namespace wcc.gateway.api.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly ILogger<PlayerController> _logger;
+        private readonly IMediator _mediator;
 
-        public PlayerController(ILogger<PlayerController> logger)
+        public PlayerController(ILogger<PlayerController> logger, IMediator mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet, Route("{id}")]
-        public PlayerModel Get(int id)
+        public Task<PlayerModel> Get(int id)
         {
-            //var playersList = FakeDataHelper.GetPlayers();
-            //return playersList.FirstOrDefault(n => n.Id == id) ??
-            //    new PlayerModel() { Id = 0, Name = "Not Found" };
-
-            throw new NotImplementedException();
+            return _mediator.Send(new Player { Id = id });
         }
 
         [HttpGet, Route("List")]

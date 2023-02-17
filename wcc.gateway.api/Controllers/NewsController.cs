@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using wcc.gateway.api.Models;
+using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
@@ -19,12 +19,9 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpGet, Route("{id}")]
-        public Task<string> Get(int id)
+        public Task<NewsModel> Get(long id)
         {
-            //return FakeDataHelper.GetNews().FirstOrDefault(n => n.Id == id) ??
-            //    new NewsItemModel() { Id = 0, Name = "Not Found", Description = "Empty", Image_url = "" };
-
-            return _mediator.Send(new Ping { ResponseMessage = "Pong!" });
+            return _mediator.Send(new News { Id = id });
         }
 
         [HttpGet, Route("List")]
