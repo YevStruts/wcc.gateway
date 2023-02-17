@@ -11,4 +11,8 @@
     <ProjectReference Include="..\wcc.gateway\wcc.gateway.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.0.0" />
+  </ItemGroup>
+
 </Project>
