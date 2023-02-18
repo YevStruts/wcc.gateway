@@ -4,17 +4,33 @@ using wcc.gateway.kernel.Models;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class News : IRequest<NewsModel>
+    public class GetNewsDetailQuery : IRequest<NewsModel>
     {
-        public long? Id { get; set; }
+        public long Id { get; }
+
+        public GetNewsDetailQuery(long id)
+        {
+            Id = id;
+        }
     }
 
-    public class NewsHandler : IRequestHandler<News, NewsModel>
+    public class GetNewsListQuery : IRequest<IEnumerable<NewsModel>>
     {
-        public Task<NewsModel> Handle(News request, CancellationToken cancellationToken)
+    }
+
+    public class NewsHandler :
+        IRequestHandler<GetNewsDetailQuery, NewsModel>,
+        IRequestHandler<GetNewsListQuery, IEnumerable<NewsModel>>
+    {
+        public Task<NewsModel> Handle(GetNewsDetailQuery request, CancellationToken cancellationToken)
         {
             var news = FakeDataHelper.GetNews().First(n => n.Id == request.Id);
             return Task.FromResult(news);
+        }
+
+        public Task<IEnumerable<NewsModel>> Handle(GetNewsListQuery request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

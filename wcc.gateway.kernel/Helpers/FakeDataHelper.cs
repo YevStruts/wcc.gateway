@@ -1,36 +1,35 @@
-﻿using wcc.gateway.Infrastructure;
-using wcc.gateway.kernel.Models;
+﻿using wcc.gateway.kernel.Models;
 
 namespace wcc.gateway.kernel.Helpers
 {
     internal static class FakeDataHelper
     {
-        //internal static IEnumerable<GameList> GetGames()
-        //{
-        //    return new List<GameListModel>()
-        //    {
-        //        new GameListModel
-        //        {
-        //            Id = 1, OrderId = 2, Name = "Game 1", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
-        //            Home = new PlayerGameListModel { Id = 1, Name = "Player 1", Score = 0 },
-        //            Visitor = new PlayerGameListModel { Id = 2, Name = "Player 2", Score = 2 },
-        //            YoutubeUrls = new List<string>() { "#", "#" }
-        //        },
-        //        new GameListModel
-        //        {
-        //            Id = 2, OrderId = 3, Name = "Game 2", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
-        //            Home = new PlayerGameListModel { Id = 3, Name = "Player 3", Score = 2 },
-        //            Visitor = new PlayerGameListModel { Id = 4, Name = "Player 4", Score = 1 },
-        //            YoutubeUrls = new List<string>() { "#", "#", "#" }
-        //        },
-        //        new GameListModel
-        //        {
-        //            Id = 3, OrderId = 1, Name = "Game 3", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
-        //            Home = new PlayerGameListModel { Id = 2, Name = "Player 2", Score = 0 },
-        //            Visitor = new PlayerGameListModel { Id = 3, Name = "Player 3", Score = 0 },
-        //        }
-        //    };
-        //}
+        internal static IEnumerable<GameListModel> GetGames()
+        {
+            return new List<GameListModel>()
+            {
+                new GameListModel
+                {
+                    Id = 1, OrderId = 2, Name = "Game 1", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
+                    Home = new PlayerGameListModel { Id = 1, Name = "Player 1", Score = 0 },
+                    Visitor = new PlayerGameListModel { Id = 2, Name = "Player 2", Score = 2 },
+                    YoutubeUrls = new List<string>() { "#", "#" }
+                },
+                new GameListModel
+                {
+                    Id = 2, OrderId = 3, Name = "Game 2", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
+                    Home = new PlayerGameListModel { Id = 3, Name = "Player 3", Score = 2 },
+                    Visitor = new PlayerGameListModel { Id = 4, Name = "Player 4", Score = 1 },
+                    YoutubeUrls = new List<string>() { "#", "#", "#" }
+                },
+                new GameListModel
+                {
+                    Id = 3, OrderId = 1, Name = "Game 3", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
+                    Home = new PlayerGameListModel { Id = 2, Name = "Player 2", Score = 0 },
+                    Visitor = new PlayerGameListModel { Id = 3, Name = "Player 3", Score = 0 },
+                }
+            };
+        }
 
         internal static IEnumerable<NewsModel> GetNews()
         {
@@ -69,38 +68,38 @@ namespace wcc.gateway.kernel.Helpers
             };
         }
 
-        //internal static IEnumerable<RuleModel> GetRules()
-        //{
-        //    return new List<RuleModel>
-        //    {
-        //        new RuleModel {
-        //            Id = 1,
-        //            Name = "General",
-        //            Season = "Summer",
-        //            MapShape = "Land",
-        //            TerrainType = "Plain",
-        //            StartingResources = "Thousands",
-        //            Minerals = "Rich",
-        //            MapSize = "Normal",
-        //            StartOptions = "Default",
-        //            BaloonOptions = "Default",
-        //            Cannons = "Default",
-        //            PeaceTime = "15 min",
-        //            EighteenthCenturyOptions = "Default",
-        //            Capture = "Default",
-        //            DipCenterAndMarket = "Default",
-        //            Allies = "Nearby",
-        //            LimitOfPopulation = "Without limitation",
-        //            GameSpeed = "Very Fast"
-        //        }
-        //    };
-        //}
-
-        internal static IEnumerable<Tournament> GetTournaments()
+        internal static IEnumerable<RuleModel> GetRules()
         {
-            return new List<Tournament>
+            return new List<RuleModel>
             {
-                new Tournament { Id = 1, Name = "Lords of The Kingdom", ImageUrl = "https://assets.rockpapershotgun.com/images/16/sep/cos3.jpg", CountPlayers = 22, DateStart = new DateTime(2023, 1, 25), DateCreated = new DateTime(2022, 12, 19) }
+                new RuleModel {
+                    Id = 1,
+                    Name = "General",
+                    Season = "Summer",
+                    MapShape = "Land",
+                    TerrainType = "Plain",
+                    StartingResources = "Thousands",
+                    Minerals = "Rich",
+                    MapSize = "Normal",
+                    StartOptions = "Default",
+                    BaloonOptions = "Default",
+                    Cannons = "Default",
+                    PeaceTime = "15 min",
+                    EighteenthCenturyOptions = "Default",
+                    Capture = "Default",
+                    DipCenterAndMarket = "Default",
+                    Allies = "Nearby",
+                    LimitOfPopulation = "Without limitation",
+                    GameSpeed = "Very Fast"
+                }
+            };
+        }
+
+        internal static IEnumerable<TournamentModel> GetTournaments()
+        {
+            return new List<TournamentModel>
+            {
+                new TournamentModel { Id = 1, Name = "Lords of The Kingdom", Image_url = "https://assets.rockpapershotgun.com/images/16/sep/cos3.jpg", Count_players = 22, Date_start = new DateTime(2023, 1, 25), Date_created = new DateTime(2022, 12, 19) }
             };
         }
     }

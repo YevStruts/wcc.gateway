@@ -1,25 +1,36 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class Player : IRequest<PlayerModel>
+    public class GetPlayerDetailQuery : IRequest<PlayerModel>
     {
-        public long? Id { get; set; }
+        public long Id { get; }
+
+        public GetPlayerDetailQuery(long id)
+        { 
+            Id = id;
+        }
     }
 
-    public class PlayerHandler : IRequestHandler<Player, PlayerModel>
+    public class GetPlayerListQuery : IRequest<IEnumerable<PlayerModel>>
     {
-        public Task<PlayerModel> Handle(Player request, CancellationToken cancellationToken)
+    }
+
+    public class PlayerHandler :
+        IRequestHandler<GetPlayerDetailQuery, PlayerModel>,
+        IRequestHandler<GetPlayerListQuery, IEnumerable<PlayerModel>>
+    {
+        public Task<PlayerModel> Handle(GetPlayerDetailQuery request, CancellationToken cancellationToken)
         {
             var player = FakeDataHelper.GetPlayers().First(n => n.Id == request.Id) as PlayerModel;
             return Task.FromResult(player);
+        }
+
+        public Task<IEnumerable<PlayerModel>> Handle(GetPlayerListQuery request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

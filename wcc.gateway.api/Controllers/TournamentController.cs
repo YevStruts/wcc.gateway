@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using wcc.gateway.api.Models;
+using wcc.gateway.kernel.Models;
 
 namespace wcc.gateway.api.Controllers
 {

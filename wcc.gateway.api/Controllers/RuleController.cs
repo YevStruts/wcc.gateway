@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using wcc.gateway.api.Models;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
 {
@@ -8,19 +10,18 @@ namespace wcc.gateway.api.Controllers
     public class RuleController : ControllerBase
     {
         private readonly ILogger<RuleController> _logger;
+        protected readonly IMediator? _mediator;
 
-        public RuleController(ILogger<RuleController> logger)
+        public RuleController(ILogger<RuleController> logger, IMediator mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet("{id}")]
-        public RuleModel Get(int id)
+        public Task<RuleModel> Get(long id)
         {
-            //return FakeDataHelper.GetRules().FirstOrDefault(n => n.Id == id) ??
-            //    new RuleModel() { Id = 0, Name = " Not Found" };
-
-            throw new NotImplementedException();
+            return _mediator.Send(new GetRuleDetailQuery(id));
         }
     }
 }

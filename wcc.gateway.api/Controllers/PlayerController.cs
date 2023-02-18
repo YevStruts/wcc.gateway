@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using wcc.gateway.api.Models;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.RequestHandlers;
 
@@ -22,15 +21,13 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("{id}")]
         public Task<PlayerModel> Get(int id)
         {
-            return _mediator.Send(new Player { Id = id });
+            return _mediator.Send(new GetPlayerDetailQuery(id));
         }
 
         [HttpGet, Route("List")]
-        public IEnumerable<PlayerModel> List()
+        public Task<IEnumerable<PlayerModel>> List()
         {
-            //return FakeDataHelper.GetPlayers();
-
-            throw new NotImplementedException();
+            return _mediator.Send(new GetPlayerListQuery());
         }
     }
 }

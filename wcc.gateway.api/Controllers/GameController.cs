@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using wcc.gateway.api.Models;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
 {
@@ -7,28 +9,25 @@ namespace wcc.gateway.api.Controllers
     [Route("api/[controller]")]
     public class GameController : ControllerBase
     {
-        private readonly ILogger<GameController> _logger;
+        protected readonly ILogger<GameController>? _logger;
+        protected readonly IMediator? _mediator;
 
-        public GameController(ILogger<GameController> logger)
+        public GameController(ILogger<GameController> logger, IMediator mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet, Route("{id}")]
-        public GameModel Get(int id)
+        public Task<GameModel> Get(int id)
         {
-            //return FakeDataHelper.GetGames().FirstOrDefault(n => n.Id == id) ??
-            //    new GameModel() { Id = 0, OrderId = 0, Name = "Not Found" };
-
-            throw new NotImplementedException();
+            return _mediator.Send(new GetGameDetailQuery(id));
         }
 
         [HttpGet, Route("Schedule/{tournamentId}")]
-        public IEnumerable<GameListModel> Schedule(int tournamentId)
+        public Task<IEnumerable<GameListModel>> Schedule(long tournamentId)
         {
-            //return FakeDataHelper.GetGames();
-
-            throw new NotImplementedException();
+            return _mediator.Send(new GetGameListQuery(tournamentId));
         }
     }
 }

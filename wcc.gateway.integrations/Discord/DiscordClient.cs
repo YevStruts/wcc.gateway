@@ -5,6 +5,7 @@ using OAuth2.Models;
 using RestSharp;
 using Newtonsoft.Json;
 using Endpoint = OAuth2.Client.Endpoint;
+using UserInfo = wcc.gateway.integrations.Discord.Models.UserInfo;
 
 namespace wcc.gateway.integrations.Discord
 {
