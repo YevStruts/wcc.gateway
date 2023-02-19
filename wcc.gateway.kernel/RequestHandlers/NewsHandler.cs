@@ -30,7 +30,8 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public Task<IEnumerable<NewsModel>> Handle(GetNewsListQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var news = FakeDataHelper.GetNews();
+            return Task.FromResult(news);
         }
     }
 }

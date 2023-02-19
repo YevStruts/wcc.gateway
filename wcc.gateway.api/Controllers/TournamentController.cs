@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
 {
@@ -8,27 +10,24 @@ namespace wcc.gateway.api.Controllers
     public class TournamentController : ControllerBase
     {
         private readonly ILogger<TournamentController> _logger;
+        protected readonly IMediator? _mediator;
 
-        public TournamentController(ILogger<TournamentController> logger)
+        public TournamentController(ILogger<TournamentController> logger, IMediator? mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet, Route("{id}")]
-        public TournamentModel Get(int id)
+        public Task<TournamentModel> Get(int id)
         {
-            //return FakeDataHelper.GetTournaments().FirstOrDefault(n => n.Id == id) ??
-            //    new TournamentModel() { Id = 0, Name = "Not Found", Image_url = "" };
-
-            throw new NotImplementedException();
+            return _mediator.Send(new GetTournamentDetailQuery(id));
         }
 
         [HttpGet, Route("List")]
-        public IEnumerable<TournamentModel> List()
+        public Task<IEnumerable<TournamentModel>> List()
         {
-            //return FakeDataHelper.GetTournaments();
-
-            throw new NotImplementedException();
+            return _mediator.Send(new GetTournamentListQuery());
         }
     }
 }

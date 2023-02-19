@@ -30,7 +30,8 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public Task<IEnumerable<PlayerModel>> Handle(GetPlayerListQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var players = FakeDataHelper.GetPlayers() as IEnumerable<PlayerModel>;
+            return Task.FromResult(players);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using OAuth2.Client;
 using OAuth2.Configuration;
 using OAuth2.Infrastructure;
-using OAuth2.Models;
 using RestSharp;
 using Newtonsoft.Json;
 using Endpoint = OAuth2.Client.Endpoint;

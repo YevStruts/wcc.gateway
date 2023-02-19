@@ -12,6 +12,12 @@ namespace wcc.gateway.api.Controllers
         protected readonly ILogger<NewsController>? _logger;
         protected readonly IMediator? _mediator;
 
+        public NewsController(ILogger<NewsController>? logger, IMediator? mediator)
+        {
+            _logger = logger;
+            _mediator = mediator;
+        }
+
         [HttpGet, Route("{id}")]
         public Task<NewsModel> Get(long id)
         {

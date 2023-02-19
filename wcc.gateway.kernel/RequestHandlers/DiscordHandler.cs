@@ -1,15 +1,8 @@
 ﻿using MediatR;
 using OAuth2.Infrastructure;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wcc.gateway.integrations.Discord;
-using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.Discord;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
