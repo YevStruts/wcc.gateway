@@ -18,6 +18,10 @@ namespace wcc.gateway.Identity
         public string? Avatar { get; set; }
 
         [Required]
+        [StringLength(2048, ErrorMessage = "The Token value cannot exceed 2048 characters. ")]
+        public string? Token { get; set; }
+
+        [Required]
         [StringLength(128, ErrorMessage = "The Code value cannot exceed 128 characters. ")]
         public string? Code { get; set; }
     }
