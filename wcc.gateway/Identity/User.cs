@@ -1,13 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using wcc.gateway.Infrastructure;
 
 namespace wcc.gateway.Identity
 {
     [Table("users")]
-    public class User
+    public class User : Entity
     {
         [Required]
-        public long Id { get; set; }
+        [StringLength(100, ErrorMessage = "The ExternalId value cannot exceed 100 characters. ")]
+        public string ExternalId { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The Username value cannot exceed 100 characters. ")]
@@ -24,5 +26,7 @@ namespace wcc.gateway.Identity
         [Required]
         [StringLength(128, ErrorMessage = "The Code value cannot exceed 128 characters. ")]
         public string? Code { get; set; }
+
+        public virtual Player player { get; set; }
     }
 }

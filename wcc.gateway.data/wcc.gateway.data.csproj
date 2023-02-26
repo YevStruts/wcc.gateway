@@ -18,4 +18,8 @@
     <ProjectReference Include="..\wcc.gateway\wcc.gateway.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

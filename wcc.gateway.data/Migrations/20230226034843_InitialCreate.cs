@@ -26,33 +26,47 @@ namespace wcc.gateway.data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "players",
-                columns: table => new
-                {
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Id = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_players", x => x.UserId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ExternalId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Avatar = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_users", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "players",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_players", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_players_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_players_UserId",
+                table: "players",
+                column: "UserId",
+                unique: true);
         }
 
         /// <inheritdoc />

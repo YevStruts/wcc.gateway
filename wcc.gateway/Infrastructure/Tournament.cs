@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace wcc.gateway.Infrastructure
 {
     [Table("tournament")]
-    public class Tournament
+    public class Tournament : Entity
     {
-        [Required]
-        public long Id { get; set; }
-
         [Required]
         [StringLength(100, ErrorMessage = "The Name value cannot exceed 100 characters. ")]
         public string? Name { get; set; }

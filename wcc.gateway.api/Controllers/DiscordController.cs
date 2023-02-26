@@ -37,15 +37,23 @@ namespace wcc.gateway.api.Controllers
         [HttpPost, Route("Exchange")]
         public async Task<IActionResult> Exchange(ExchangeModel model)
         {
-            var clientId = _discordConfig.ClientID?.Trim() ?? string.Empty;
-            var clientSecret = _discordConfig.ClientSecret?.Trim() ?? string.Empty;
-            var redirectUri = _discordConfig.RedirectUrl ?? string.Empty;
-            var scope = "identify";
-            var code = model.code ?? string.Empty;
+            try
+            {
+                var clientId = _discordConfig.ClientID?.Trim() ?? string.Empty;
+                var clientSecret = _discordConfig.ClientSecret?.Trim() ?? string.Empty;
+                var redirectUri = _discordConfig.RedirectUrl ?? string.Empty;
+                var scope = "identify";
+                var code = model.code ?? string.Empty;
 
-            var user = await _mediator.Send(new GetDiscordUserQuery(clientId, clientSecret, redirectUri, scope, code));
+                var user = await _mediator.Send(new GetDiscordUserQuery(clientId, clientSecret, redirectUri, scope, code));
 
-            return Ok(new { model.code, user.id, user.username, user.avatar });
+                return Ok(new { model.code, user.id, user.username, user.avatar });
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return Ok();
         }
     }
 }

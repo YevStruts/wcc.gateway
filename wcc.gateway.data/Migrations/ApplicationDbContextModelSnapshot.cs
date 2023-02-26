@@ -39,6 +39,11 @@ namespace wcc.gateway.data.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(2048)
@@ -84,23 +89,43 @@ namespace wcc.gateway.data.Migrations
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
                 {
-                    b.Property<long>("UserId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("UserId"));
-
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("UserId");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("players");
+                });
+
+            modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
+                {
+                    b.HasOne("wcc.gateway.Identity.User", "user")
+                        .WithOne("player")
+                        .HasForeignKey("wcc.gateway.Infrastructure.Player", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("wcc.gateway.Identity.User", b =>
+                {
+                    b.Navigation("player")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

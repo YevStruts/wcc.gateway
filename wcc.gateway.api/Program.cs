@@ -1,4 +1,5 @@
 using wcc.gateway.api.Models.Discord;
+using wcc.gateway.data;
 using wcc.gateway.kernel.RequestHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,8 @@ builder.Services.AddSwaggerGen();
 
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Ping>());
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetNewsDetailQuery).Assembly));
+
+builder.Services.AddSingleton<ApplicationDbContext>();
 
 var app = builder.Build();
 
