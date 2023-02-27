@@ -47,11 +47,11 @@ namespace wcc.gateway.kernel.RequestHandlers
         IRequestHandler<GetAuthorizationUrlQuery, string>,
         IRequestHandler<GetDiscordUserQuery, UserModel>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDataRepository _db;
 
-        public DiscordHandler(ApplicationDbContext context)
+        public DiscordHandler(IDataRepository db)
         {
-            _context = context;
+            _db = db;
         }
 
         public async Task<string> Handle(GetAuthorizationUrlQuery request, CancellationToken cancellationToken)
@@ -88,25 +88,8 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             var userinfo = await discordClient.GetUserInfoAsync();
 
-            // SignIn user
-            var userDto = new User
-            {
-                ExternalId = userinfo.id,
-                Username = userinfo.username,
-                Avatar = userinfo.avatar,
-                Code = request.Code,
-                Token = token
-            };
-            _context.Users.Add(userDto);
-            _context.SaveChanges();
-
-            var playerDto = new Player
-            {
-                Name = userDto.Username,
-                UserId = userDto.Id
-            };
-            _context.Players.Add(playerDto);
-            _context.SaveChanges();
+            if (!userSignIn(userinfo.id, userinfo.username, userinfo.avatar, request.Code, token))
+                throw new Exception("Can't user sign in");
 
             var user = new UserModel
             {
@@ -117,6 +100,35 @@ namespace wcc.gateway.kernel.RequestHandlers
             };
 
             return user;
+        }
+
+        private bool userSignIn(string externalId, string username, string avatar, string code, string token)
+        {
+            var user =_db.GetUserByExternalId(externalId);
+            if (user == null)
+            {
+                var newUser = new User
+                {
+                    ExternalId = externalId,
+                    Username = username,
+                    Avatar = avatar,
+                    Code = code,
+                    Token = token
+                };
+                if (!_db.AddUser(newUser))
+                    return false;
+
+                var newPlayer = new Player
+                {
+                    Name = username,
+                    UserId = newUser.Id,
+                    user = newUser
+                };
+                if (!_db.AddPlayer(newPlayer))
+                    return false;
+                return true;
+            }
+            return _db.UpdateUser(user);
         }
     }
 }

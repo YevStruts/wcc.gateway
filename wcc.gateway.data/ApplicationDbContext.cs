@@ -5,7 +5,7 @@ using wcc.gateway.Infrastructure;
 
 namespace wcc.gateway.data
 {
-    public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class ApplicationDbContext : DbContext
     {
         protected readonly IConfiguration Configuration;
 

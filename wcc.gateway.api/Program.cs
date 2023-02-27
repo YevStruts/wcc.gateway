@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Ping>());
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetNewsDetailQuery).Assembly));
 
+builder.Services.AddScoped<IDataRepository, DataRepository>();
 builder.Services.AddSingleton<ApplicationDbContext>();
 
 var app = builder.Build();
