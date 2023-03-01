@@ -24,8 +24,8 @@ namespace wcc.gateway.Identity
         public string? Token { get; set; }
 
         [Required]
-        [StringLength(128, ErrorMessage = "The Code value cannot exceed 128 characters. ")]
-        public string? Code { get; set; }
+        [StringLength(32, ErrorMessage = "The Discriminator value cannot exceed 32 characters. ")]
+        public string? Discriminator { get; set; }
 
         public virtual Player player { get; set; }
     }

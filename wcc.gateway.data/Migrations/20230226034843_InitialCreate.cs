@@ -35,7 +35,7 @@ namespace wcc.gateway.data.Migrations
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Avatar = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Token = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
+                    Discriminator = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
                 },
                 constraints: table =>
                 {

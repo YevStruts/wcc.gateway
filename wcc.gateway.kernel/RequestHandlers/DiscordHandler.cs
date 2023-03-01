@@ -88,7 +88,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             var userinfo = await discordClient.GetUserInfoAsync();
 
-            if (!userSignIn(userinfo.id, userinfo.username, userinfo.avatar, request.Code, token))
+            if (!userSignIn(userinfo.id, userinfo.username, userinfo.avatar, userinfo.discriminator, token))
                 throw new Exception("Can't user sign in");
 
             var user = new UserModel
@@ -102,7 +102,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             return user;
         }
 
-        private bool userSignIn(string externalId, string username, string avatar, string code, string token)
+        private bool userSignIn(string externalId, string username, string avatar, string discriminator, string token)
         {
             var user =_db.GetUserByExternalId(externalId);
             if (user == null)
@@ -112,7 +112,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     ExternalId = externalId,
                     Username = username,
                     Avatar = avatar,
-                    Code = code,
+                    Discriminator = discriminator,
                     Token = token
                 };
                 if (!_db.AddUser(newUser))

@@ -1,6 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using wcc.gateway.api.Models.Discord;
+using wcc.gateway.api.Models.Jwt;
+using wcc.gateway.Identity;
 using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
@@ -13,11 +19,13 @@ namespace wcc.gateway.api.Controllers
         private readonly ILogger<DiscordController> _logger;
         protected readonly IMediator? _mediator;
         private readonly DiscordConfig _discordConfig;
+        private readonly JwtConfig _jwtConfig;
 
-        public DiscordController(ILogger<DiscordController> logger, DiscordConfig discordConfig, IMediator mediator)
+        public DiscordController(ILogger<DiscordController> logger, DiscordConfig discordConfig, JwtConfig jwtConfig, IMediator mediator)
         {
             _logger = logger;
             _discordConfig = discordConfig;
+            _jwtConfig = jwtConfig;
             _mediator = mediator;
         }
 
@@ -47,13 +55,44 @@ namespace wcc.gateway.api.Controllers
 
                 var user = await _mediator.Send(new GetDiscordUserQuery(clientId, clientSecret, redirectUri, scope, code));
 
-                return Ok(new { model.code, user.id, user.username, user.avatar });
+                string token = createToken(user.id, user.username);
+
+                return Ok(new { token, user.id, user.username, user.avatar });
             }
             catch (Exception ex)
             {
 
             }
             return Ok();
+        }
+
+        private string createToken(string id, string username)
+        {
+            var issuer = _jwtConfig.Issuer?.Trim();
+            var audience = _jwtConfig.Audience?.Trim(); // builder.Configuration["Jwt:Audience"];
+            var key = Encoding.ASCII.GetBytes(_jwtConfig.Key?.Trim() ?? string.Empty);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                new Claim("Id", Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, id),
+                new Claim(JwtRegisteredClaimNames.Email, username),
+                new Claim(JwtRegisteredClaimNames.Jti,
+                Guid.NewGuid().ToString())
+             }),
+                Expires = DateTime.UtcNow.AddMinutes(5),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = new SigningCredentials
+                (new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha512Signature)
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = tokenHandler.WriteToken(token);
+            var stringToken = tokenHandler.WriteToken(token);
+            return stringToken;
         }
     }
 }

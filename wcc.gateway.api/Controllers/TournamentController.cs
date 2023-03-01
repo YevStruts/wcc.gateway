@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.RequestHandlers;
@@ -18,6 +19,7 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
+        [Authorize]
         [HttpGet, Route("{id}")]
         public Task<TournamentModel> Get(int id)
         {
