@@ -11,8 +11,8 @@ using wcc.gateway.data;
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230226034843_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230302042618_AddedLanguagesTable")]
+    partial class AddedLanguagesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,10 +37,10 @@ namespace wcc.gateway.data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Code")
+                    b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("ExternalId")
                         .IsRequired()
@@ -112,6 +112,28 @@ namespace wcc.gateway.data.Migrations
                         .IsUnique();
 
                     b.ToTable("players");
+                });
+
+            modelBuilder.Entity("wcc.gateway.Localization.Language", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("languages");
                 });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
