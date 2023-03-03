@@ -27,6 +27,10 @@ namespace wcc.gateway.Identity
         [StringLength(32, ErrorMessage = "The Discriminator value cannot exceed 32 characters. ")]
         public string? Discriminator { get; set; }
 
+        [Required]
+        [StringLength(100, ErrorMessage = "The Email value cannot exceed 100 characters. ")]
+        public string? Email { get; set; }
+
         public virtual Player player { get; set; }
     }
 }
