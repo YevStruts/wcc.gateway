@@ -36,8 +36,8 @@ namespace wcc.gateway.data
         public bool UpdateUser(User user)
         {
             // TODO: Check what returns.
-            var result = _context.Users.Update(user);
-            return result.State == Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Users.Update(user);
+            return _context.SaveChanges() == SingleEntry;
         }
 
         #endregion User

@@ -7,6 +7,7 @@
         public string? avatar { get; set; }
         public string? avatar_decoration { get; set; }
         public string? discriminator { get; set; }
+        public string? email { get; set; }
         public bool public_flags { get; set; }
         public bool flags { get; set; }
         public string? banner { get; set; }
