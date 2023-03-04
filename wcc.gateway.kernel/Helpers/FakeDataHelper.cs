@@ -31,19 +31,6 @@ namespace wcc.gateway.kernel.Helpers
             };
         }
 
-        internal static IEnumerable<NewsModel> GetNews()
-        {
-            return new List<NewsModel>
-            {
-                new NewsModel { Id = 1, Name = "What is Lorem Ipsum?", Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,", Image_url = "https://i.picsum.photos/id/664/140/345.jpg?hmac=652GUsIUg395zIDLbpwU2hfstk5GQsLVMNFjyu7OIAc" },
-                new NewsModel { Id = 2, Name = "Why do we use it?", Description = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.", Image_url = "https://i.picsum.photos/id/965/140/345.jpg?hmac=7-_CkBhBFDClyLYILPdeGyeBtmiRBVgBRexfaduhvo4" },
-                new NewsModel { Id = 3, Name = "Where does it come from?", Description = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ", Image_url = "https://i.picsum.photos/id/387/140/345.jpg?hmac=hZNcO1Q71wsCZBt0gsUxljbR4sKs8VuVHFt0YNZxOq0" },
-                new NewsModel { Id = 4, Name = "Lorem ipsum dolor sit amet.", Description = "Ea quos minima eum laudantium eaque sit corrupti tempora. At suscipit doloribus ut iure voluptatibus qui odit tenetur sit voluptatem odio hic sint ipsam cum consequatur architecto. ", Image_url = "https://i.picsum.photos/id/87/387/140.jpg?hmac=GyXj2rw58Fc5tw6vFhPoOZbBOhgYNH5x1cHU8A2HLqU" },
-                new NewsModel { Id = 5, Name = "Eos vero voluptas", Description = "At adipisci quos et voluptatem consequatur non dolor impedit. Ut similique iste et eaque quia ut ipsa neque aut quia quis ea maxime magnam.", Image_url = "https://i.picsum.photos/id/79/387/140.jpg?hmac=j4tWMWNUA8ZMAmY83Mj16VODn_aVR5IDGc81yMVGj_E" },
-                new NewsModel { Id = 6, Name = "Rem officiis quod ut repellat", Description = " At totam odio sed temporibus voluptatem eos natus temporibus sit enim porro. Vel aperiam ipsum quo vitae nihil et fugiat iure! Aut dolorem quisquam est alias cupiditate ut culpa dolorem nam deleniti architecto ea itaque molestiae.", Image_url = "https://i.picsum.photos/id/591/387/140.jpg?hmac=v3SIsk5v-Nq_jeSyterdQtVRAIONY5VFhCO39GpCP2s" }
-            };
-        }
-
         internal static IEnumerable<PlayerRatingModel> GetPlayers()
         {
             return new List<PlayerRatingModel>

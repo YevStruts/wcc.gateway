@@ -15,5 +15,8 @@ namespace wcc.gateway.data
         User? GetUserByExternalId(string? id);
 
         bool AddPlayer(Player player);
+
+        News? GetNews(long id);
+        IList<News> GetNewsList();
     }
 }

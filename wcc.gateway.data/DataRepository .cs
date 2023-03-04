@@ -51,5 +51,19 @@ namespace wcc.gateway.data
         }
 
         #endregion Player
+
+        #region News
+
+        public News? GetNews(long id)
+        {
+            return _context.News.FirstOrDefault(u => u.Id == id);
+        }
+
+        public IList<News> GetNewsList()
+        {
+            return _context.News.ToList();
+        }
+
+        #endregion News
     }
 }
