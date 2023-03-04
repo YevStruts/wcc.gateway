@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using wcc.gateway.data;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 
@@ -22,15 +24,25 @@ namespace wcc.gateway.kernel.RequestHandlers
         IRequestHandler<GetTournamentDetailQuery, TournamentModel>,
         IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModel>>
     {
+        private readonly IDataRepository _db;
+        private readonly IMapper _mapper = MapperHelper.Instance;
+
+        public TournamentHandler(IDataRepository db)
+        {
+            _db = db;
+        }
+
         public Task<TournamentModel> Handle(GetTournamentDetailQuery request, CancellationToken cancellationToken)
         {
-            var tournament = FakeDataHelper.GetTournaments().First(t => t.Id == request.TournamentId);
+            var tournamentDto = _db.GetTournament(request.TournamentId);
+            var tournament = _mapper.Map<TournamentModel>(tournamentDto);
             return Task.FromResult(tournament);
         }
 
         public Task<IEnumerable<TournamentModel>> Handle(GetTournamentListQuery request, CancellationToken cancellationToken)
         {
-            var tournaments = FakeDataHelper.GetTournaments();
+            var tournamentsDto = _db.GetTournaments();
+            var tournaments = _mapper.Map<IEnumerable<TournamentModel>>(tournamentsDto);
             return Task.FromResult(tournaments);
         }
     }

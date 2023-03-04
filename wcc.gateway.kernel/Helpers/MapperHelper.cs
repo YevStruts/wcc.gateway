@@ -27,7 +27,14 @@ namespace wcc.gateway.kernel.Helpers
                     {
                         cfg.CreateMap<News, NewsModel>()
                             .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl));
+                        
                         cfg.CreateMap<Player, PlayerModel>();
+
+                        cfg.CreateMap<Tournament, TournamentModel>()
+                            .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl))
+                            .ForMember(dest => dest.Count_players, act => act.MapFrom(src => src.CountPlayers))
+                            .ForMember(dest => dest.Date_created, act => act.MapFrom(src => src.DateCreated))
+                            .ForMember(dest => dest.Date_start, act => act.MapFrom(src => src.DateStart));
                     });
 
                     instance = new Mapper(config);

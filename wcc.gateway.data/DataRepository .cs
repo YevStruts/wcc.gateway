@@ -75,5 +75,19 @@ namespace wcc.gateway.data
         }
 
         #endregion News
+
+        #region Tournament
+
+        public Tournament? GetTournament(long id)
+        {
+            return _context.Tournaments.FirstOrDefault(u => u.Id == id);
+        }
+
+        public IEnumerable<Tournament> GetTournaments()
+        {
+            return _context.Tournaments.ToList();
+        }
+
+        #endregion Tournament
     }
 }

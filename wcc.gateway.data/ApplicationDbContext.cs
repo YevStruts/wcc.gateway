@@ -25,5 +25,6 @@ namespace wcc.gateway.data
         public virtual DbSet<Player> Players { get; set; }
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<Language> Languages { get; set; }
+        public virtual DbSet<Tournament> Tournaments { get; set; }
     }
 }

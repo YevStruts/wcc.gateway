@@ -81,13 +81,5 @@ namespace wcc.gateway.kernel.Helpers
                 }
             };
         }
-
-        internal static IEnumerable<TournamentModel> GetTournaments()
-        {
-            return new List<TournamentModel>
-            {
-                new TournamentModel { Id = 1, Name = "Lords of The Kingdom", Image_url = "https://assets.rockpapershotgun.com/images/16/sep/cos3.jpg", Count_players = 22, Date_start = new DateTime(2023, 1, 25), Date_created = new DateTime(2022, 12, 19) }
-            };
-        }
     }
 }

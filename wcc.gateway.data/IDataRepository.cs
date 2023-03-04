@@ -20,5 +20,8 @@ namespace wcc.gateway.data
 
         News? GetNews(long id);
         IEnumerable<News> GetNewsList();
+
+        Tournament? GetTournament(long id);
+        IEnumerable<Tournament> GetTournaments();
     }
 }
