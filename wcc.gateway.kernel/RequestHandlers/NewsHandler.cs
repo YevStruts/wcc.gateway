@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using wcc.gateway.data;
+using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 
@@ -24,6 +26,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         IRequestHandler<GetNewsListQuery, IEnumerable<NewsModel>>
     {
         private readonly IDataRepository _db;
+        private readonly IMapper _mapper = MapperHelper.Instance;
 
         public NewsHandler(IDataRepository db)
         {
@@ -34,8 +37,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         {
             var news = _db.GetNews(request.Id);
 
-            var model = new NewsModel();
-            model.FromDto(news);
+            var model = _mapper.Map<News, NewsModel>(news);
 
             return Task.FromResult(model);
         }
@@ -44,13 +46,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         {
             var news = _db.GetNewsList().ToList();
             
-            var model = new List<NewsModel>();
-            news.ForEach(n =>
-            {
-                var item = new NewsModel();
-                item.FromDto(n);
-                model.Add(item);
-            });
+            var model = _mapper.Map<List<News>, List<NewsModel>>(news);
 
             return Task.FromResult<IEnumerable<NewsModel>>(model);
         }
