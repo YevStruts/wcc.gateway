@@ -14,9 +14,11 @@ namespace wcc.gateway.data
         bool UpdateUser(User user);
         User? GetUserByExternalId(string? id);
 
+        Player GetPlayer(long id);
         bool AddPlayer(Player player);
+        IEnumerable<Player> GetPlayers();
 
         News? GetNews(long id);
-        IList<News> GetNewsList();
+        IEnumerable<News> GetNewsList();
     }
 }

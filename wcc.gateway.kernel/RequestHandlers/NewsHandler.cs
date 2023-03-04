@@ -36,19 +36,18 @@ namespace wcc.gateway.kernel.RequestHandlers
         public Task<NewsModel> Handle(GetNewsDetailQuery request, CancellationToken cancellationToken)
         {
             var news = _db.GetNews(request.Id);
+            if (news == null)
+                throw new Exception("News does not exist.");
 
-            var model = _mapper.Map<News, NewsModel>(news);
-
+            var model = _mapper.Map<NewsModel>(news);
             return Task.FromResult(model);
         }
 
         public Task<IEnumerable<NewsModel>> Handle(GetNewsListQuery request, CancellationToken cancellationToken)
         {
             var news = _db.GetNewsList().ToList();
-            
-            var model = _mapper.Map<List<News>, List<NewsModel>>(news);
-
-            return Task.FromResult<IEnumerable<NewsModel>>(model);
+            var model = _mapper.Map<IEnumerable<NewsModel>>(news);
+            return Task.FromResult(model);
         }
     }
 }

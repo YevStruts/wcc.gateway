@@ -44,6 +44,16 @@ namespace wcc.gateway.data
 
         #region Player
 
+        public Player GetPlayer(long id)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public IEnumerable<Player> GetPlayers()
+        {
+            return _context.Players.ToList();
+        }
+
         public bool AddPlayer(Player player)
         {
             _context.Players.Add(player);
@@ -59,7 +69,7 @@ namespace wcc.gateway.data
             return _context.News.FirstOrDefault(u => u.Id == id);
         }
 
-        public IList<News> GetNewsList()
+        public IEnumerable<News> GetNewsList()
         {
             return _context.News.ToList();
         }
