@@ -8,17 +8,8 @@ namespace wcc.gateway.data
 {
     public class ApplicationDbContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
-
-        public ApplicationDbContext(IConfiguration configuration)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            Configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            // connect to sql server with connection string from app settings
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
         }
 
         public virtual DbSet<User> Users { get; set; }
