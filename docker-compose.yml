@@ -6,7 +6,7 @@ services:
     container_name: wcc_gateway
     ports:
       - "5001:80"
-      # - "5002:443"
+      - "5002:443"
     # environment:
     #   - ASPNETCORE_ENVIRONMENT=Development
     #   - ASPNETCORE_URLS=https://+:443;http://+:80
