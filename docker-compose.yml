@@ -3,7 +3,8 @@ version: "3.8"
 services:
   wcc_gateway:
     build: . # build the Docker image 
-    container_name: wcc_gateway
+    container_name: wcc.gateway
+    image: wcc.gateway.i
     ports:
       - "5001:80"
       - "5002:443"
@@ -15,11 +16,11 @@ services:
     # volumes:
     #   - ~/.aspnet/https:/https:ro
       
-  sql:
-    image: "mcr.microsoft.com/mssql/server:2022-latest"
-    container_name: sql_server2022
-    ports: # not actually needed, because the two services are on the same network.
-      - "1433:1433" 
-    environment:
-      - ACCEPT_EULA=y
-      - SA_PASSWORD=A&VeryComplex123Password
+  # sql:
+  #   image: "mcr.microsoft.com/mssql/server:2022-latest"
+  #   container_name: sql_server2022
+  #   ports: # not actually needed, because the two services are on the same network.
+  #     - "1433:1433" 
+  #   environment:
+  #     - ACCEPT_EULA=y
+  #     - SA_PASSWORD=A&VeryComplex123Password
