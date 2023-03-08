@@ -11,6 +11,10 @@ namespace wcc.gateway.Infrastructure
         public string? Name { get; set; }
 
         [Required]
+        [StringLength(10000, ErrorMessage = "The Name value cannot exceed 10000 characters. ")]
+        public string? Description { get; set; }
+
+        [Required]
         [StringLength(255, ErrorMessage = "The ImageUrl value cannot exceed 255 characters. ")]
         public string? ImageUrl { get; set; }
 
