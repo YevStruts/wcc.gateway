@@ -18,6 +18,6 @@ namespace wcc.gateway.Infrastructure
 
         public User User { get; set; }
 
-        public List<Tournament> Tournametns { get; set; }
+        public List<Tournament> Tournament { get; set; }
     }
 }

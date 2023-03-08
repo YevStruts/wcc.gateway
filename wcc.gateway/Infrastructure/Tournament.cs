@@ -21,7 +21,7 @@ namespace wcc.gateway.Infrastructure
         [Required]
         public int CountPlayers { get; set; }
 
-        public List<Player> Participants { get; set; }
+        public List<Player> Participant { get; set; }
 
         [Required]
         public DateTime DateStart { get; set; }

@@ -100,21 +100,21 @@ namespace wcc.gateway.data.Migrations
                 name: "PlayerTournament",
                 columns: table => new
                 {
-                    ParticipantsId = table.Column<long>(type: "bigint", nullable: false),
-                    TournametnsId = table.Column<long>(type: "bigint", nullable: false)
+                    ParticipantId = table.Column<long>(type: "bigint", nullable: false),
+                    TournamentId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlayerTournament", x => new { x.ParticipantsId, x.TournametnsId });
+                    table.PrimaryKey("PK_PlayerTournament", x => new { x.ParticipantId, x.TournamentId });
                     table.ForeignKey(
-                        name: "FK_PlayerTournament_Players_ParticipantsId",
-                        column: x => x.ParticipantsId,
+                        name: "FK_PlayerTournament_Players_ParticipantId",
+                        column: x => x.ParticipantId,
                         principalTable: "Players",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PlayerTournament_Tournament_TournametnsId",
-                        column: x => x.TournametnsId,
+                        name: "FK_PlayerTournament_Tournament_TournamentId",
+                        column: x => x.TournamentId,
                         principalTable: "Tournament",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -127,9 +127,9 @@ namespace wcc.gateway.data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlayerTournament_TournametnsId",
+                name: "IX_PlayerTournament_TournamentId",
                 table: "PlayerTournament",
-                column: "TournametnsId");
+                column: "TournamentId");
         }
 
         /// <inheritdoc />

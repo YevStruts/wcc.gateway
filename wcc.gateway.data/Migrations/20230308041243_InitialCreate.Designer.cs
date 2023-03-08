@@ -12,7 +12,7 @@ using wcc.gateway.data;
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230308040753_InitialCreate")]
+    [Migration("20230308041243_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,15 +27,15 @@ namespace wcc.gateway.data.Migrations
 
             modelBuilder.Entity("PlayerTournament", b =>
                 {
-                    b.Property<long>("ParticipantsId")
+                    b.Property<long>("ParticipantId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TournametnsId")
+                    b.Property<long>("TournamentId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("ParticipantsId", "TournametnsId");
+                    b.HasKey("ParticipantId", "TournamentId");
 
-                    b.HasIndex("TournametnsId");
+                    b.HasIndex("TournamentId");
 
                     b.ToTable("PlayerTournament");
                 });
@@ -198,13 +198,13 @@ namespace wcc.gateway.data.Migrations
                 {
                     b.HasOne("wcc.gateway.Infrastructure.Player", null)
                         .WithMany()
-                        .HasForeignKey("ParticipantsId")
+                        .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("wcc.gateway.Infrastructure.Tournament", null)
                         .WithMany()
-                        .HasForeignKey("TournametnsId")
+                        .HasForeignKey("TournamentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
