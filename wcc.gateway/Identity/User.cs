@@ -4,7 +4,7 @@ using wcc.gateway.Infrastructure;
 
 namespace wcc.gateway.Identity
 {
-    [Table("users")]
+    [Table("Users")]
     public class User : Entity
     {
         [Required]
@@ -31,6 +31,6 @@ namespace wcc.gateway.Identity
         [StringLength(100, ErrorMessage = "The Email value cannot exceed 100 characters. ")]
         public string? Email { get; set; }
 
-        public virtual Player player { get; set; }
+        public Player Player { get; set; }
     }
 }

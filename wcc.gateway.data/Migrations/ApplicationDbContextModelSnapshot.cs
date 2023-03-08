@@ -22,6 +22,21 @@ namespace wcc.gateway.data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("PlayerTournament", b =>
+                {
+                    b.Property<long>("ParticipantsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TournametnsId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ParticipantsId", "TournametnsId");
+
+                    b.HasIndex("TournametnsId");
+
+                    b.ToTable("PlayerTournament");
+                });
+
             modelBuilder.Entity("wcc.gateway.Identity.User", b =>
                 {
                     b.Property<long>("Id")
@@ -62,7 +77,7 @@ namespace wcc.gateway.data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.News", b =>
@@ -90,7 +105,7 @@ namespace wcc.gateway.data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("news");
+                    b.ToTable("News");
                 });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
@@ -114,7 +129,7 @@ namespace wcc.gateway.data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("players");
+                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Tournament", b =>
@@ -151,7 +166,7 @@ namespace wcc.gateway.data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tournament");
+                    b.ToTable("Tournament");
                 });
 
             modelBuilder.Entity("wcc.gateway.Localization.Language", b =>
@@ -173,23 +188,38 @@ namespace wcc.gateway.data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("languages");
+                    b.ToTable("Languages");
+                });
+
+            modelBuilder.Entity("PlayerTournament", b =>
+                {
+                    b.HasOne("wcc.gateway.Infrastructure.Player", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("wcc.gateway.Infrastructure.Tournament", null)
+                        .WithMany()
+                        .HasForeignKey("TournametnsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
                 {
-                    b.HasOne("wcc.gateway.Identity.User", "user")
-                        .WithOne("player")
+                    b.HasOne("wcc.gateway.Identity.User", "User")
+                        .WithOne("Player")
                         .HasForeignKey("wcc.gateway.Infrastructure.Player", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("user");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("wcc.gateway.Identity.User", b =>
                 {
-                    b.Navigation("player")
+                    b.Navigation("Player")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

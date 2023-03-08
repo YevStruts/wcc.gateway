@@ -123,7 +123,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 {
                     Name = username,
                     UserId = newUser.Id,
-                    user = newUser
+                    User = newUser
                 };
                 if (!_db.AddPlayer(newPlayer))
                     return false;

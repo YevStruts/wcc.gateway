@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace wcc.gateway.Infrastructure
 {
-    [Table("news")]
+    [Table("News")]
     public class News : Entity
     {
         [Required]

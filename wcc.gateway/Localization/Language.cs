@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace wcc.gateway.Localization
 {
-    [Table("languages")]
+    [Table("Languages")]
     public class Language : Entity
     {
         [Required]

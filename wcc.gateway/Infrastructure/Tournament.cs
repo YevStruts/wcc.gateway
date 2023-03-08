@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace wcc.gateway.Infrastructure
 {
-    [Table("tournament")]
+    [Table("Tournament")]
     public class Tournament : Entity
     {
         [Required]
@@ -20,6 +20,8 @@ namespace wcc.gateway.Infrastructure
 
         [Required]
         public int CountPlayers { get; set; }
+
+        public List<Player> Participants { get; set; }
 
         [Required]
         public DateTime DateStart { get; set; }

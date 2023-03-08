@@ -5,7 +5,7 @@ using wcc.gateway.Identity;
 
 namespace wcc.gateway.Infrastructure
 {
-    [Table("players")]
+    [Table("Players")]
     public class Player : Entity
     {
         [Required]
@@ -16,6 +16,8 @@ namespace wcc.gateway.Infrastructure
         [ForeignKey("User")]
         public long UserId { get; set; }
 
-        public virtual User user { get; set; }
+        public User User { get; set; }
+
+        public List<Tournament> Tournametns { get; set; }
     }
 }
