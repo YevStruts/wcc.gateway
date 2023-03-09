@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,7 @@ namespace wcc.gateway.data
         public User? GetUserByExternalId(string? id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            return _context.Users.FirstOrDefault(u => u.ExternalId == id);
+            return _context.Users.Include(p => p.Player).FirstOrDefault(u => u.ExternalId == id);
         }
 
         public bool UpdateUser(User user)
@@ -80,12 +81,23 @@ namespace wcc.gateway.data
 
         public Tournament? GetTournament(long id)
         {
-            return _context.Tournaments.FirstOrDefault(u => u.Id == id);
+            return _context.Tournaments.Include(p => p.Participant).FirstOrDefault(u => u.Id == id);
         }
 
         public IEnumerable<Tournament> GetTournaments()
         {
             return _context.Tournaments.ToList();
+        }
+
+        public bool AddTournamentParticipant(int tournamentId, Player player)
+        {
+            var tournament = GetTournament(tournamentId);
+            if (tournament != null && !tournament.Participant.Any(p => p.Id == player.Id))
+            {
+                tournament.Participant.Add(player);
+                return _context.SaveChanges() == SingleEntry;
+            }
+            return false;
         }
 
         #endregion Tournament

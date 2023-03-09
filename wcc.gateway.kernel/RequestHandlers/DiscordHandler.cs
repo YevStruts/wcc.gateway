@@ -95,6 +95,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             {
                 id = userinfo.id,
                 username = userinfo.username,
+                email = userinfo.email,
                 avatar = userinfo.avatar,
                 code = request.Code
             };

@@ -55,7 +55,7 @@ namespace wcc.gateway.api.Controllers
 
                 var user = await _mediator.Send(new GetDiscordUserQuery(clientId, clientSecret, redirectUri, scope, code));
 
-                string token = createToken(user.id, user.username);
+                string token = createToken(user.id, user.username, user.email);
 
                 return Ok(new { token, user.id, user.username, user.avatar });
             }
@@ -66,7 +66,7 @@ namespace wcc.gateway.api.Controllers
             return Ok();
         }
 
-        private string createToken(string id, string username)
+        private string createToken(string id, string username, string email)
         {
             var issuer = _jwtConfig.Issuer?.Trim();
             var audience = _jwtConfig.Audience?.Trim(); // builder.Configuration["Jwt:Audience"];
@@ -75,9 +75,9 @@ namespace wcc.gateway.api.Controllers
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim("Id", Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, id),
-                new Claim(JwtRegisteredClaimNames.Email, username),
+                new Claim("Id", id),
+                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Email, email),
                 new Claim(JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
              }),

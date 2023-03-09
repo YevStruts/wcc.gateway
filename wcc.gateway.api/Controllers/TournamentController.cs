@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using wcc.gateway.api.Helpers;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.RequestHandlers;
 
@@ -8,6 +9,7 @@ namespace wcc.gateway.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TournamentController : ControllerBase
     {
         private readonly ILogger<TournamentController> _logger;
@@ -19,13 +21,20 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
-        [Authorize]
         [HttpGet, Route("{id}")]
         public Task<TournamentModel> Get(int id)
         {
             return _mediator.Send(new GetTournamentDetailQuery(id));
         }
 
+        [HttpPost, Route("Join/{id:int}")]
+        public Task<bool> Join(int id)
+        {
+            var userId = User.GetUserId();
+            return _mediator.Send(new JoinToTournamentQuery(id, userId));
+        }
+
+        [AllowAnonymous]
         [HttpGet, Route("List")]
         public Task<IEnumerable<TournamentModel>> List()
         {

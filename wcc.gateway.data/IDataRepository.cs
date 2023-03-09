@@ -23,5 +23,6 @@ namespace wcc.gateway.data
 
         Tournament? GetTournament(long id);
         IEnumerable<Tournament> GetTournaments();
+        bool AddTournamentParticipant(int tournamentId, Player player);
     }
 }
