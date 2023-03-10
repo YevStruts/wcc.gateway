@@ -34,11 +34,25 @@ namespace wcc.gateway.api.Controllers
             return _mediator.Send(new JoinToTournamentQuery(id, userId));
         }
 
+        [HttpPost, Route("Leave/{id:int}")]
+        public Task<bool> Leave(int id)
+        {
+            var userId = User.GetUserId();
+            return _mediator.Send(new LeaveTournamentQuery(id, userId));
+        }
+
         [AllowAnonymous]
         [HttpGet, Route("List")]
         public Task<IEnumerable<TournamentModel>> List()
         {
             return _mediator.Send(new GetTournamentListQuery());
+        }
+
+        [HttpGet, Route("GetParticipationStatus/{tournamentId:int}")]
+        public Task<bool> GetParticipationStatus(int tournamentId)
+        {
+            var userId = User.GetUserId();
+            return _mediator.Send(new GetParticipationStatusQuery(tournamentId, userId));
         }
     }
 }

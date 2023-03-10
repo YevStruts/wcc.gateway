@@ -100,6 +100,17 @@ namespace wcc.gateway.data
             return false;
         }
 
+        public bool RemoveTournamentParticipant(int tournamentId, Player player)
+        {
+            var tournament = GetTournament(tournamentId);
+            if (tournament != null && tournament.Participant.Any(p => p.Id == player.Id))
+            {
+                tournament.Participant.Remove(player);
+                return _context.SaveChanges() == SingleEntry;
+            }
+            return false;
+        }
+
         #endregion Tournament
     }
 }

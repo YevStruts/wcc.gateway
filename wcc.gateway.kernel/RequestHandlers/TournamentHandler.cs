@@ -32,10 +32,36 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class LeaveTournamentQuery : IRequest<bool>
+    {
+        public int TournamentId { get; }
+        public string ExternalId { get; }
+
+        public LeaveTournamentQuery(int tournamentId, string externalId)
+        {
+            ExternalId = externalId;
+            TournamentId = tournamentId;
+        }
+    }
+
+    public class GetParticipationStatusQuery : IRequest<bool>
+    {
+        public int TournamentId { get; }
+        public string ExternalId { get; }
+
+        public GetParticipationStatusQuery(int tournamentId, string externalId)
+        {
+            TournamentId = tournamentId;
+            ExternalId = externalId;
+        }
+    }
+
     public class TournamentHandler :
         IRequestHandler<GetTournamentDetailQuery, TournamentModel>,
         IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModel>>,
-        IRequestHandler<JoinToTournamentQuery, bool>
+        IRequestHandler<JoinToTournamentQuery, bool>,
+        IRequestHandler<LeaveTournamentQuery, bool>,
+        IRequestHandler<GetParticipationStatusQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -65,6 +91,33 @@ namespace wcc.gateway.kernel.RequestHandlers
             if (user != null)
             {
                 if (_db.AddTournamentParticipant(request.TournamentId, user.Player))
+                {
+                    return Task.FromResult(true);
+                }
+            }
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> Handle(LeaveTournamentQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalId);
+            if (user != null)
+            {
+                if (_db.RemoveTournamentParticipant(request.TournamentId, user.Player))
+                {
+                    return Task.FromResult(true);
+                }
+            }
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> Handle(GetParticipationStatusQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalId);
+            if (user != null)
+            {
+                var tournament = _db.GetTournament(request.TournamentId);
+                if (tournament != null && tournament.Participant.Any(p => p.UserId == user.Id))
                 {
                     return Task.FromResult(true);
                 }
