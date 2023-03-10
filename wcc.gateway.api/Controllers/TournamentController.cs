@@ -21,6 +21,7 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
+        [AllowAnonymous]
         [HttpGet, Route("{id}")]
         public Task<TournamentModel> Get(int id)
         {
