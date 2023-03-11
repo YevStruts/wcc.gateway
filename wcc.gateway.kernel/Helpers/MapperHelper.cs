@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using wcc.gateway.Infrastructure;
+using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Models;
 
 namespace wcc.gateway.kernel.Helpers
@@ -27,8 +28,9 @@ namespace wcc.gateway.kernel.Helpers
                     {
                         cfg.CreateMap<News, NewsModel>()
                             .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl));
-                        
-                        cfg.CreateMap<Player, PlayerModel>();
+
+                        cfg.CreateMap<Player, PlayerModel>()
+                            .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
 
                         cfg.CreateMap<Tournament, TournamentModel>()
                             .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl))

@@ -52,7 +52,7 @@ namespace wcc.gateway.data
         
         public IEnumerable<Player> GetPlayers()
         {
-            return _context.Players.ToList();
+            return _context.Players.Include(p => p.User).ToList();
         }
 
         public bool AddPlayer(Player player)
