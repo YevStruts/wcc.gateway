@@ -25,6 +25,7 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("{id}")]
         public Task<TournamentModel> Get(int id)
         {
+            _logger.LogInformation($"User:{User.GetUserId()} get's tournament Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetTournamentDetailQuery(id));
         }
 
@@ -32,6 +33,7 @@ namespace wcc.gateway.api.Controllers
         public Task<bool> Join(int id)
         {
             var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} joins to tournament Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new JoinToTournamentQuery(id, userId));
         }
 
@@ -39,6 +41,7 @@ namespace wcc.gateway.api.Controllers
         public Task<bool> Leave(int id)
         {
             var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} leaves to tournament Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new LeaveTournamentQuery(id, userId));
         }
 
@@ -46,6 +49,7 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("List")]
         public Task<IEnumerable<TournamentModel>> List()
         {
+            _logger.LogInformation($"User:{User.GetUserId()} list of tournaments", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetTournamentListQuery());
         }
 
@@ -53,6 +57,7 @@ namespace wcc.gateway.api.Controllers
         public Task<bool> GetParticipationStatus(int tournamentId)
         {
             var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} get's participation status four tournament Id:{tournamentId}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetParticipationStatusQuery(tournamentId, userId));
         }
     }

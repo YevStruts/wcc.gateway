@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using wcc.gateway.api.Helpers;
 using wcc.gateway.api.Models.Discord;
 using wcc.gateway.api.Models.Jwt;
 using wcc.gateway.Identity;
@@ -61,7 +62,7 @@ namespace wcc.gateway.api.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Exception message:{ex.Message}", DateTimeOffset.UtcNow);
             }
             return Ok();
         }
