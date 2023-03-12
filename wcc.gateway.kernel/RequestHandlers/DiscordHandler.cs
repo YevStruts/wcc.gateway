@@ -87,8 +87,20 @@ namespace wcc.gateway.kernel.RequestHandlers
             });
 
             var userinfo = await discordClient.GetUserInfoAsync();
+            if (userinfo == null ||
+                string.IsNullOrEmpty(userinfo.id) ||
+                string.IsNullOrEmpty(userinfo.username) ||
+                string.IsNullOrEmpty(userinfo.discriminator))
+            {
+                throw new Exception("Can't get user info.");
+            }
 
-            if (!userSignIn(userinfo.id, userinfo.username, userinfo.avatar, userinfo.discriminator, userinfo.email, token))
+            if (!userSignIn(userinfo.id,
+                            userinfo.username,
+                            userinfo.avatar ?? string.Empty,
+                            userinfo.discriminator,
+                            userinfo.email ?? string.Empty,
+                            token))
                 throw new Exception("Can't user sign in");
 
             var user = new UserModel

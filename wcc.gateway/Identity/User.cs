@@ -15,7 +15,6 @@ namespace wcc.gateway.Identity
         [StringLength(100, ErrorMessage = "The Username value cannot exceed 100 characters. ")]
         public string? Username { get; set; }
 
-        [Required]
         [StringLength(100, ErrorMessage = "The Avatar value cannot exceed 100 characters. ")]
         public string? Avatar { get; set; }
 
@@ -27,7 +26,6 @@ namespace wcc.gateway.Identity
         [StringLength(32, ErrorMessage = "The Discriminator value cannot exceed 32 characters. ")]
         public string? Discriminator { get; set; }
 
-        [Required]
         [StringLength(100, ErrorMessage = "The Email value cannot exceed 100 characters. ")]
         public string? Email { get; set; }
 
