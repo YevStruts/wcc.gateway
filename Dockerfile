@@ -22,5 +22,6 @@ RUN dotnet publish "wcc.gateway.api.csproj" -c Release -o /app/publish /p:UseApp
 
 FROM base AS final
 WORKDIR /app
+COPY cert /usr/local/cert
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "wcc.gateway.api.dll"]
