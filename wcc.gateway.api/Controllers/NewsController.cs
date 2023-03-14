@@ -22,15 +22,17 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("{id}")]
         public Task<NewsModel> Get(long id)
         {
+            var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} get's news Id:{id}", DateTimeOffset.UtcNow);
-            return _mediator.Send(new GetNewsDetailQuery(id));
+            return _mediator.Send(new GetNewsDetailQuery(id, locale));
         }
 
         [HttpGet, Route("List")]
         public Task<IEnumerable<NewsModel>> List()
         {
+            var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} get's news list", DateTimeOffset.UtcNow);
-            return _mediator.Send(new GetNewsListQuery());
+            return _mediator.Send(new GetNewsListQuery(locale));
         }
     }
 }

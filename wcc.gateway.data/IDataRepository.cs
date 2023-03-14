@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
+using wcc.gateway.Localization;
 
 namespace wcc.gateway.data
 {
@@ -25,5 +26,7 @@ namespace wcc.gateway.data
         IEnumerable<Tournament> GetTournaments();
         bool AddTournamentParticipant(int tournamentId, Player player);
         bool RemoveTournamentParticipant(int tournamentId, Player player);
+        
+        Language? GetLanguage(string locale);
     }
 }

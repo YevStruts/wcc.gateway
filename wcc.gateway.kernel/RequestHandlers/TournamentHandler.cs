@@ -9,15 +9,23 @@ namespace wcc.gateway.kernel.RequestHandlers
     public class GetTournamentDetailQuery : IRequest<TournamentModel>
     {
         public long TournamentId { get; }
+        public string Locale { get; }
 
-        public GetTournamentDetailQuery(long tournamentId)
+        public GetTournamentDetailQuery(long tournamentId, string locale)
         {
             TournamentId = tournamentId;
+            Locale = locale;
         }
     }
 
     public class GetTournamentListQuery : IRequest<IEnumerable<TournamentModel>>
     {
+        public string Locale { get; }
+
+        public GetTournamentListQuery(string locale)
+        {
+            Locale = locale;
+        }
     }
 
     public class JoinToTournamentQuery : IRequest<bool>
@@ -74,14 +82,49 @@ namespace wcc.gateway.kernel.RequestHandlers
         public Task<TournamentModel> Handle(GetTournamentDetailQuery request, CancellationToken cancellationToken)
         {
             var tournamentDto = _db.GetTournament(request.TournamentId);
+            if (tournamentDto == null)
+                throw new Exception("Can't retrieve tournament");
+
             var tournament = _mapper.Map<TournamentModel>(tournamentDto);
+
+            var language = _db.GetLanguage(request.Locale);
+            if (language != null)
+            {
+                var translation = tournamentDto.Translations.FirstOrDefault(t => t.LanguageId == language.Id);
+                if (translation != null)
+                {
+                    tournament.Name = translation.Name;
+                    tournament.Description = translation.Description;
+                }
+            }
             return Task.FromResult(tournament);
         }
 
         public Task<IEnumerable<TournamentModel>> Handle(GetTournamentListQuery request, CancellationToken cancellationToken)
         {
             var tournamentsDto = _db.GetTournaments();
+            if (tournamentsDto == null)
+                throw new Exception("Can't retrieve tournament");
+
             var tournaments = _mapper.Map<IEnumerable<TournamentModel>>(tournamentsDto);
+
+            var language = _db.GetLanguage(request.Locale);
+            if (language != null)
+            {
+                foreach (var tournament in tournaments)
+                {
+                    var tournamentDto = tournamentsDto.FirstOrDefault(t => t.Id == tournament.Id);
+                    if (tournamentDto != null)
+                    {
+                        var translation = tournamentDto.Translations.FirstOrDefault(t => t.LanguageId == language.Id);
+                        if (translation != null)
+                        {
+                            tournament.Name = translation.Name;
+                            tournament.Description = translation.Description;
+                        }
+                    }
+                }
+            }
             return Task.FromResult(tournaments);
         }
 

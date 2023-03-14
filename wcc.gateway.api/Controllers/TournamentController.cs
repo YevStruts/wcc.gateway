@@ -25,8 +25,9 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("{id}")]
         public Task<TournamentModel> Get(int id)
         {
+            var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} get's tournament Id:{id}", DateTimeOffset.UtcNow);
-            return _mediator.Send(new GetTournamentDetailQuery(id));
+            return _mediator.Send(new GetTournamentDetailQuery(id, locale));
         }
 
         [HttpPost, Route("Join/{id:int}")]
@@ -49,8 +50,9 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("List")]
         public Task<IEnumerable<TournamentModel>> List()
         {
+            var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} list of tournaments", DateTimeOffset.UtcNow);
-            return _mediator.Send(new GetTournamentListQuery());
+            return _mediator.Send(new GetTournamentListQuery(locale));
         }
 
         [HttpGet, Route("GetParticipationStatus/{tournamentId:int}")]

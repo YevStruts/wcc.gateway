@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
+using wcc.gateway.Localization;
 
 namespace wcc.gateway.data
 {
@@ -67,12 +68,12 @@ namespace wcc.gateway.data
 
         public News? GetNews(long id)
         {
-            return _context.News.FirstOrDefault(u => u.Id == id);
+            return _context.News.Include(t => t.Translations).FirstOrDefault(u => u.Id == id);
         }
 
         public IEnumerable<News> GetNewsList()
         {
-            return _context.News.ToList();
+            return _context.News.Include(t => t.Translations).ToList();
         }
 
         #endregion News
@@ -81,12 +82,12 @@ namespace wcc.gateway.data
 
         public Tournament? GetTournament(long id)
         {
-            return _context.Tournaments.Include(p => p.Participant).FirstOrDefault(u => u.Id == id);
+            return _context.Tournaments.Include(p => p.Participant).Include(l => l.Translations).FirstOrDefault(u => u.Id == id);
         }
 
         public IEnumerable<Tournament> GetTournaments()
         {
-            return _context.Tournaments.ToList();
+            return _context.Tournaments.Include(l => l.Translations).ToList();
         }
 
         public bool AddTournamentParticipant(int tournamentId, Player player)
@@ -112,5 +113,12 @@ namespace wcc.gateway.data
         }
 
         #endregion Tournament
+
+        #region Language
+        public Language? GetLanguage(string culture)
+        {
+            return _context.Languages.FirstOrDefault(u => u.Culture == culture);
+        }
+        #endregion Language
     }
 }
