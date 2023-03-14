@@ -65,7 +65,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public Task<IEnumerable<NewsModel>> Handle(GetNewsListQuery request, CancellationToken cancellationToken)
         {
-            var newsDto = _db.GetNewsList();
+            var newsDto = _db.GetNewsList().OrderByDescending(n => n.Id).ToList();
             if (newsDto == null)
                 throw new Exception("Can't retrieve news");
 
