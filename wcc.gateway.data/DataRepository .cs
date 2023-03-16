@@ -62,6 +62,11 @@ namespace wcc.gateway.data
             return _context.SaveChanges() == SingleEntry;
         }
 
+        public bool UpdatePlayer(Player player)
+        {
+            _context.Players.Update(player);
+            return _context.SaveChanges() == SingleEntry;
+        }
         #endregion Player
 
         #region News

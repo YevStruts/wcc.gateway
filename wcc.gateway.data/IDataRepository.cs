@@ -17,6 +17,7 @@ namespace wcc.gateway.data
 
         Player GetPlayer(long id);
         bool AddPlayer(Player player);
+        bool UpdatePlayer(Player player);
         IEnumerable<Player> GetPlayers();
 
         News? GetNews(long id);
