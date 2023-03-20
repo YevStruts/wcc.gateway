@@ -20,7 +20,7 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpGet, Route("{id}")]
-        public Task<GameModel> Get(int id)
+        public Task<GameListModel> Get(int id)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's game Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetGameDetailQuery(id));

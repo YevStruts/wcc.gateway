@@ -125,5 +125,29 @@ namespace wcc.gateway.data
             return _context.Languages.FirstOrDefault(u => u.Culture == culture);
         }
         #endregion Language
+
+        #region Game
+        public Game? GetGame(long id)
+        {
+            return _context.Games.FirstOrDefault(u => u.Id == id);
+        }
+
+        public List<Game> GetGames()
+        {
+            return _context.Games.ToList();
+        }
+        #endregion Game
+
+        #region Youtube
+        public Youtube? GetYoutube(long id)
+        {
+            return _context.YoutubeUrls.FirstOrDefault(u => u.Id == id);
+        }
+
+        public List<Youtube> GetYoutubes()
+        {
+            return _context.YoutubeUrls.ToList();
+        }
+        #endregion Youtube
     }
 }

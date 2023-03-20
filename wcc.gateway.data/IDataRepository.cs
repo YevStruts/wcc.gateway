@@ -29,5 +29,11 @@ namespace wcc.gateway.data
         bool RemoveTournamentParticipant(int tournamentId, Player player);
         
         Language? GetLanguage(string locale);
+
+        Game? GetGame(long id);
+        List<Game> GetGames();
+
+        Youtube? GetYoutube(long id);
+        List<Youtube> GetYoutubes();
     }
 }
