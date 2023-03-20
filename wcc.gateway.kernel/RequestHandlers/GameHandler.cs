@@ -82,19 +82,22 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             foreach (var game in games)
             {
-                var hUserId = gamesDto.First(g => g.Id == game.Id).HUserId;
+                var gameDto = gamesDto.First(g => g.Id == game.Id);
+                var hUserId = gameDto.HUserId;
                 var hPLayerDto = playersDto.FirstOrDefault(p => p.UserId == hUserId);
                 if (hPLayerDto == null)
                     throw new ArgumentNullException(nameof(hPLayerDto));
 
                 game.Home = _mapper.Map<PlayerGameListModel>(hPLayerDto);
+                game.Home.Score = gameDto.HScore;
 
-                var vUserId = gamesDto.First(g => g.Id == game.Id).VUserId;
+                var vUserId = gameDto.VUserId;
                 var vPLayerDto = playersDto.FirstOrDefault(p => p.UserId == vUserId);
                 if (vPLayerDto == null)
                     throw new ArgumentNullException(nameof(vPLayerDto));
 
                 game.Visitor = _mapper.Map<PlayerGameListModel>(vPLayerDto);
+                game.Visitor.Score = gameDto.VScore;
 
                 var ytUrl = youtubes.Where(y => y.GameId == game.Id);
                 foreach (var yt in ytUrl)
