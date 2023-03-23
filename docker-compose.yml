@@ -6,7 +6,7 @@ services:
     container_name: wcc.gateway
     image: wcc.gateway.i
     ports:
-      - "5001:80"
+      - "3001:80"
       - "5002:443"
     # environment:
     #   - ASPNETCORE_ENVIRONMENT=Development
