@@ -80,13 +80,22 @@ namespace wcc.gateway.kernel.RequestHandlers
             var gamesIds = gamesDto.Select(g => g.Id).ToList();
             var youtubes = _db.GetYoutubes().Where(g => gamesIds.Contains(g.GameId)).ToList();
 
+            var fakePlayer = new Player()
+            {
+                Id = 0,
+                Name = "TBD",
+                UserId = 0
+            };
+
             foreach (var game in games)
             {
                 var gameDto = gamesDto.First(g => g.Id == game.Id);
                 var hUserId = gameDto.HUserId;
                 var hPLayerDto = playersDto.FirstOrDefault(p => p.UserId == hUserId);
                 if (hPLayerDto == null)
-                    throw new ArgumentNullException(nameof(hPLayerDto));
+                {
+                    hPLayerDto = fakePlayer;
+                }
 
                 game.Home = _mapper.Map<PlayerGameListModel>(hPLayerDto);
                 game.Home.Score = gameDto.HScore;
@@ -94,7 +103,9 @@ namespace wcc.gateway.kernel.RequestHandlers
                 var vUserId = gameDto.VUserId;
                 var vPLayerDto = playersDto.FirstOrDefault(p => p.UserId == vUserId);
                 if (vPLayerDto == null)
-                    throw new ArgumentNullException(nameof(vPLayerDto));
+                {
+                    vPLayerDto = fakePlayer;
+                }
 
                 game.Visitor = _mapper.Map<PlayerGameListModel>(vPLayerDto);
                 game.Visitor.Score = gameDto.VScore;
