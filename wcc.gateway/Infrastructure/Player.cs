@@ -19,5 +19,6 @@ namespace wcc.gateway.Infrastructure
         public User User { get; set; }
 
         public List<Tournament> Tournament { get; set; }
+        public List<Rating> Rating { get; set; }
     }
 }

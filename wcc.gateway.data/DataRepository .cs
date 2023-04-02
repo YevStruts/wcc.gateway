@@ -149,5 +149,14 @@ namespace wcc.gateway.data
             return _context.YoutubeUrls.ToList();
         }
         #endregion Youtube
+
+        #region Rating
+
+        public Rating? GetRating(long id)
+        {
+            return _context.Ratings.FirstOrDefault(u => u.Id == id);
+        }
+
+        #endregion Rating
     }
 }

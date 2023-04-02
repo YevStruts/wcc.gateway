@@ -35,5 +35,7 @@ namespace wcc.gateway.data
 
         Youtube? GetYoutube(long id);
         List<Youtube> GetYoutubes();
+
+        Rating? GetRating(long id);
     }
 }
