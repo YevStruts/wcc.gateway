@@ -22,9 +22,6 @@ namespace wcc.gateway.Infrastructure
     [Table("Rating")]
     public class Rating : RatingBase
     {
-        public int Progress { get; set; }
-        public int Position { get; set; }
-        public int TotalPoints { get; set; }
         public List<Player> Players { get; set; }
         public List<RatingTranslations> Translations { get; set; }
     }
@@ -43,5 +40,15 @@ namespace wcc.gateway.Infrastructure
         public Rating Rating { get; set; }
 
         public Language Language { get; set; }
+    }
+
+    [Table("PlayerRatingData")]
+    public class PlayerRatingData : Entity
+    {
+        public int Progress { get; set; }
+        public int Position { get; set; }
+        public int TotalPoints { get; set; }
+        public Player Player { get; set; }
+        public Rating Rating { get; set; }
     }
 }
