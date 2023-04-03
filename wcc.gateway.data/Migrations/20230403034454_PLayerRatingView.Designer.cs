@@ -3,18 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wcc.gateway.data;
-using wcc.gateway.Infrastructure;
 
 #nullable disable
 
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230403034454_PLayerRatingView")]
+    partial class PLayerRatingView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -514,9 +516,6 @@ namespace wcc.gateway.data.Migrations
                     b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
-            modelBuilder.Entity<PlayerRatingView>()
-                .ToView(nameof(PlayerRatingView))
-                .HasKey(t => t.Id);
         }
     }
 }

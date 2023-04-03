@@ -20,7 +20,7 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpGet, Route("{id}")]
-        public Task<RatingModel> Get(long id)
+        public Task<List<RatingModel>> Get(long id)
         {
             var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} get's news Id:{id}", DateTimeOffset.UtcNow);

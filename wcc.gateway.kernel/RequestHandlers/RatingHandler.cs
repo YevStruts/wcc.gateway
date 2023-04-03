@@ -12,7 +12,7 @@ using wcc.gateway.kernel.Models;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class GetRatingQuery : IRequest<RatingModel>
+    public class GetRatingQuery : IRequest<List<RatingModel>>
     {
         public long Id { get; }
 
@@ -25,7 +25,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class RatingHandler : IRequestHandler<GetRatingQuery, RatingModel>
+    public class RatingHandler : IRequestHandler<GetRatingQuery, List<RatingModel>>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -35,22 +35,28 @@ namespace wcc.gateway.kernel.RequestHandlers
             _db = db;
         }
 
-        public Task<RatingModel> Handle(GetRatingQuery request, CancellationToken cancellationToken)
+        public Task<List<RatingModel>> Handle(GetRatingQuery request, CancellationToken cancellationToken)
         {
             var ratingDto = _db.GetRating(request.Id);
             if (ratingDto == null)
                 throw new Exception("Rating does not exist.");
 
-            var rating = _mapper.Map<RatingModel>(ratingDto);
+            //var rating = _mapper.Map<List<RatingModel>>(ratingDto);
+
+            var rating = new List<RatingModel>();
+            foreach (var player in ratingDto.Players)
+            {
+                rating.Add(new RatingModel { Id = player.Id, Name = player.Name });
+            }
 
             var language = _db.GetLanguage(request.Locale);
             if (language != null)
             {
-                var translation = ratingDto.Translations.FirstOrDefault(t => t.LanguageId == language.Id);
-                if (translation != null)
-                {
-                    rating.Name = translation.Name;
-                }
+                //var translation = ratingDto.Translations.FirstOrDefault(t => t.LanguageId == language.Id);
+                //if (translation != null)
+                //{
+                //    rating.Name = translation.Name;
+                //}
             }
 
             return Task.FromResult(rating);
