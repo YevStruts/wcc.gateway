@@ -16,7 +16,8 @@ SELECT dbo.Rating.Id, dbo.PlayerRating.PlayersId, dbo.PlayerRating.RatingId, dbo
 FROM dbo.Rating
 INNER JOIN dbo.PlayerRating ON dbo.Rating.Id = dbo.PlayerRating.RatingId
 INNER JOIN dbo.Languages ON dbo.Rating.Id = dbo.Languages.Id
-INNER JOIN dbo.RatingTranslations ON dbo.Rating.Id = dbo.RatingTranslations.RatingId AND dbo.Languages.Id = dbo.RatingTranslations.LanguageId;
+INNER JOIN dbo.RatingTranslations ON dbo.Rating.Id = dbo.RatingTranslations.RatingId AND dbo.Languages.Id = dbo.RatingTranslations.LanguageId
+ORDER BY dbo.PlayerRating.Position;
 ");
         }
 
