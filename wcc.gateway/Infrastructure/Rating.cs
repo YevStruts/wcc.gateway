@@ -41,14 +41,4 @@ namespace wcc.gateway.Infrastructure
 
         public Language Language { get; set; }
     }
-
-    [Table("PlayerRatingData")]
-    public class PlayerRatingData : Entity
-    {
-        public int Progress { get; set; }
-        public int Position { get; set; }
-        public int TotalPoints { get; set; }
-        public Player Player { get; set; }
-        public Rating Rating { get; set; }
-    }
 }

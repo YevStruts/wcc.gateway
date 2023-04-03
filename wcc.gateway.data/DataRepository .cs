@@ -154,7 +154,7 @@ namespace wcc.gateway.data
 
         public Rating? GetRating(long id)
         {
-            return _context.Ratings.FirstOrDefault(u => u.Id == id);
+            return _context.Ratings.Include(r => r.Translations).Include(p => p.Players).FirstOrDefault(u => u.Id == id);
         }
 
         #endregion Rating
