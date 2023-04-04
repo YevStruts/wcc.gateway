@@ -152,9 +152,9 @@ namespace wcc.gateway.data
 
         #region Rating
 
-        public Rating? GetRating(long id)
+        public List<PlayerRatingView> GetRating(long id)
         {
-            return _context.Ratings.Include(r => r.Translations).Include(p => p.Players).FirstOrDefault(u => u.Id == id);
+            return _context.PlayerRatingView.Where(r => r.RatingId == id).OrderBy(r => r.Position).ToList();
         }
 
         #endregion Rating

@@ -12,7 +12,7 @@ namespace wcc.gateway.data.Migrations
         {
             migrationBuilder.Sql(@"
 CREATE VIEW PlayerRatingView as
-SELECT dbo.Rating.Id, dbo.PlayerRating.PlayersId, dbo.PlayerRating.RatingId, dbo.PlayerRating.Position, dbo.PlayerRating.Progress, dbo.PlayerRating.TotalPoints
+SELECT dbo.PlayerRating.PlayersId, dbo.PlayerRating.RatingId, dbo.PlayerRating.Position, dbo.PlayerRating.Progress, dbo.PlayerRating.TotalPoints
 FROM dbo.Rating
 INNER JOIN dbo.PlayerRating ON dbo.Rating.Id = dbo.PlayerRating.RatingId
 INNER JOIN dbo.Languages ON dbo.Rating.Id = dbo.Languages.Id

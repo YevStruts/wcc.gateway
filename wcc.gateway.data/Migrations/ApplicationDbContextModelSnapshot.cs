@@ -516,7 +516,7 @@ namespace wcc.gateway.data.Migrations
 #pragma warning restore 612, 618
             modelBuilder.Entity<PlayerRatingView>()
                 .ToView(nameof(PlayerRatingView))
-                .HasKey(t => t.Id);
+                .HasKey(t => t.RatingId);
         }
     }
 }

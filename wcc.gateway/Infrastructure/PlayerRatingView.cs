@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace wcc.gateway.Infrastructure
 {
+    [Keyless]
     public class PlayerRatingView
     {
-        public long Id { get; set; }
         public long PlayersId { get; set; }
         public long RatingId { get; set; }
         public int Position { get; set; }
