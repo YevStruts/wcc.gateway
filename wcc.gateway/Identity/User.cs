@@ -29,6 +29,12 @@ namespace wcc.gateway.Identity
         [StringLength(100, ErrorMessage = "The Email value cannot exceed 100 characters. ")]
         public string? Email { get; set; }
 
+        [Required]
+        [ForeignKey("Role")]
+        public long RoleId { get; set; }
+
         public Player Player { get; set; }
+
+        public Role Role { get; set; }
     }
 }

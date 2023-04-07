@@ -23,7 +23,7 @@ namespace wcc.gateway.data
         public virtual DbSet<RatingTranslations> RatingsTranslations { get; set; }
         public virtual DbSet<Game> Games { get; set; }
         public virtual DbSet<Youtube> YoutubeUrls { get; set; }
-
+        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<PlayerRatingView> PlayerRatingView { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 
 namespace wcc.gateway.data
@@ -36,6 +37,13 @@ namespace wcc.gateway.data
                     DateCreated = new DateTime(2023, 3, 4)
                 };
                 context.Tournaments.Add(tournament);
+                context.SaveChanges();
+            }
+            if (!context.Roles.Any())
+            {
+                context.Roles.Add(new Role() { Name = "Admin" });
+                context.Roles.Add(new Role() { Name = "Manager" });
+                context.Roles.Add(new Role() { Name = "User" });
                 context.SaveChanges();
             }
         }
