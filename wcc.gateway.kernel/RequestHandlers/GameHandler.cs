@@ -71,8 +71,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
         public Task<IEnumerable<GameListModel>> Handle(GetGameListQuery request, CancellationToken cancellationToken)
         {
-            //var games = FakeDataHelper.GetGames();
-            var gamesDto = _db.GetGames().ToList();
+            var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId).ToList();
             var games = _mapper.Map<IEnumerable<GameListModel>>(gamesDto);
 
             var playersDto = _db.GetPlayers();

@@ -36,7 +36,7 @@ namespace wcc.gateway.api.Controllers
             var clientId = _discordConfig.ClientID?.Trim();
             var clientSecret = _discordConfig.ClientSecret?.Trim();
             var redirectUri = _discordConfig.RedirectUrl;
-            var scope = "identify email";
+            var scope = "identify";
 
             var redirectUrl = await _mediator.Send(new GetAuthorizationUrlQuery(clientId, clientSecret, redirectUri, scope));
 

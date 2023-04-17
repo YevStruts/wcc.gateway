@@ -22,5 +22,11 @@ namespace wcc.gateway.Infrastructure
         public int VScore { get; set; }
 
         public List<Youtube> YoutubeUrls { get; set; }
+
+        [Required]
+        [ForeignKey("Tournament")]
+        public long TournamentId { get; set; }
+
+        public Tournament Tournament { get; set; }
     }
 }
