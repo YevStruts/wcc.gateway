@@ -32,7 +32,7 @@ namespace wcc.gateway.data
         public User? GetUserByExternalId(string? id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            return _context.Users.Include(p => p.Player).FirstOrDefault(u => u.ExternalId == id);
+            return _context.Users.Include(p => p.Player).Include(r => r.Role).FirstOrDefault(u => u.ExternalId == id);
         }
 
         public bool UpdateUser(User user)

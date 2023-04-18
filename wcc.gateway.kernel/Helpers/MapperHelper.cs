@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Models;
@@ -46,6 +47,9 @@ namespace wcc.gateway.kernel.Helpers
 
                         cfg.CreateMap<Game, GameListModel>()
                             .ForMember(dest => dest.Scheduled, act => act.MapFrom(src => ((DateTimeOffset)(src.Scheduled)).ToUnixTimeMilliseconds()));
+
+                        cfg.CreateMap<User, WhoAmIModel>()
+                            .ForMember(dest => dest.Role, act => act.MapFrom(src => src.Role.Name));
                     });
 
                     instance = new Mapper(config);
