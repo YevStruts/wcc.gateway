@@ -37,5 +37,9 @@ namespace wcc.gateway.data
         List<Youtube> GetYoutubes();
 
         List<PlayerRatingView> GetRating(long id);
+
+        Role GetRole(long id);
+
+        List<Role> GetRoles();
     }
 }

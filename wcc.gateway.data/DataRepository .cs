@@ -158,5 +158,16 @@ namespace wcc.gateway.data
         }
 
         #endregion Rating
+
+        #region Role
+        public Role GetRole(long id)
+        {
+            return _context.Roles.First(r => r.Id == id);
+        }
+        public List<Role> GetRoles()
+        {
+            return _context.Roles.ToList();
+        }
+        #endregion
     }
 }

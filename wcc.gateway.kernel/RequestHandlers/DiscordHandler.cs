@@ -117,9 +117,10 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         private bool userSignIn(string externalId, string username, string avatar, string discriminator, string email, string token)
         {
-            var user =_db.GetUserByExternalId(externalId);
+            var user = _db.GetUserByExternalId(externalId);
             if (user == null)
             {
+                var role = _db.GetRole(3L);
                 var newUser = new User
                 {
                     ExternalId = externalId,
@@ -127,7 +128,8 @@ namespace wcc.gateway.kernel.RequestHandlers
                     Avatar = avatar,
                     Discriminator = discriminator,
                     Email = email,
-                    Token = token
+                    Token = token,
+                    Role = role
                 };
                 if (!_db.AddUser(newUser))
                     return false;
