@@ -54,7 +54,10 @@ namespace wcc.gateway.kernel.RequestHandlers
                 {
                     Id = player.Id,
                     Name = player.Name,
-                    AvatarUrl = DiscordHelper.GetAvatarUrl(player.User.ExternalId, player.User.Avatar)
+                    AvatarUrl = DiscordHelper.GetAvatarUrl(player.User.ExternalId, player.User.Avatar),
+                    Position = rp.Position,
+                    Progress = rp.Progress,
+                    TotalPoints = rp.TotalPoints
                 });
             }
 
