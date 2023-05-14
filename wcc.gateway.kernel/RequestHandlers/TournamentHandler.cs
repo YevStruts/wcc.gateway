@@ -18,6 +18,16 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class GetTournamentParticipantsQuery : IRequest<IEnumerable<PlayerModel>>
+    {
+        public long TournamentId { get; }
+
+        public GetTournamentParticipantsQuery(long tournamentId)
+        {
+            TournamentId = tournamentId;
+        }
+    }
+
     public class GetTournamentListQuery : IRequest<IEnumerable<TournamentModel>>
     {
         public string Locale { get; }
@@ -66,6 +76,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     public class TournamentHandler :
         IRequestHandler<GetTournamentDetailQuery, TournamentModel>,
+        IRequestHandler<GetTournamentParticipantsQuery, IEnumerable<PlayerModel>>,
         IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModel>>,
         IRequestHandler<JoinToTournamentQuery, bool>,
         IRequestHandler<LeaveTournamentQuery, bool>,
@@ -98,6 +109,17 @@ namespace wcc.gateway.kernel.RequestHandlers
                 }
             }
             return Task.FromResult(tournament);
+        }
+
+        public Task<IEnumerable<PlayerModel>> Handle(GetTournamentParticipantsQuery request, CancellationToken cancellationToken)
+        {
+            var tournamentDto = _db.GetTournament(request.TournamentId);
+            if (tournamentDto == null)
+                throw new Exception("Can't retrieve tournament");
+
+            var participants = _mapper.Map<IEnumerable<PlayerModel>>(tournamentDto.Participant);
+
+            return Task.FromResult(participants);
         }
 
         public Task<IEnumerable<TournamentModel>> Handle(GetTournamentListQuery request, CancellationToken cancellationToken)

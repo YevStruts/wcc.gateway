@@ -42,6 +42,8 @@ namespace wcc.gateway.kernel.Helpers
                             .ForMember(dest => dest.Date_created, act => act.MapFrom(src => src.DateCreated))
                             .ForMember(dest => dest.Date_start, act => act.MapFrom(src => src.DateStart));
 
+                        cfg.CreateMap<List<PlayerModel>, IEnumerable<PlayerModel>>();
+
                         cfg.CreateMap<Game, GameModel>()
                             .ForMember(dest => dest.Scheduled, act => act.MapFrom(src => ((DateTimeOffset)(src.Scheduled)).ToUnixTimeMilliseconds()));
 

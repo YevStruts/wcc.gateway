@@ -25,9 +25,16 @@ namespace wcc.gateway.api.Controllers
         [HttpGet, Route("{id}")]
         public Task<TournamentModel> Get(int id)
         {
-            var locale = Request.Headers["locale"].ToString() ?? "ua";
+            var locale = Request.Headers["locale"].ToString() ?? "gb";
             _logger.LogInformation($"User:{User.GetUserId()} get's tournament Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetTournamentDetailQuery(id, locale));
+        }
+
+        [HttpGet, Route("participant/{id}")]
+        public Task<IEnumerable<PlayerModel>> GetParticipants(int id)
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} get's tournament's Id:{id} participants", DateTimeOffset.UtcNow);
+            return _mediator.Send(new GetTournamentParticipantsQuery(id));
         }
 
         [HttpPost, Route("Join/{id:int}")]
