@@ -36,6 +36,8 @@ namespace wcc.gateway.Infrastructure
         [Required]
         public DateTime DateCreated { get; set; }
 
+        public bool IsEnrollment { get; set; }
+
         public List<Player> Participant { get; set; }
 
         public List<TournamentTranslations> Translations { get; set; }
