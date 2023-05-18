@@ -48,15 +48,23 @@ namespace wcc.gateway.api.Controllers
         {
             try
             {
+                _logger.LogInformation($"Discord Exchange: {model.code}", DateTimeOffset.UtcNow);
+
                 var clientId = _discordConfig.ClientID?.Trim() ?? string.Empty;
                 var clientSecret = _discordConfig.ClientSecret?.Trim() ?? string.Empty;
                 var redirectUri = _discordConfig.RedirectUrl ?? string.Empty;
                 var scope = "identify";
                 var code = model.code ?? string.Empty;
 
+                _logger.LogInformation($"Discord login attempt: {model.code}", DateTimeOffset.UtcNow);
+
                 var user = await _mediator.Send(new GetDiscordUserQuery(clientId, clientSecret, redirectUri, scope, code));
 
+                _logger.LogInformation($"Discord attempt to retreive token: {user.id} {user.username}", DateTimeOffset.UtcNow);
+
                 string token = createToken(user.id, user.username, user.email);
+
+                _logger.LogInformation($"Discord retrieved token: {user.id} token:{token}", DateTimeOffset.UtcNow);
 
                 return Ok(new { token, user.id, user.username, user.avatar });
             }
@@ -78,7 +86,7 @@ namespace wcc.gateway.api.Controllers
                 {
                 new Claim("Id", id),
                 new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(JwtRegisteredClaimNames.Email, email ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
              }),

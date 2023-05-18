@@ -8,29 +8,29 @@
 # docker-compose -f "docker-compose.yml" up -d
 
 # add tag
-# docker tag wccgateway_wcc_gateway:latest yevstruts/wcc.gateway:2023.5.13.1
+# docker tag wccgateway_wcc_gateway:latest yevstruts/wcc.gateway:2023.5.17.1
 # push
-# docker push yevstruts/wcc.gateway:2023.5.13.1
+# docker push yevstruts/wcc.gateway:2023.5.17.1
 
 # -p <host_port>:<container_port>
 
 # Server
-# docker run --name wcc.ui -p 80:80 -p 433:433 -d yevstruts/wcc.ui:2023.5.13.1
+# docker run --name wcc.ui -p 80:80 -p 433:433 -d yevstruts/wcc.ui:2023.5.17.1
 # docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=A&VeryComplex123Password' --name mssql -p 1433:1433 -v /home/ubuntu/database:/media/Database --cpus="4.0" --memory="6G" -d mcr.microsoft.com/mssql/server:2022-latest
-# docker run --name wcc.gateway -p 80:80 -p 433:433 -d yevstruts/wcc.gateway:2023.5.13.1
+# docker run --name wcc.gateway -p 80:80 -p 433:433 -d yevstruts/wcc.gateway:2023.5.17.1
 
 # docker run --name wcc.gateway -p 5001:5001 -d yevstruts/wcc.gateway:2023.3.5.2
 
 # -------------------------
-# docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2023.5.13.1
-# docker tag wcc.ui.i:latest yevstruts/wcc.ui:2023.5.13.1
+# docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2023.5.17.1
+# docker tag wcc.ui.i:latest yevstruts/wcc.ui:2023.5.17.1
 
-# docker push yevstruts/wcc.gateway:2023.5.13.1
-# docker push yevstruts/wcc.ui:2023.5.13.1
+# docker push yevstruts/wcc.gateway:2023.5.17.1
+# docker push yevstruts/wcc.ui:2023.5.17.1
 
 # docker stop wcc.ui;docker rm wcc.ui;docker stop wcc.gateway;docker rm wcc.gateway;
-# docker run --name wcc.ui -p 3000:80 -d yevstruts/wcc.ui:2023.5.13.1
-# docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d yevstruts/wcc.gateway:2023.5.13.1
+# docker run --name wcc.ui -p 3000:80 -d yevstruts/wcc.ui:2023.5.17.1
+# docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d yevstruts/wcc.gateway:2023.5.17.1
 
 # -------------------------
 # delete everything in docker
@@ -43,5 +43,5 @@
 # chown mssql /media/Database
 
 # explore files system docker
-# docker exec -t -i wcc.gateway.temp /bin/bash
-# docker cp wcc.gateway.temp:/logs/webapi-20230311.log .
+# docker exec -t -i wcc.gateway /bin/bash
+# docker cp wcc.gateway:/logs/webapi-20230311.log .
