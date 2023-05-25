@@ -32,9 +32,11 @@ namespace wcc.gateway.data
 
         Game? GetGame(long id);
         List<Game> GetGames();
+        bool UpdateGame(Game game);
 
         Youtube? GetYoutube(long id);
         List<Youtube> GetYoutubes();
+        bool UpdateYoutube(Youtube url);
 
         List<PlayerRatingView> GetRating(long id);
 

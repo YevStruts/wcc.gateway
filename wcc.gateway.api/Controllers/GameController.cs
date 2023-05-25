@@ -1,6 +1,9 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.api.Helpers;
+using wcc.gateway.data;
+using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.RequestHandlers;
 
@@ -31,6 +34,15 @@ namespace wcc.gateway.api.Controllers
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's games list", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetGameListQuery(tournamentId));
+        }
+
+        [HttpPost, Authorize, Route("Save")]
+        public Task SaveGame(GameListModel model)
+        {
+            var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+
+            return _mediator.Send(new UpdateGameQuery(model, userId));
         }
     }
 }

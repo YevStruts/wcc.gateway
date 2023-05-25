@@ -46,9 +46,9 @@ namespace wcc.gateway.data
 
         #region Player
 
-        public Player GetPlayer(long id)
+        public Player? GetPlayer(long id)
         {
-            throw new NotImplementedException();
+            return _context.Players.FirstOrDefault(p => p.Id == id);
         }
         
         public IEnumerable<Player> GetPlayers()
@@ -129,12 +129,18 @@ namespace wcc.gateway.data
         #region Game
         public Game? GetGame(long id)
         {
-            return _context.Games.FirstOrDefault(u => u.Id == id);
+            return _context.Games.Include(g => g.YoutubeUrls).FirstOrDefault(u => u.Id == id);
         }
 
         public List<Game> GetGames()
         {
             return _context.Games.ToList();
+        }
+
+        public bool UpdateGame(Game game)
+        {
+            _context.Games.Update(game);
+            return _context.SaveChanges() == SingleEntry;
         }
         #endregion Game
 
@@ -147,6 +153,12 @@ namespace wcc.gateway.data
         public List<Youtube> GetYoutubes()
         {
             return _context.YoutubeUrls.ToList();
+        }
+
+        public bool UpdateYoutube(Youtube url)
+        {
+            _context.YoutubeUrls.Update(url);
+            return _context.SaveChanges() == SingleEntry;
         }
         #endregion Youtube
 

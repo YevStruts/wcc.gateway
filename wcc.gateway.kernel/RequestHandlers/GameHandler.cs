@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using System;
 using wcc.gateway.data;
+using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
@@ -27,9 +29,22 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class UpdateGameQuery : IRequest<bool>
+    {
+        public GameListModel Game { get; }
+        public string ExternalUserId { get; }
+
+        public UpdateGameQuery(GameListModel game, string externalUserId)
+        {
+            Game = game;
+            ExternalUserId = externalUserId;
+        }
+    }
+
     public class GameHandler :
         IRequestHandler<GetGameDetailQuery, GameListModel>,
-        IRequestHandler<GetGameListQuery, IEnumerable<GameListModel>>
+        IRequestHandler<GetGameListQuery, IEnumerable<GameListModel>>,
+        IRequestHandler<UpdateGameQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -117,6 +132,50 @@ namespace wcc.gateway.kernel.RequestHandlers
             }
 
             return Task.FromResult(games);
+        }
+
+        public Task<bool> Handle(UpdateGameQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalUserId);
+            if (user == null || user.RoleId == (long)Roles.User) return Task.FromResult(false);
+
+            var gameDto = _db.GetGame(request.Game.Id);
+            if (gameDto == null) return Task.FromResult(false);
+
+            gameDto.Name = request.Game.Name;
+
+            gameDto.Scheduled = DateTimeOffset.FromUnixTimeMilliseconds(request.Game.Scheduled).UtcDateTime;
+
+            var hPlayer = _db.GetPlayer(request.Game.Home.Id);
+            gameDto.HUserId = hPlayer.UserId;
+            gameDto.HScore = request.Game.Home.Score;
+
+            var vPlayer = _db.GetPlayer(request.Game.Visitor.Id);
+            gameDto.VUserId = vPlayer.UserId;
+            gameDto.VScore = request.Game.Visitor.Score;
+
+            if (gameDto.YoutubeUrls == null)
+                gameDto.YoutubeUrls = new List<Youtube>() { };
+            
+            if (request.Game.YoutubeUrls == null || request.Game.YoutubeUrls.Count == 0)
+            {
+                gameDto.YoutubeUrls.Clear();
+            }
+            else
+            {
+                for (var i = 0; i < request.Game.YoutubeUrls.Count; i++)
+                {
+                    if (gameDto.YoutubeUrls.Count > i)
+                    {
+                        gameDto.YoutubeUrls[i].Url = request.Game.YoutubeUrls[i];
+                    }
+                    else
+                    {
+                        gameDto.YoutubeUrls.Add(new Youtube() { GameId = gameDto.Id, Url = request.Game.YoutubeUrls[i] });
+                    }
+                }
+            }
+            return Task.FromResult(_db.UpdateGame(gameDto));
         }
     }
 }
