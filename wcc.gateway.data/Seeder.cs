@@ -46,6 +46,13 @@ namespace wcc.gateway.data
                 context.Roles.Add(new Role() { Name = "User" });
                 context.SaveChanges();
             }
+            if (!context.TournamentTypes.Any())
+            {
+                context.TournamentTypes.Add(new TournamentType() { Name = "Rating" });
+                context.TournamentTypes.Add(new TournamentType() { Name = "Olympic's" });
+                context.TournamentTypes.Add(new TournamentType() { Name = "Switzerland's" });
+                context.SaveChanges();
+            }
         }
     }
 }

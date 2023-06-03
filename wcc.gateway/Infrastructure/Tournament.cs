@@ -38,6 +38,10 @@ namespace wcc.gateway.Infrastructure
 
         public bool IsEnrollment { get; set; }
 
+        [Required]
+        [ForeignKey("TournamentTypes")]
+        public long TournamentTypeId { get; set; }
+
         public List<Player> Participant { get; set; }
 
         public List<TournamentTranslations> Translations { get; set; }

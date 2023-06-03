@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wcc.gateway.data;
 
@@ -11,9 +12,11 @@ using wcc.gateway.data;
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230603142846_AddedTournamentTypes")]
+    partial class AddedTournamentTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -348,12 +351,7 @@ namespace wcc.gateway.data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<long>("TournamentTypeId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TournamentTypeId");
 
                     b.ToTable("Tournament");
                 });
@@ -554,15 +552,6 @@ namespace wcc.gateway.data.Migrations
                     b.Navigation("Rating");
                 });
 
-            modelBuilder.Entity("wcc.gateway.Infrastructure.Tournament", b =>
-                {
-                    b.HasOne("wcc.gateway.Infrastructure.TournamentType", null)
-                        .WithMany("Tournaments")
-                        .HasForeignKey("TournamentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("wcc.gateway.Infrastructure.TournamentTranslations", b =>
                 {
                     b.HasOne("wcc.gateway.Localization.Language", "Language")
@@ -617,11 +606,6 @@ namespace wcc.gateway.data.Migrations
                     b.Navigation("Games");
 
                     b.Navigation("Translations");
-                });
-
-            modelBuilder.Entity("wcc.gateway.Infrastructure.TournamentType", b =>
-                {
-                    b.Navigation("Tournaments");
                 });
 #pragma warning restore 612, 618
         }
