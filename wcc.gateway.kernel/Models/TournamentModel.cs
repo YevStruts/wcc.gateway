@@ -11,5 +11,6 @@
         public DateTime Date_start { get; set; }
         public DateTime Date_created { get; set; }
         public bool IsEnrollment { get; set; }
+        public int TournamentTypeId { get; set; }
     }
 }
