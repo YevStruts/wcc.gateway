@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
+using System.Linq;
 using wcc.gateway.data;
+using wcc.gateway.Infrastructure;
+using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 
@@ -74,13 +77,24 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class GetTournamentSwitzTableQuery : IRequest<List<SwitzTableItemModel>>
+    {
+        public long TournamentId { get; }
+
+        public GetTournamentSwitzTableQuery(long tournamentId)
+        {
+            TournamentId = tournamentId;
+        }
+    }
+
     public class TournamentHandler :
         IRequestHandler<GetTournamentDetailQuery, TournamentModel>,
         IRequestHandler<GetTournamentParticipantsQuery, IEnumerable<PlayerModel>>,
         IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModel>>,
         IRequestHandler<JoinToTournamentQuery, bool>,
         IRequestHandler<LeaveTournamentQuery, bool>,
-        IRequestHandler<GetParticipationStatusQuery, bool>
+        IRequestHandler<GetParticipationStatusQuery, bool>,
+        IRequestHandler<GetTournamentSwitzTableQuery, List<SwitzTableItemModel>>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -188,6 +202,83 @@ namespace wcc.gateway.kernel.RequestHandlers
                 }
             }
             return Task.FromResult(false);
+        }
+
+        public Task<List<SwitzTableItemModel>> Handle(GetTournamentSwitzTableQuery request, CancellationToken cancellationToken)
+        {
+            var players = _db.GetPlayers().Where(p => p.Tournament.Select(t => t.Id).Contains(request.TournamentId));
+            var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId).ToList();
+            
+            var records = new List<SwitzTableItemModel>();
+
+            var games = gamesDto.Where(g => g.HScore + g.VScore > 0).ToList();
+
+            var ratingDto = _db.GetLastRating();
+
+            foreach (var player in players)
+            {
+                var hgames = games.Where(g => g.HUserId == player.UserId).ToList();
+                var vgames = games.Where(g => g.VUserId == player.UserId).ToList();
+
+                // games
+                var hgameswin = hgames.Where(g => g.HUserId == player.UserId && g.HScore > g.VScore).ToList();
+                var vgameswin = vgames.Where(g => g.VUserId == player.UserId && g.HScore < g.VScore).ToList();
+
+                var hgamesloss = hgames.Where(g => g.HUserId == player.UserId && g.HScore < g.VScore).ToList();
+                var vgamesloss = vgames.Where(g => g.VUserId == player.UserId && g.HScore > g.VScore).ToList();
+
+                var hwins = hgameswin.Count();
+                var vwins = vgameswin.Count();
+
+                var hloss = hgamesloss.Count();
+                var vloss = vgamesloss.Count();
+
+                // scores
+                var scoreswon = hgameswin.Select(g => g.HScore).Sum() + vgameswin.Select(g => g.VScore).Sum() +
+                                hgamesloss.Select(g => g.HScore).Sum() + vgamesloss.Select(g => g.VScore).Sum();
+                int scoresloss = hgameswin.Select(g => g.VScore).Sum() + vgameswin.Select(g => g.HScore).Sum() +
+                                 hgamesloss.Select(g => g.VScore).Sum() + vgamesloss.Select(g => g.HScore).Sum();
+
+                var oppUserIdWon = new List<long>();
+                oppUserIdWon.AddRange(hgameswin.Select(p => p.VUserId).ToList());
+                oppUserIdWon.AddRange(vgameswin.Select(p => p.HUserId).ToList());
+
+                var oppUserIdLoss = new List<long>();
+                oppUserIdLoss.AddRange(hgamesloss.Select(p => p.VUserId).ToList());
+                oppUserIdLoss.AddRange(vgamesloss.Select(p => p.HUserId).ToList());
+
+                float averageRatingOppWon = getAverageRatingOpponent(ratingDto, players, oppUserIdWon);
+                float averageRatingOppLoss = getAverageRatingOpponent(ratingDto, players, oppUserIdLoss);
+
+                var record = new SwitzTableItemModel()
+                {
+                    Name = player.Name,
+                    Avatar = DiscordHelper.GetAvatarUrl(player.User.ExternalId, player.User.Avatar),
+                    GamesCount = hgames.Count + vgames.Count,
+                    ScoresWon = scoreswon,
+                    ScoresLoss = scoresloss,
+                    AverageRatingOppWon = averageRatingOppWon,
+                    AverageRatingOppLoss = averageRatingOppLoss,
+                    Scores = hwins + vwins
+                };
+
+                records.Add(record);
+            }
+
+            return Task.FromResult(records);
+        }
+
+        private float getAverageRatingOpponent(List<PlayerRatingView> rating, IEnumerable<Player> players, List<long> oppUserIds)
+        {
+            if (oppUserIds.Count == 0) return rating.Count / 2;
+
+            var oppPositions = new List<int>();
+            foreach (var oppUserId in oppUserIds)
+            {
+                var player = players.First(p => p.UserId == oppUserId);
+                oppPositions.Add(rating.FirstOrDefault(r => r.PlayersId == player.Id)?.Position ?? rating.Count / 2);
+            }
+            return oppPositions.Sum() / oppPositions.Count();
         }
     }
 }

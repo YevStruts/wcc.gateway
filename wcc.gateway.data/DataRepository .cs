@@ -53,7 +53,7 @@ namespace wcc.gateway.data
         
         public IEnumerable<Player> GetPlayers()
         {
-            return _context.Players.Include(p => p.User).ToList();
+            return _context.Players.Include(p => p.User).Include(p => p.Tournament).ToList();
         }
 
         public bool AddPlayer(Player player)
@@ -163,6 +163,12 @@ namespace wcc.gateway.data
         #endregion Youtube
 
         #region Rating
+
+        public List<PlayerRatingView> GetLastRating()
+        {
+            var ratingId = _context.PlayerRatingView.Select(r => r.RatingId).Max();
+            return _context.PlayerRatingView.Where(r => r.RatingId == ratingId).OrderBy(r => r.Position).ToList();
+        }
 
         public List<PlayerRatingView> GetRating(long id)
         {

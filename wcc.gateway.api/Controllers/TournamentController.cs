@@ -37,6 +37,13 @@ namespace wcc.gateway.api.Controllers
             return _mediator.Send(new GetTournamentParticipantsQuery(id));
         }
 
+        [HttpGet, Route("getswitztable/{id}")]
+        public Task<List<SwitzTableItemModel>> GetSwitzTable(int id)
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} get's tournament's Id:{id} Switz table", DateTimeOffset.UtcNow);
+            return _mediator.Send(new GetTournamentSwitzTableQuery(id));
+        }
+
         [HttpPost, Route("Join/{id:int}")]
         public Task<bool> Join(int id)
         {
