@@ -37,6 +37,7 @@ namespace wcc.gateway.api.Controllers
             return _mediator.Send(new GetTournamentParticipantsQuery(id));
         }
 
+        [AllowAnonymous]
         [HttpGet, Route("getswitztable/{id}")]
         public Task<List<SwitzTableItemModel>> GetSwitzTable(int id)
         {
