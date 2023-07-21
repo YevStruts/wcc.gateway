@@ -4,6 +4,7 @@ using System;
 using wcc.gateway.data;
 using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
+using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 
@@ -134,13 +135,13 @@ namespace wcc.gateway.kernel.RequestHandlers
             return Task.FromResult(games);
         }
 
-        public Task<bool> Handle(UpdateGameQuery request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateGameQuery request, CancellationToken cancellationToken)
         {
             var user = _db.GetUserByExternalId(request.ExternalUserId);
-            if (user == null || user.RoleId == (long)Roles.User) return Task.FromResult(false);
+            if (user == null || user.RoleId == (long)Roles.User) return false;
 
             var gameDto = _db.GetGame(request.Game.Id);
-            if (gameDto == null) return Task.FromResult(false);
+            if (gameDto == null) return false;
 
             gameDto.Name = request.Game.Name;
 
@@ -175,7 +176,21 @@ namespace wcc.gateway.kernel.RequestHandlers
                     }
                 }
             }
-            return Task.FromResult(_db.UpdateGame(gameDto));
+            if (_db.UpdateGame(gameDto))
+            {
+                //try
+                //{
+                //    var api = new ApiCaller("https://localhost:7258");
+
+                //    var response = await api.GetAsync<List<PlayerData>>("api/Rating");
+                //}
+                //catch (Exception ex)
+                //{
+
+                //}
+                return true;
+            }
+            return false;
         }
     }
 }

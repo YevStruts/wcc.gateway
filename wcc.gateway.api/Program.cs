@@ -84,7 +84,8 @@ if (app.Environment.IsDevelopment())
 // }
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
-    .WithOrigins("http://localhost:3000",
+    .WithOrigins("http://localhost:3000", 
+                 "https://localhost:7258",
                  "https://wcc-cossacks.com:3000",
                  "https://wcc-cossacks.com"));
 
