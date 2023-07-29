@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
-using System;
 using wcc.gateway.data;
-using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
-using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -49,10 +47,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
+        private readonly RatingConfig _ratingConfig;
 
-        public GameHandler(IDataRepository db)
+        public GameHandler(IDataRepository db, RatingConfig ratingConfig)
         {
             _db = db;
+            _ratingConfig = ratingConfig;
         }
 
         public Task<GameListModel> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
@@ -178,16 +178,22 @@ namespace wcc.gateway.kernel.RequestHandlers
             }
             if (_db.UpdateGame(gameDto))
             {
-                //try
-                //{
-                //    var api = new ApiCaller("https://localhost:7258");
+                try
+                {
+                    var gameModel = new Models.Microservices.Rating.GameModel
+                    {
+                        GameId = gameDto.Id,
+                        HPlayerId = hPlayer.Id,
+                        HScore = gameDto.HScore,
+                        VPlayerId = vPlayer.Id,
+                        VScore = gameDto.VScore
+                    };
+                    var response = await new ApiCaller(_ratingConfig.Url).PostAsync<Models.Microservices.Rating.GameModel, string>("api/Game/Save", gameModel);
+                }
+                catch (Exception ex)
+                {
 
-                //    var response = await api.GetAsync<List<PlayerData>>("api/Rating");
-                //}
-                //catch (Exception ex)
-                //{
-
-                //}
+                }
                 return true;
             }
             return false;

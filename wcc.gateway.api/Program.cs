@@ -7,6 +7,7 @@ using System.Text;
 using wcc.gateway.api.Models.Discord;
 using wcc.gateway.api.Models.Jwt;
 using wcc.gateway.data;
+using wcc.gateway.kernel.Models.Microservices;
 using wcc.gateway.kernel.RequestHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,10 @@ builder.Logging.AddSerilog(logger);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+RatingConfig ratingConfig = new RatingConfig();
+builder.Configuration.GetSection("Rating").Bind(ratingConfig);
+builder.Services.AddSingleton<RatingConfig>(ratingConfig);
 
 DiscordConfig discordConfig = new DiscordConfig();
 builder.Configuration.GetSection("Discord").Bind(discordConfig);
