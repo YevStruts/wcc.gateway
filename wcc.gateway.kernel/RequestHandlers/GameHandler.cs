@@ -178,22 +178,22 @@ namespace wcc.gateway.kernel.RequestHandlers
             }
             if (_db.UpdateGame(gameDto))
             {
-                //try
-                //{
-                //    var gameModel = new Models.Microservices.Rating.GameModel
-                //    {
-                //        GameId = gameDto.Id,
-                //        HPlayerId = hPlayer.Id,
-                //        HScore = gameDto.HScore,
-                //        VPlayerId = vPlayer.Id,
-                //        VScore = gameDto.VScore
-                //    };
-                //    var response = await new ApiCaller(_ratingConfig.Url).PostAsync<Models.Microservices.Rating.GameModel, string>("api/Game/Save", gameModel);
-                //}
-                //catch (Exception ex)
-                //{
+                try
+                {
+                    var gameModel = new Models.Microservices.Rating.GameModel
+                    {
+                        GameId = gameDto.Id,
+                        HPlayerId = hPlayer.Id,
+                        HScore = gameDto.HScore,
+                        VPlayerId = vPlayer.Id,
+                        VScore = gameDto.VScore
+                    };
+                    var response = await new ApiCaller(_ratingConfig.Url).PostAsync<Models.Microservices.Rating.GameModel, string>("api/Game/Save", gameModel);
+                }
+                catch (Exception ex)
+                {
 
-                //}
+                }
                 return true;
             }
             return false;
