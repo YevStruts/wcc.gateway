@@ -207,7 +207,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         public Task<List<SwitzTableItemModel>> Handle(GetTournamentSwitzTableQuery request, CancellationToken cancellationToken)
         {
             var players = _db.GetPlayers().Where(p => p.Tournament.Select(t => t.Id).Contains(request.TournamentId));
-            var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId).ToList();
+            var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId && g.Id < 245).ToList();
             
             var records = new List<SwitzTableItemModel>();
 
