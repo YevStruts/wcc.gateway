@@ -20,8 +20,6 @@ namespace wcc.gateway.data
         public virtual DbSet<Tournament> Tournaments { get; set; }
         public virtual DbSet<TournamentType> TournamentTypes { get; set; }
         public virtual DbSet<TournamentTranslations> TournamentsTranslations { get; set; }
-        public virtual DbSet<Rating> Ratings { get; set; }
-        public virtual DbSet<RatingTranslations> RatingsTranslations { get; set; }
         public virtual DbSet<Game> Games { get; set; }
         public virtual DbSet<Youtube> YoutubeUrls { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
