@@ -38,9 +38,6 @@ namespace wcc.gateway.data
         List<Youtube> GetYoutubes();
         bool UpdateYoutube(Youtube url);
 
-        List<PlayerRatingView> GetLastRating();
-        List<PlayerRatingView> GetRating(long id);
-
         Role GetRole(long id);
 
         List<Role> GetRoles();

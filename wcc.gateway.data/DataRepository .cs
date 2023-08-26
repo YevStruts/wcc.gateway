@@ -162,21 +162,6 @@ namespace wcc.gateway.data
         }
         #endregion Youtube
 
-        #region Rating
-
-        public List<PlayerRatingView> GetLastRating()
-        {
-            var ratingId = _context.PlayerRatingView.Select(r => r.RatingId).Max();
-            return _context.PlayerRatingView.Where(r => r.RatingId == ratingId).OrderBy(r => r.Position).ToList();
-        }
-
-        public List<PlayerRatingView> GetRating(long id)
-        {
-            return _context.PlayerRatingView.Where(r => r.RatingId == id).OrderBy(r => r.Position).ToList();
-        }
-
-        #endregion Rating
-
         #region Role
         public Role GetRole(long id)
         {

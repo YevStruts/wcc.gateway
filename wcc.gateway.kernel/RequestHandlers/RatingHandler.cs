@@ -1,14 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wcc.gateway.data;
-using wcc.gateway.Identity;
-using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;

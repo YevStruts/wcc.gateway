@@ -4,8 +4,10 @@ using System.Linq;
 using wcc.gateway.data;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
+using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -98,10 +100,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
+        private readonly RatingConfig _ratingConfig;
 
-        public TournamentHandler(IDataRepository db)
+        public TournamentHandler(IDataRepository db, RatingConfig ratingConfig)
         {
             _db = db;
+            _ratingConfig = ratingConfig;
         }
 
         public Task<TournamentModel> Handle(GetTournamentDetailQuery request, CancellationToken cancellationToken)
@@ -204,16 +208,16 @@ namespace wcc.gateway.kernel.RequestHandlers
             return Task.FromResult(false);
         }
 
-        public Task<List<SwitzTableItemModel>> Handle(GetTournamentSwitzTableQuery request, CancellationToken cancellationToken)
+        public async Task<List<SwitzTableItemModel>> Handle(GetTournamentSwitzTableQuery request, CancellationToken cancellationToken)
         {
             var players = _db.GetPlayers().Where(p => p.Tournament.Select(t => t.Id).Contains(request.TournamentId));
             var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId && g.Id < 245).ToList();
             
             var records = new List<SwitzTableItemModel>();
-
             var games = gamesDto.Where(g => g.HScore + g.VScore > 0).ToList();
 
-            var ratingDto = _db.GetLastRating();
+            var playerRatingData = await new ApiCaller(_ratingConfig.Url).GetAsync<List<PlayerData>>("api/rating");
+            var rating = playerRatingData.OrderByDescending(r => r.Points).ToList();
 
             foreach (var player in players)
             {
@@ -247,8 +251,8 @@ namespace wcc.gateway.kernel.RequestHandlers
                 oppUserIdLoss.AddRange(hgamesloss.Select(p => p.VUserId).ToList());
                 oppUserIdLoss.AddRange(vgamesloss.Select(p => p.HUserId).ToList());
 
-                float averageRatingOppWon = getAverageRatingOpponent(ratingDto, players, oppUserIdWon);
-                float averageRatingOppLoss = getAverageRatingOpponent(ratingDto, players, oppUserIdLoss);
+                float averageRatingOppWon = getAverageRatingOpponent(rating, players, oppUserIdWon);
+                float averageRatingOppLoss = getAverageRatingOpponent(rating, players, oppUserIdLoss);
 
                 var record = new SwitzTableItemModel()
                 {
@@ -265,10 +269,10 @@ namespace wcc.gateway.kernel.RequestHandlers
                 records.Add(record);
             }
 
-            return Task.FromResult(records);
+            return records;
         }
 
-        private float getAverageRatingOpponent(List<PlayerRatingView> rating, IEnumerable<Player> players, List<long> oppUserIds)
+        private float getAverageRatingOpponent(List<PlayerData> rating, IEnumerable<Player> players, List<long> oppUserIds)
         {
             if (oppUserIds.Count == 0) return rating.Count / 2;
 
@@ -276,7 +280,14 @@ namespace wcc.gateway.kernel.RequestHandlers
             foreach (var oppUserId in oppUserIds)
             {
                 var player = players.First(p => p.UserId == oppUserId);
-                oppPositions.Add(rating.FirstOrDefault(r => r.PlayersId == player.Id)?.Position ?? rating.Count / 2);
+
+                var ratingItem = rating.FirstOrDefault(r => r.PlayerId == player.Id);
+                if (ratingItem != null)
+                {
+                    var position = rating.IndexOf(ratingItem);
+                    oppPositions.Add(position);
+                }
+                oppPositions.Add(rating.Count / 2);
             }
             return oppPositions.Sum() / oppPositions.Count();
         }
