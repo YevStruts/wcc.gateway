@@ -32,5 +32,12 @@ namespace wcc.gateway.api.Controllers
             _logger.LogInformation($"User:{User.GetUserId()} get's list of players", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetPlayerListQuery());
         }
+
+        [HttpGet, Route("Profile/{id}")]
+        public Task<PlayerProfile> Profile(int id)
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} get's player profile", DateTimeOffset.UtcNow);
+            return _mediator.Send(new GetPlayerProfileQuery(id));
+        }
     }
 }

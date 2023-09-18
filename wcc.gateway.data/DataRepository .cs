@@ -48,7 +48,7 @@ namespace wcc.gateway.data
 
         public Player? GetPlayer(long id)
         {
-            return _context.Players.FirstOrDefault(p => p.Id == id);
+            return _context.Players.Include(p => p.User).FirstOrDefault(p => p.Id == id);
         }
         
         public IEnumerable<Player> GetPlayers()
@@ -134,7 +134,7 @@ namespace wcc.gateway.data
 
         public List<Game> GetGames()
         {
-            return _context.Games.ToList();
+            return _context.Games.Include(g => g.Tournament).ToList();
         }
 
         public bool UpdateGame(Game game)
