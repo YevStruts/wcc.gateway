@@ -61,46 +61,57 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<PlayerProfile> Handle(GetPlayerProfileQuery request, CancellationToken cancellationToken)
         {
+            var games = _db.GetLastFightsStatistics(request.Id, 1);
+
             var playersDto = _db.GetPlayers();
             var playerDto = playersDto.First(p => p.Id == request.Id);
 
-            var gamesDto = _db.GetGames().Where(g => g.HUserId == playerDto.UserId || g.VUserId == playerDto.UserId).OrderBy(g => g.Scheduled).ToList();
-
             var model = _mapper.Map<PlayerProfile>(playerDto);
+            model.Debut = games.OrderBy(g => g.Date).FirstOrDefault()?.Date ?? DateTime.MinValue;
+            model.LastFight = games.OrderByDescending(g => g.Date).FirstOrDefault()?.Date ?? DateTime.MinValue;
             model.LastFightsList = new List<LastFightsList>();
-            foreach ( var gameDto in gamesDto )
-            {
-                int wld = getWinLossDraw(gameDto, playerDto.UserId);
-                
-                var opponent = gameDto.HUserId == playerDto.UserId ?
-                    playersDto.First(p => p.UserId == gameDto.VUserId) :
-                    playersDto.First(p => p.UserId == gameDto.HUserId);
 
-                model.LastFightsList.Add(new LastFightsList
+            int wins = 0;
+            int losses = 0;
+            foreach (var game in games)
+            {
+                if (!game.GameName?.Contains("(TL)") ?? false)
                 {
-                    Date = gameDto.Scheduled,
-                    Name = opponent.Name,
-                    Wins = 0,
-                    Losses = 0,
-                    Last6 = new string[] {},
-                    Tournament = gameDto.Tournament.Name,
-                    Wld = wld
-                });
+                    List<string> last6Fights = new List<string>();
+                    if (game.LastFights != null)
+                    {
+                        foreach (var lastFight in game.LastFights.Split(','))
+                        {
+                            var fightCode = "#888";
+                            if (lastFight.Trim() == "1")
+                                fightCode = "#080";
+                            else if (lastFight.Trim() == "-1")
+                                fightCode = "#800";
+
+                            last6Fights.Add(fightCode);
+                        }
+                    }
+
+                    model.LastFightsList.Add(new LastFightsList
+                    {
+                        Date = game.Date,
+                        Name = game.Name,
+                        Wins = game.Wins ?? 0,
+                        Losses = game.Losses ?? 0,
+                        Last6 = last6Fights,
+                        Tournament = game.Tournament,
+                        Wld = game.Result ?? 0
+                    });
+
+                    if (game.Result == 1) wins++;
+                    if (game.Result == -1) losses++;
+                }
             }
+
+            model.Wins = wins;
+            model.Losses = losses;
 
             return model;
-        }
-
-        private int getWinLossDraw(Game game, long userId)
-        {
-            if (game.HUserId == userId)
-            {
-                return game.HScore > game.VScore ? 1 :
-                       game.HScore < game.VScore ? -1 : 0;
-            }
-            // game.VUserId == userId)
-            return game.VScore > game.HScore ? 1 :
-                    game.VScore < game.HScore ? -1 : 0;
         }
     }
 }

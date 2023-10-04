@@ -172,5 +172,26 @@ namespace wcc.gateway.data
             return _context.Roles.ToList();
         }
         #endregion
+
+        public List<LastFightsStatistics> GetLastFightsStatistics(long playerId, int languageId)
+        {
+            return _context.LastFightsStatistics
+                .Where(s => (s.PlayerId == getPlayerIdQuickFix(playerId) || s.PlayerId == playerId) && s.LanguageId == languageId)
+                .OrderByDescending(s => s.Date)
+                .ToList();
+        }
+
+        private long getPlayerIdQuickFix(long playerId)
+        {
+            // fix for Fenrir
+
+            if (playerId == 44)
+                return 97;
+
+            if (playerId == 97)
+                return 44;
+
+            return playerId;
+        }
     }
 }

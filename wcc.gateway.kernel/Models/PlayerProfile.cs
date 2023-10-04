@@ -20,7 +20,7 @@
         public int Wins { get; set; }
         public int Losses { get; set; }
         // [ '#080', '#800', '#800', '#080', '#080', '#080']
-        public string[]? Last6 { get; set; }
+        public List<string>? Last6 { get; set; }
         public string? Tournament { get; set; }
         // 1 - win, 0 - draw, -1 - loss
         public int Wld { get; set; }
