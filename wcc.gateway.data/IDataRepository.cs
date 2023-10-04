@@ -41,5 +41,7 @@ namespace wcc.gateway.data
         Role GetRole(long id);
 
         List<Role> GetRoles();
+
+        List<LastFightsStatistics> GetLastFightsStatistics(long playerId, int languageId);
     }
 }

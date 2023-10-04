@@ -52,6 +52,11 @@ namespace wcc.gateway.kernel.Helpers
 
                         cfg.CreateMap<User, WhoAmIModel>()
                             .ForMember(dest => dest.Role, act => act.MapFrom(src => src.Role.Name));
+
+                        cfg.CreateMap<Player, PlayerProfile>()
+                            .ForMember(dest => dest.Avatar, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
+
+                        cfg.CreateMap<IEnumerable<Game>, IEnumerable<LastFightsList>>();
                     });
 
                     instance = new Mapper(config);

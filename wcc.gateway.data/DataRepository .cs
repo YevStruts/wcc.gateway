@@ -48,7 +48,7 @@ namespace wcc.gateway.data
 
         public Player? GetPlayer(long id)
         {
-            return _context.Players.FirstOrDefault(p => p.Id == id);
+            return _context.Players.Include(p => p.User).FirstOrDefault(p => p.Id == id);
         }
         
         public IEnumerable<Player> GetPlayers()
@@ -134,7 +134,7 @@ namespace wcc.gateway.data
 
         public List<Game> GetGames()
         {
-            return _context.Games.ToList();
+            return _context.Games.Include(g => g.Tournament).ToList();
         }
 
         public bool UpdateGame(Game game)
@@ -172,5 +172,26 @@ namespace wcc.gateway.data
             return _context.Roles.ToList();
         }
         #endregion
+
+        public List<LastFightsStatistics> GetLastFightsStatistics(long playerId, int languageId)
+        {
+            return _context.LastFightsStatistics
+                .Where(s => (s.PlayerId == getPlayerIdQuickFix(playerId) || s.PlayerId == playerId) && s.LanguageId == languageId)
+                .OrderByDescending(s => s.Date)
+                .ToList();
+        }
+
+        private long getPlayerIdQuickFix(long playerId)
+        {
+            // fix for Fenrir
+
+            if (playerId == 44)
+                return 97;
+
+            if (playerId == 97)
+                return 44;
+
+            return playerId;
+        }
     }
 }

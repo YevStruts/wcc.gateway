@@ -23,5 +23,11 @@ namespace wcc.gateway.data
         public virtual DbSet<Game> Games { get; set; }
         public virtual DbSet<Youtube> YoutubeUrls { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<LastFightsStatistics> LastFightsStatistics { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<LastFightsStatistics>().ToView("LastFightsStatistics");
+        }
     }
 }
