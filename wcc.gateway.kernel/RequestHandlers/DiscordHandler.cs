@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OAuth2.Infrastructure;
+using System;
 using System.Collections.Specialized;
 using wcc.gateway.data;
 using wcc.gateway.Identity;
@@ -118,6 +119,18 @@ namespace wcc.gateway.kernel.RequestHandlers
         private bool userSignIn(string externalId, string username, string avatar, string discriminator, string email, string token)
         {
             var user = _db.GetUserByExternalId(externalId);
+
+            #region Pre-registerd users
+            
+            if (user == null)
+            {
+                user = _db.GetUserByUsername(username);
+                if (user != null && user.ExternalId != "0")
+                    return false;
+            }
+
+            #endregion
+            
             if (user == null)
             {
                 var role = _db.GetRole(3L);

@@ -14,7 +14,7 @@ namespace wcc.gateway.data
         bool AddUser(User user);
         bool UpdateUser(User user);
         User? GetUserByExternalId(string? id);
-
+        User? GetUserByUsername(string? username);
         Player GetPlayer(long id);
         bool AddPlayer(Player player);
         bool UpdatePlayer(Player player);

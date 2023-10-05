@@ -35,6 +35,12 @@ namespace wcc.gateway.data
             return _context.Users.Include(p => p.Player).Include(r => r.Role).FirstOrDefault(u => u.ExternalId == id);
         }
 
+        public User? GetUserByUsername(string? username)
+        {
+            if (string.IsNullOrEmpty(username)) return null;
+            return _context.Users.Include(p => p.Player).Include(r => r.Role).FirstOrDefault(u => u.Username == username);
+        }
+
         public bool UpdateUser(User user)
         {
             // TODO: Check what returns.
