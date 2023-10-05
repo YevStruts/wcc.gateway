@@ -16,6 +16,8 @@ namespace wcc.gateway.Infrastructure
         [ForeignKey("User")]
         public long UserId { get; set; }
 
+        public int Age { get; set; }
+
         public User User { get; set; }
 
         public List<Tournament> Tournament { get; set; }
