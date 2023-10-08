@@ -24,6 +24,7 @@ namespace wcc.gateway.data
         public virtual DbSet<Youtube> YoutubeUrls { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<LastFightsStatistics> LastFightsStatistics { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

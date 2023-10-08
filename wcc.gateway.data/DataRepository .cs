@@ -179,6 +179,20 @@ namespace wcc.gateway.data
         }
         #endregion
 
+        #region Country
+
+        public Country? GetCountry(long id)
+        {
+            return _context.Countries.FirstOrDefault(u => u.Id == id);
+        }
+
+        public List<Country> GetCountries(long id)
+        {
+            return _context.Countries.ToList();
+        }
+
+        #endregion Country
+
         public List<LastFightsStatistics> GetLastFightsStatistics(long playerId, int languageId)
         {
             return _context.LastFightsStatistics

@@ -3,18 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wcc.gateway.data;
-using wcc.gateway.Infrastructure;
 
 #nullable disable
 
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231005050801_AddedCountriesForNationality")]
+    partial class AddedCountriesForNationality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,14 +112,12 @@ namespace wcc.gateway.data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Country");
                 });
-
-            modelBuilder.Entity<Country>().HasData(new Country { Id = 1, Name = "Ukraine" });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Game", b =>
                 {
@@ -275,10 +275,6 @@ namespace wcc.gateway.data.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<long>("CountryId")
-                        .HasColumnType("bigint")
-                        .HasDefaultValue(1);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -288,8 +284,6 @@ namespace wcc.gateway.data.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -495,19 +489,11 @@ namespace wcc.gateway.data.Migrations
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
                 {
-                    b.HasOne("wcc.gateway.Infrastructure.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("wcc.gateway.Identity.User", "User")
                         .WithOne("Player")
                         .HasForeignKey("wcc.gateway.Infrastructure.Player", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Country");
 
                     b.Navigation("User");
                 });
