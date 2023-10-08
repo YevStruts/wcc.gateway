@@ -18,12 +18,12 @@ namespace wcc.gateway.Infrastructure
 
         public int Age { get; set; }
 
-        //[Required]
-        //[ForeignKey("Country")]
-        //public long CountryId { get; set; }
+        [Required]
+        [ForeignKey("Country")]
+        public long CountryId { get; set; }
 
         public User User { get; set; }
-        //public Country Country { get; set; }
+        public Country Country { get; set; }
 
         public List<Tournament> Tournament { get; set; }
     }
