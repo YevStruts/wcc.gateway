@@ -8,17 +8,17 @@
 # docker-compose -f "docker-compose.yml" up -d
 
 # add tag
-# docker tag wccgateway_wcc_gateway:latest yevstruts/wcc.gateway:2023.10.5.1
+# docker tag wccgateway_wcc_gateway:latest yevstruts/wcc.gateway:2023.10.8.1
 # push
-# docker push yevstruts/wcc.gateway:2023.10.5.1
+# docker push yevstruts/wcc.gateway:2023.10.8.1
 
 # -p <host_port>:<container_port>
 
 # Server
-# docker run --name wcc.ui -p 80:80 -p 433:433 -d yevstruts/wcc.ui:2023.10.5.1
+# docker run --name wcc.ui -p 80:80 -p 433:433 -d yevstruts/wcc.ui:2023.10.8.1
 # docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=A&VeryComplex123Password' --name mssql -p 1433:1433 -v /home/ubuntu/database:/media/Database --cpus="4.0" --memory="6G" -d mcr.microsoft.com/mssql/server:2022-latest
 # docker run --rm --name ravendb -d -p 8080:8080 -p 38888:38888 -v /home/ubuntu/database/ravendb:/opt/RavenDB/Server/RavenData --name RavenDb-WithData -e RAVEN_Setup_Mode=None -e RAVEN_License_Eula_Accepted=true -e RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork ravendb/ravendb
-# docker run --name wcc.gateway -p 80:80 -p 433:433 -d yevstruts/wcc.gateway:2023.10.5.1
+# docker run --name wcc.gateway -p 80:80 -p 433:433 -d yevstruts/wcc.gateway:2023.10.8.1
 
 # docker run --name ravendb -d -p 8080:8080 -p 38888:38888 -v d:/database/wcc/ravendb:/opt/RavenDB/Server/RavenData -e RAVEN_Setup_Mode=None -e RAVEN_License_Eula_Accepted=true -e RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork ravendb/ravendb
 # docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=A&VeryComplex123Password' --name mssql -p 1433:1433 -v d:/database/wcc/mssql:/media/database --cpus="4.0" --memory="6G" -d mcr.microsoft.com/mssql/server:2022-latest
@@ -26,18 +26,18 @@
 # docker run --name wcc.gateway -p 5001:5001 -d yevstruts/wcc.gateway:2023.3.5.2
 
 # -------------------------
-# docker tag wcc.ui.i:latest yevstruts/wcc.ui:2023.10.5.1
-# docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2023.10.5.1
-# docker tag wcc.rating.i:latest yevstruts/wcc.rating:2023.10.5.1
+# docker tag wcc.ui.i:latest yevstruts/wcc.ui:2023.10.8.1
+# docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2023.10.8.1
+# docker tag wcc.rating.i:latest yevstruts/wcc.rating:2023.10.8.1
 
-# docker push yevstruts/wcc.gateway:2023.10.5.1
-# docker push yevstruts/wcc.ui:2023.10.5.1
-# docker push yevstruts/wcc.rating:2023.10.5.1
+# docker push yevstruts/wcc.gateway:2023.10.8.1
+# docker push yevstruts/wcc.ui:2023.10.8.1
+# docker push yevstruts/wcc.rating:2023.10.8.1
 
 # docker stop wcc.ui;docker rm wcc.ui;docker stop wcc.gateway;docker rm wcc.gateway;docker stop wcc.rating;docker rm wcc.rating;
-# docker run --name wcc.ui -p 3000:80 -d yevstruts/wcc.ui:2023.10.5.1
-# docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d yevstruts/wcc.gateway:2023.10.5.1
-# docker run --name wcc.rating -p 6001:80 -p 6002:433 -d yevstruts/wcc.rating:2023.10.5.1
+# docker run --name wcc.ui -p 3000:80 -d yevstruts/wcc.ui:2023.10.8.1
+# docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d yevstruts/wcc.gateway:2023.10.8.1
+# docker run --name wcc.rating -p 6001:80 -p 6002:433 -d yevstruts/wcc.rating:2023.10.8.1
 
 # -------------------------
 # delete everything in docker
