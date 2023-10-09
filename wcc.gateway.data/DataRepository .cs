@@ -186,7 +186,7 @@ namespace wcc.gateway.data
             return _context.Countries.FirstOrDefault(u => u.Id == id);
         }
 
-        public List<Country> GetCountries(long id)
+        public List<Country> GetCountries()
         {
             return _context.Countries.ToList();
         }

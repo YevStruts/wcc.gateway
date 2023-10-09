@@ -46,6 +46,6 @@ namespace wcc.gateway.data
 
         Country GetCountry(long id);
 
-        List<Country> GetCountries(long id);
+        List<Country> GetCountries();
     }
 }

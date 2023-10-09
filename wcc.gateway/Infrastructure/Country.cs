@@ -11,7 +11,7 @@ namespace wcc.gateway.Infrastructure
     public class Country : Entity
     {
         public string? Name { get; set; }
-
+        public string? Code { get; set; }
         public List<Player> Players { get; set; }
     }
 }

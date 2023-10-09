@@ -38,6 +38,8 @@ namespace wcc.gateway.kernel.RequestHandlers
         {
             var players = _db.GetPlayers();
 
+            var countries = _db.GetCountries();
+
             var playerData = await new ApiCaller(_ratingConfig.Url).GetAsync<List<PlayerData>>("api/rating");
 
             var rating = new List<RatingModel>();
@@ -49,6 +51,8 @@ namespace wcc.gateway.kernel.RequestHandlers
                     var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
                     if (player != null && player.Name != null)
                     {
+                        var nation = countries.FirstOrDefault(c => c.Id == player.CountryId);
+
                         rating.Add(new RatingModel
                         {
                             Id = player.Id,
@@ -56,7 +60,8 @@ namespace wcc.gateway.kernel.RequestHandlers
                             AvatarUrl = DiscordHelper.GetAvatarUrl(player.User.ExternalId, player.User.Avatar),
                             Position = position++,
                             Progress = 0,
-                            TotalPoints = rp.Points
+                            TotalPoints = rp.Points,
+                            Nation = nation?.Code ?? "xx"
                         });
                     }
                 }
