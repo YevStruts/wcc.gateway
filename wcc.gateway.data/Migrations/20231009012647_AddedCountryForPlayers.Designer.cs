@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wcc.gateway.data;
 
@@ -11,9 +12,11 @@ using wcc.gateway.data;
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231009012647_AddedCountryForPlayers")]
+    partial class AddedCountryForPlayers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -491,7 +494,7 @@ namespace wcc.gateway.data.Migrations
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
                 {
-                    b.HasOne("wcc.gateway.Infrastructure.Country", null)
+                    b.HasOne("wcc.gateway.Infrastructure.Country", "Country")
                         .WithMany("Players")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -502,6 +505,8 @@ namespace wcc.gateway.data.Migrations
                         .HasForeignKey("wcc.gateway.Infrastructure.Player", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Country");
 
                     b.Navigation("User");
                 });

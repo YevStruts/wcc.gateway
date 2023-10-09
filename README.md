@@ -52,11 +52,12 @@
 # explore files system docker
 # docker exec -t -i wcc.gateway /bin/bash
 # docker cp wcc.gateway:/logs/webapi-20230311.log .
+# docker cp mssql:/media/Database/wcc.bak .
 
 # INSERT INTO [dbo].[Games] VALUES ( 1 ,'none' ,'2023-05-13 00:00:00.0000000' ,0 ,0 ,0 ,0 ,4);
 #
 # copy from vps to local
-# scp root@217.160.240.169:/home/ubuntu/database/wcc.bak C:\Users\strut\Downloads 
+# scp root@217.160.240.169:/home/ubuntu/database/wcc.bak D:/Database/WCC/mssql 
 
 # ------------------------
 # docker run --name teamcity-server -v D:/Projects/wcc/wcc.teamcity/server/data:/data/teamcity_server/datadir -v D:/Projects/wcc/wcc.teamcity/server/logs:/opt/teamcity/logs -p 8111:8111 jetbrains/teamcity-server

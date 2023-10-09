@@ -12,8 +12,8 @@ using wcc.gateway.data;
 namespace wcc.gateway.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231008184110_AddedCountryIdColumnToPlayerTable")]
-    partial class AddedCountryIdColumnToPlayerTable
+    [Migration("20231009014731_AddedCountryIdTest")]
+    partial class AddedCountryIdTest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -495,7 +495,7 @@ namespace wcc.gateway.data.Migrations
             modelBuilder.Entity("wcc.gateway.Infrastructure.Player", b =>
                 {
                     b.HasOne("wcc.gateway.Infrastructure.Country", "Country")
-                        .WithMany()
+                        .WithMany("Players")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -552,6 +552,11 @@ namespace wcc.gateway.data.Migrations
                 {
                     b.Navigation("Player")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("wcc.gateway.Infrastructure.Country", b =>
+                {
+                    b.Navigation("Players");
                 });
 
             modelBuilder.Entity("wcc.gateway.Infrastructure.Game", b =>

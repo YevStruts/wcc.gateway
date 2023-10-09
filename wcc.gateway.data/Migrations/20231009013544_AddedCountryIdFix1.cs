@@ -5,7 +5,7 @@
 namespace wcc.gateway.data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedCountryIdColumnToPlayerTable : Migration
+    public partial class AddedCountryIdFix1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,9 +21,7 @@ namespace wcc.gateway.data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CountryId",
-                table: "Players");
+            migrationBuilder.DropColumn("CountryId", "Players");
         }
     }
 }
