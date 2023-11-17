@@ -46,7 +46,9 @@ namespace wcc.gateway.Infrastructure
 
         public List<TournamentTranslations> Translations { get; set; }
 
-        public List<Game> Games { get; set; } 
+        public List<Game> Games { get; set; }
+
+        public List<Team> Teams { get; set; }
     }
 
     [Table("TournamentTranslations")]
