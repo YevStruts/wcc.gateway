@@ -29,15 +29,18 @@
 # docker tag wcc.ui.i:latest yevstruts/wcc.ui:2023.11.4.1
 # docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2023.11.4.1
 # docker tag wcc.rating.i:latest yevstruts/wcc.rating:2023.11.4.1
+# docker tag wcc.lanserver.i:latest yevstruts/wcc.lanserver:2023.11.4.1
 
 # docker push yevstruts/wcc.gateway:2023.11.4.1
 # docker push yevstruts/wcc.ui:2023.11.4.1
 # docker push yevstruts/wcc.rating:2023.11.4.1
+# docker push yevstruts/wcc.lanserver:2023.11.4.1
 
 # docker stop wcc.ui;docker rm wcc.ui;docker stop wcc.gateway;docker rm wcc.gateway;docker stop wcc.rating;docker rm wcc.rating;
 # docker run --name wcc.ui -p 3000:80 -d yevstruts/wcc.ui:2023.11.4.1
 # docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d yevstruts/wcc.gateway:2023.11.4.1
 # docker run --name wcc.rating -p 6001:80 -p 6002:433 -d yevstruts/wcc.rating:2023.11.4.1
+# docker run --name wcc.lanserver -p 31523:31523 -d yevstruts/wcc.lanserver:2023.11.4.1
 
 # -------------------------
 # delete everything in docker
