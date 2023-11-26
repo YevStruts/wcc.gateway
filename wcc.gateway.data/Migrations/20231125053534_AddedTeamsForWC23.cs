@@ -32,7 +32,7 @@ namespace wcc.gateway.data.Migrations
     VALUES (@TournamentId, 1, 'World Cup 2023 (Qualification)', '');
 
     INSERT INTO [dbo].[TournamentTranslations] ([TournamentId],[LanguageId],[Name],[Description])
-    VALUES (@TournamentId, 2, 'Кубок Світу 2023 (Кваліфікація)', '');
+    VALUES (@TournamentId, 2,N'Кубок Світу 2023 (Кваліфікація)', '');
 
 -- Create teams
 
@@ -44,7 +44,7 @@ namespace wcc.gateway.data.Migrations
     INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES ( 'Spaner', @TournamentId);
     INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES ('HAWKS-2', @TournamentId);
     INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES (  'PKS-2', @TournamentId);
-    INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES (    'ПЦУ', @TournamentId);
+    INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES (   N'ПЦУ', @TournamentId);
     INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES ( 'POLSKA', @TournamentId);
     INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES (  'CPS-4', @TournamentId);
     INSERT INTO [dbo].[Team] ([Name],[TournamentId]) VALUES (     'RT', @TournamentId);
