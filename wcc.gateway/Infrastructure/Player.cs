@@ -8,6 +8,11 @@ namespace wcc.gateway.Infrastructure
     [Table("Players")]
     public class Player : Entity
     {
+        public Player()
+        {
+            CountryId = 254; /* Neutral */
+        }
+
         [Required]
         [StringLength(100, ErrorMessage = "The Name value cannot exceed 100 characters. ")]
         public string? Name { get; set; }
