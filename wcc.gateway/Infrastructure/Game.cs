@@ -28,5 +28,7 @@ namespace wcc.gateway.Infrastructure
         public long TournamentId { get; set; }
 
         public Tournament Tournament { get; set; }
+
+        public GameType GameType { get; set; }
     }
 }
