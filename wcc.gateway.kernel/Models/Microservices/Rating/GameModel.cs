@@ -1,4 +1,6 @@
-﻿namespace wcc.gateway.kernel.Models.Microservices.Rating
+﻿using wcc.gateway.Infrastructure;
+
+namespace wcc.gateway.kernel.Models.Microservices.Rating
 {
     public class GameModel
     {
@@ -7,5 +9,8 @@
         public int HScore { get; set; }
         public long VPlayerId { get; set; }
         public int VScore { get; set; }
+        public GameType GameType { get; set; }
+        public List<int>? HParticipants { get; set; }
+        public List<int>? VParticipants { get; set; }
     }
 }

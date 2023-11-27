@@ -1,4 +1,6 @@
-﻿namespace wcc.gateway.kernel.Models
+﻿using wcc.gateway.Infrastructure;
+
+namespace wcc.gateway.kernel.Models
 {
     public class GameModel
     {
@@ -8,6 +10,7 @@
         public long Scheduled { get; set; }
         public PlayerGameListModel? Home { get; set; }
         public PlayerGameListModel? Visitor { get; set; }
+        public GameType GameType { get; set; }
     }
 
     public class GameListModel : GameModel
