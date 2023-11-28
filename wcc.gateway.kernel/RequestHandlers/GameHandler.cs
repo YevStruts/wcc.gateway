@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using System.Numerics;
 using wcc.gateway.data;
+using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
@@ -91,38 +93,26 @@ namespace wcc.gateway.kernel.RequestHandlers
             var games = _mapper.Map<IEnumerable<GameListModel>>(gamesDto);
 
             var playersDto = _db.GetPlayers();
+            var teamsDto = _db.GetTeams().Where(t => t.TournamentId == request.TournamentId);
 
             var gamesIds = gamesDto.Select(g => g.Id).ToList();
             var youtubes = _db.GetYoutubes().Where(g => gamesIds.Contains(g.GameId)).ToList();
 
-            var fakePlayer = new Player()
-            {
-                Id = 0,
-                Name = "TBD",
-                UserId = 0
-            };
-
             foreach (var game in games)
             {
                 var gameDto = gamesDto.First(g => g.Id == game.Id);
-                var hUserId = gameDto.HUserId;
-                var hPLayerDto = playersDto.FirstOrDefault(p => p.UserId == hUserId);
-                if (hPLayerDto == null)
-                {
-                    hPLayerDto = fakePlayer;
-                }
 
-                game.Home = _mapper.Map<PlayerGameListModel>(hPLayerDto);
+                var hUserId = gameDto.HUserId;
+                game.Home = game.GameType == GameType.Teams ?
+                    addTeam(teamsDto, hUserId) :
+                    addPlayer(playersDto, hUserId);
+
                 game.Home.Score = gameDto.HScore;
 
                 var vUserId = gameDto.VUserId;
-                var vPLayerDto = playersDto.FirstOrDefault(p => p.UserId == vUserId);
-                if (vPLayerDto == null)
-                {
-                    vPLayerDto = fakePlayer;
-                }
-
-                game.Visitor = _mapper.Map<PlayerGameListModel>(vPLayerDto);
+                game.Visitor = game.GameType == GameType.Teams ?
+                    addTeam(teamsDto, vUserId) :
+                    addPlayer(playersDto, vUserId);
                 game.Visitor.Score = gameDto.VScore;
 
                 var ytUrl = youtubes.Where(y => y.GameId == game.Id);
@@ -133,6 +123,35 @@ namespace wcc.gateway.kernel.RequestHandlers
             }
 
             return Task.FromResult(games);
+        }
+
+        private PlayerGameListModel addPlayer(IEnumerable<Player> players, long userId)
+        {
+            var player = players.FirstOrDefault(p => p.UserId == userId);
+            if (player == null)
+            {
+                player = new Player()
+                {
+                    Id = 0,
+                    Name = "TBD",
+                    UserId = 0
+                };
+            }
+            return _mapper.Map<PlayerGameListModel>(player);
+        }
+
+        private PlayerGameListModel addTeam(IEnumerable<Team> teams, long userId)
+        {
+            var team = teams.FirstOrDefault(p => p.Id == userId);
+            if (team == null)
+            {
+                team = new Team()
+                {
+                    Id = 0,
+                    Name = "TBD"
+                };
+            }
+            return _mapper.Map<PlayerGameListModel>(team);
         }
 
         public async Task<bool> Handle(UpdateGameQuery request, CancellationToken cancellationToken)
@@ -147,12 +166,37 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             gameDto.Scheduled = DateTimeOffset.FromUnixTimeMilliseconds(request.Game.Scheduled).UtcDateTime;
 
-            var hPlayer = _db.GetPlayer(request.Game.Home.Id);
-            gameDto.HUserId = hPlayer.UserId;
-            gameDto.HScore = request.Game.Home.Score;
+            long hPlayerId = 0;
 
-            var vPlayer = _db.GetPlayer(request.Game.Visitor.Id);
-            gameDto.VUserId = vPlayer.UserId;
+            long vPlayerId = 0;
+
+            switch (gameDto.GameType)
+            {
+                case GameType.Individual:
+                    {
+                        var hPlayer = _db.GetPlayer(request.Game.Home.Id);
+                        var vPlayer = _db.GetPlayer(request.Game.Visitor.Id);
+
+                        hPlayerId = hPlayer.Id;
+                        vPlayerId = vPlayer.Id;
+                        gameDto.HUserId = hPlayer.UserId;
+                        gameDto.VUserId = vPlayer.UserId;
+                    }
+                    break;
+                case GameType.Teams:
+                    {
+                        hPlayerId = request.Game.Home.Id;
+                        vPlayerId = request.Game.Visitor.Id;
+
+                        gameDto.HUserId = hPlayerId;
+                        gameDto.VUserId = vPlayerId;
+                    }
+                    break;
+                default: 
+                    return false;
+            }
+
+            gameDto.HScore = request.Game.Home.Score;
             gameDto.VScore = request.Game.Visitor.Score;
 
             if (gameDto.YoutubeUrls == null)
@@ -183,11 +227,19 @@ namespace wcc.gateway.kernel.RequestHandlers
                     var gameModel = new Models.Microservices.Rating.GameModel
                     {
                         GameId = gameDto.Id,
-                        HPlayerId = hPlayer.Id,
+                        HPlayerId = hPlayerId,
                         HScore = gameDto.HScore,
-                        VPlayerId = vPlayer.Id,
+                        VPlayerId = vPlayerId,
                         VScore = gameDto.VScore
                     };
+                    if (gameDto.GameType == GameType.Teams)
+                    {
+                        Team hTeam = _db.GetTeam(request.Game.Home.Id);
+                        Team vTeam = _db.GetTeam(request.Game.Visitor.Id);
+
+                        gameModel.HParticipants = hTeam.Players.Select(p => p.Id).ToList();
+                        gameModel.VParticipants = vTeam.Players.Select(p => p.Id).ToList();
+                    }
                     var response = await new ApiCaller(_ratingConfig.Url).PostAsync<Models.Microservices.Rating.GameModel, string>("api/Game/Save", gameModel);
                 }
                 catch (Exception ex)

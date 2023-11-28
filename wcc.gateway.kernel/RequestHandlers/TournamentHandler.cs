@@ -135,7 +135,11 @@ namespace wcc.gateway.kernel.RequestHandlers
             if (tournamentDto == null)
                 throw new Exception("Can't retrieve tournament");
 
-            var participants = _mapper.Map<IEnumerable<PlayerModel>>(tournamentDto.Participant);
+            bool isTeamsCompetition = tournamentDto.Games.Any(g => g.GameType == GameType.Teams);
+
+            var participants = isTeamsCompetition ?
+                _mapper.Map<IEnumerable<PlayerModel>>(tournamentDto.Teams) :
+                _mapper.Map<IEnumerable<PlayerModel>>(tournamentDto.Participant);
 
             return Task.FromResult(participants);
         }

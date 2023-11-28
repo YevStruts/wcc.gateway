@@ -10,7 +10,7 @@ namespace wcc.gateway.kernel.Models.Microservices.Rating
         public long VPlayerId { get; set; }
         public int VScore { get; set; }
         public GameType GameType { get; set; }
-        public List<int>? HParticipants { get; set; }
-        public List<int>? VParticipants { get; set; }
+        public List<long>? HParticipants { get; set; }
+        public List<long>? VParticipants { get; set; }
     }
 }

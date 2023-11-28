@@ -33,8 +33,14 @@ namespace wcc.gateway.kernel.Helpers
                         cfg.CreateMap<Player, PlayerModel>()
                             .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
 
+                        cfg.CreateMap<Team, PlayerModel>()
+                            .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => string.Empty));
+
                         cfg.CreateMap<Player, PlayerGameListModel>()
                             .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
+
+                        cfg.CreateMap<Team, PlayerGameListModel>()
+                                .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => string.Empty));
 
                         cfg.CreateMap<Tournament, TournamentModel>()
                             .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl))

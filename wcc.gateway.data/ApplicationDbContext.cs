@@ -14,6 +14,7 @@ namespace wcc.gateway.data
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Player> Players { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<NewsTranslations> NewsTranslations { get; set; }
         public virtual DbSet<Language> Languages { get; set; }

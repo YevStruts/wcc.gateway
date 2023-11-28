@@ -75,6 +75,20 @@ namespace wcc.gateway.data
         }
         #endregion Player
 
+        #region Team
+
+        public Team? GetTeam(long id)
+        {
+            return _context.Teams.Include(p => p.Players).FirstOrDefault(p => p.Id == id);
+        }
+
+        public IEnumerable<Team> GetTeams()
+        {
+            return _context.Teams.Include(p => p.Players).Include(p => p.Tournament).ToList();
+        }
+
+        #endregion Team
+
         #region News
 
         public News? GetNews(long id)
@@ -93,7 +107,10 @@ namespace wcc.gateway.data
 
         public Tournament? GetTournament(long id)
         {
-            return _context.Tournaments.Include(p => p.Participant).Include(l => l.Translations).FirstOrDefault(u => u.Id == id);
+            return _context.Tournaments.Include(p => p.Participant)
+                .Include(p => p.Teams)
+                .Include(p => p.Games)
+                .Include(l => l.Translations).FirstOrDefault(u => u.Id == id);
         }
 
         public IEnumerable<Tournament> GetTournaments()
