@@ -109,6 +109,7 @@ LEFT JOIN TournamentTranslations tt ON tt.TournamentId = t.Id
 LEFT JOIN Players p1 ON p1.UserId = g.HUserId OR p1.UserId = g.VUserId
 LEFT JOIN Players hp ON hp.UserId = g.HUserId
 LEFT JOIN Players vp ON vp.UserId = g.VUserId
+WHERE g.GameType = 1
 ");
         }
 
