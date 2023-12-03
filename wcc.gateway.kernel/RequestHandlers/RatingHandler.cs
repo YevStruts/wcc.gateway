@@ -49,7 +49,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 foreach (var rp in playerData.OrderByDescending(r => r.Points).ToList())
                 {
                     var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
-                    if (player != null && player.Name != null)
+                    if (player != null && player.Name != null && player.IsActive)
                     {
                         var nation = countries.FirstOrDefault(c => c.Id == player.CountryId);
 

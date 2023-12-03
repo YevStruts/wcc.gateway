@@ -11,6 +11,7 @@ namespace wcc.gateway.Infrastructure
         public Player()
         {
             CountryId = 254; /* Neutral */
+            IsActive = true;
         }
 
         [Required]
@@ -25,6 +26,8 @@ namespace wcc.gateway.Infrastructure
 
         [Required]
         public long CountryId { get; set; }
+
+        public bool IsActive { get; set; }
 
         public User User { get; set; }
 
