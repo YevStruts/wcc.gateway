@@ -230,7 +230,8 @@ namespace wcc.gateway.kernel.RequestHandlers
                         HPlayerId = hPlayerId,
                         HScore = gameDto.HScore,
                         VPlayerId = vPlayerId,
-                        VScore = gameDto.VScore
+                        VScore = gameDto.VScore,
+                        GameType = gameDto.GameType
                     };
                     if (gameDto.GameType == GameType.Teams)
                     {
