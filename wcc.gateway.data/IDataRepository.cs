@@ -36,6 +36,7 @@ namespace wcc.gateway.data
         Game? GetGame(long id);
         List<Game> GetGames();
         bool UpdateGame(Game game);
+        bool AddGame(Game game);
 
         Youtube? GetYoutube(long id);
         List<Youtube> GetYoutubes();

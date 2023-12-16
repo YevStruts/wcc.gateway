@@ -42,10 +42,25 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class AddGameQuery : IRequest<bool>
+    {
+        public long TournamentId { get; }
+        public GameType GameType { get; }
+        public string ExternalUserId { get; }
+
+        public AddGameQuery(long tournamentId, GameType gameType, string externalUserId)
+        {
+            TournamentId = tournamentId;
+            GameType = gameType;
+            ExternalUserId = externalUserId;
+        }
+    }
+
     public class GameHandler :
         IRequestHandler<GetGameDetailQuery, GameListModel>,
         IRequestHandler<GetGameListQuery, IEnumerable<GameListModel>>,
-        IRequestHandler<UpdateGameQuery, bool>
+        IRequestHandler<UpdateGameQuery, bool>,
+        IRequestHandler<AddGameQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -250,6 +265,25 @@ namespace wcc.gateway.kernel.RequestHandlers
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> Handle(AddGameQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalUserId);
+            if (user == null || user.RoleId == (long)Roles.User) return false;
+
+            var orderId = _db.GetGames().Where(g => g.TournamentId == request.TournamentId).OrderByDescending(g => g.OrderId).FirstOrDefault()?.OrderId + 1 ?? 1;
+
+            var game = new Game
+            {
+                OrderId = orderId,
+                Name = string.Empty,
+                Scheduled = DateTime.UtcNow,
+                TournamentId = request.TournamentId,
+                GameType = request.GameType
+            };
+
+            return _db.AddGame(game);
         }
     }
 }

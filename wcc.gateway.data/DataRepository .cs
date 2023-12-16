@@ -165,6 +165,12 @@ namespace wcc.gateway.data
             _context.Games.Update(game);
             return _context.SaveChanges() == SingleEntry;
         }
+
+        public bool AddGame(Game game)
+        {
+            _context.Games.Add(game);
+            return _context.SaveChanges() == SingleEntry;
+        }
         #endregion Game
 
         #region Youtube

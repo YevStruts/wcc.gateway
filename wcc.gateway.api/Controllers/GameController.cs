@@ -44,5 +44,14 @@ namespace wcc.gateway.api.Controllers
 
             return _mediator.Send(new UpdateGameQuery(model, userId));
         }
+
+        [HttpPost, Authorize, Route("Add")]
+        public Task AddGame(AddGameModel model)
+        {
+            var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+
+            return _mediator.Send(new AddGameQuery(model.TournamentId, model.GameType, userId));
+        }
     }
 }
