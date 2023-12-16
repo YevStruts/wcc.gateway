@@ -5,6 +5,7 @@ using wcc.gateway.api.Helpers;
 using wcc.gateway.data;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.Models.Game;
 using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
@@ -52,6 +53,24 @@ namespace wcc.gateway.api.Controllers
             _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
 
             return _mediator.Send(new AddGameQuery(model.TournamentId, model.GameType, userId));
+        }
+
+        [HttpPost, Authorize, Route("Edit")]
+        public Task EditGame(EditGameModel model)
+        {
+            var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+
+            return _mediator.Send(new EditGameQuery(new Game(), userId));
+        }
+
+        [HttpPost, Authorize, Route("Delete")]
+        public Task EditGame(DeleteGameModel model)
+        {
+            var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+
+            return _mediator.Send(new DeleteGameQuery(model.Id, userId));
         }
     }
 }

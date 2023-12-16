@@ -1,6 +1,6 @@
 ﻿using wcc.gateway.Infrastructure;
 
-namespace wcc.gateway.kernel.Models
+namespace wcc.gateway.kernel.Models.Game
 {
     public class AddGameModel
     {

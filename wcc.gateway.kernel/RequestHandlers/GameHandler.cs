@@ -56,11 +56,37 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class EditGameQuery : IRequest<bool>
+    {
+        public Game Game { get; }
+        public string ExternalUserId { get; }
+
+        public EditGameQuery(Game game, string externalUserId)
+        {
+            Game = game;
+            ExternalUserId = externalUserId;
+        }
+    }
+
+    public class DeleteGameQuery : IRequest<bool>
+    {
+        public long Id { get; }
+        public string ExternalUserId { get; }
+
+        public DeleteGameQuery(long id, string externalUserId)
+        {
+            Id = id;
+            ExternalUserId = externalUserId;
+        }
+    }
+
     public class GameHandler :
         IRequestHandler<GetGameDetailQuery, GameListModel>,
         IRequestHandler<GetGameListQuery, IEnumerable<GameListModel>>,
         IRequestHandler<UpdateGameQuery, bool>,
-        IRequestHandler<AddGameQuery, bool>
+        IRequestHandler<AddGameQuery, bool>,
+        IRequestHandler<EditGameQuery, bool>,
+        IRequestHandler<DeleteGameQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -284,6 +310,22 @@ namespace wcc.gateway.kernel.RequestHandlers
             };
 
             return _db.AddGame(game);
+        }
+
+        public async Task<bool> Handle(EditGameQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalUserId);
+            if (user == null || user.RoleId == (long)Roles.User) return false;
+            //var game = _db.GetGame(request.Id);
+            //game.Name = request.;
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> Handle(DeleteGameQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalUserId);
+            if (user == null || user.RoleId == (long)Roles.User) return false;
+            return _db.DeleteGame(request.Id);
         }
     }
 }

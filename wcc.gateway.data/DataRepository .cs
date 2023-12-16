@@ -171,6 +171,15 @@ namespace wcc.gateway.data
             _context.Games.Add(game);
             return _context.SaveChanges() == SingleEntry;
         }
+
+        public bool DeleteGame(long id)
+        {
+            var game = _context.Games.FirstOrDefault(u => u.Id == id);
+            if (game == null) return false;
+            _context.Games.Remove(game);
+            return _context.SaveChanges() == SingleEntry;
+        }
+
         #endregion Game
 
         #region Youtube
