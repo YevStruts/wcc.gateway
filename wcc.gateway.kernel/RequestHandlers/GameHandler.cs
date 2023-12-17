@@ -98,83 +98,63 @@ namespace wcc.gateway.kernel.RequestHandlers
             _ratingConfig = ratingConfig;
         }
 
-        public Task<GameListModel> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
+        public async Task<GameListModel> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
         {
             var gameDto = _db.GetGame(request.Id);
             if (gameDto == null)
                 throw new ArgumentNullException(nameof(gameDto));
 
-            var game = _mapper.Map<GameListModel>(gameDto);
+            var players = _db.GetPlayers().ToList();
+            var teams = _db.GetTeams().Where(t => t.TournamentId == gameDto.TournamentId).ToList();
+            var youtubes = _db.GetYoutubes().Where(g => g.GameId == gameDto.Id).ToList();
 
-            var playersDto = _db.GetPlayers();
-
-            var hPLayerDto = playersDto.FirstOrDefault(p => p.UserId == gameDto.HUserId);
-            if (hPLayerDto == null)
-                hPLayerDto = new Player()
-                {
-                    Id = 0,
-                    Name = "TBD",
-                    UserId = 0
-                };
-
-            game.Home = _mapper.Map<PlayerGameListModel>(hPLayerDto);
-            
-            var vPLayerDto = playersDto.FirstOrDefault(p => p.UserId == gameDto.VUserId);
-            if (vPLayerDto == null)
-                vPLayerDto = new Player()
-                {
-                    Id = 0,
-                    Name = "TBD",
-                    UserId = 0
-                };
-
-            game.Visitor = _mapper.Map<PlayerGameListModel>(vPLayerDto);
-
-            var youtubes = _db.GetYoutubes().Where(g => g.Id == game.Id).ToList();
-            game.YoutubeUrls.Clear();
-            foreach (var yt in youtubes)
-            {
-                game.YoutubeUrls.Add(yt.Url);
-            }
-
-            return Task.FromResult(game);
+            return mapGame(gameDto, players, teams, youtubes);
         }
-        public Task<IEnumerable<GameListModel>> Handle(GetGameListQuery request, CancellationToken cancellationToken)
+
+        public async Task<IEnumerable<GameListModel>> Handle(GetGameListQuery request, CancellationToken cancellationToken)
         {
             var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId).ToList();
-            var games = _mapper.Map<IEnumerable<GameListModel>>(gamesDto);
 
-            var playersDto = _db.GetPlayers();
-            var teamsDto = _db.GetTeams().Where(t => t.TournamentId == request.TournamentId);
+            var players = _db.GetPlayers().ToList();
+            var teams = _db.GetTeams().Where(t => t.TournamentId == request.TournamentId).ToList();
 
             var gamesIds = gamesDto.Select(g => g.Id).ToList();
             var youtubes = _db.GetYoutubes().Where(g => gamesIds.Contains(g.GameId)).ToList();
 
-            foreach (var game in games)
+            List<GameListModel> games = new List<GameListModel>();
+            foreach (var gameDto in gamesDto)
             {
-                var gameDto = gamesDto.First(g => g.Id == game.Id);
-
-                var hUserId = gameDto.HUserId;
-                game.Home = game.GameType == GameType.Teams ?
-                    addTeam(teamsDto, hUserId) :
-                    addPlayer(playersDto, hUserId);
-
-                game.Home.Score = gameDto.HScore;
-
-                var vUserId = gameDto.VUserId;
-                game.Visitor = game.GameType == GameType.Teams ?
-                    addTeam(teamsDto, vUserId) :
-                    addPlayer(playersDto, vUserId);
-                game.Visitor.Score = gameDto.VScore;
-
-                var ytUrl = youtubes.Where(y => y.GameId == game.Id);
-                foreach (var yt in ytUrl)
-                {
-                    game.YoutubeUrls.Add(yt.Url);
-                }
+                games.Add(mapGame(gameDto, players, teams, youtubes));
             }
 
-            return Task.FromResult(games);
+            return games;
+        }
+
+        private GameListModel mapGame(Game gameDto, List<Player> players, List<Team> teams, List<Youtube> youtubes)
+        {
+            var game = _mapper.Map<GameListModel>(gameDto);
+
+            var hUserId = gameDto.HUserId;
+            game.Home = game.GameType == GameType.Teams ?
+                addTeam(teams, hUserId) :
+                addPlayer(players, hUserId);
+
+            game.Home.Score = gameDto.HScore;
+
+            var vUserId = gameDto.VUserId;
+            game.Visitor = game.GameType == GameType.Teams ?
+                addTeam(teams, vUserId) :
+                addPlayer(players, vUserId);
+            game.Visitor.Score = gameDto.VScore;
+
+            var ytUrl = youtubes.Where(y => y.GameId == game.Id);
+            game.YoutubeUrls?.Clear();
+            foreach (var yt in ytUrl)
+            {
+                game.YoutubeUrls?.Add(yt.Url ?? string.Empty);
+            }
+
+            return game;
         }
 
         private PlayerGameListModel addPlayer(IEnumerable<Player> players, long userId)

@@ -163,7 +163,7 @@ namespace wcc.gateway.data
         public bool UpdateGame(Game game)
         {
             _context.Games.Update(game);
-            return _context.SaveChanges() == SingleEntry;
+            return _context.SaveChanges() > 0;
         }
 
         public bool AddGame(Game game)
