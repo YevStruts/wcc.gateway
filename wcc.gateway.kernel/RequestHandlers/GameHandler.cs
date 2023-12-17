@@ -110,18 +110,29 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             var hPLayerDto = playersDto.FirstOrDefault(p => p.UserId == gameDto.HUserId);
             if (hPLayerDto == null)
-                throw new ArgumentNullException(nameof(hPLayerDto));
+                hPLayerDto = new Player()
+                {
+                    Id = 0,
+                    Name = "TBD",
+                    UserId = 0
+                };
 
             game.Home = _mapper.Map<PlayerGameListModel>(hPLayerDto);
             
             var vPLayerDto = playersDto.FirstOrDefault(p => p.UserId == gameDto.VUserId);
             if (vPLayerDto == null)
-                throw new ArgumentNullException(nameof(vPLayerDto));
+                vPLayerDto = new Player()
+                {
+                    Id = 0,
+                    Name = "TBD",
+                    UserId = 0
+                };
 
             game.Visitor = _mapper.Map<PlayerGameListModel>(vPLayerDto);
 
             var youtubes = _db.GetYoutubes().Where(g => g.Id == game.Id).ToList();
-            foreach(var yt in youtubes)
+            game.YoutubeUrls.Clear();
+            foreach (var yt in youtubes)
             {
                 game.YoutubeUrls.Add(yt.Url);
             }
