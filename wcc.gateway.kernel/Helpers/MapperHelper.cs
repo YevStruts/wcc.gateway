@@ -30,6 +30,8 @@ namespace wcc.gateway.kernel.Helpers
                         cfg.CreateMap<News, NewsModel>()
                             .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl));
 
+                        cfg.CreateMap<Country, CountryModel>();
+
                         cfg.CreateMap<Player, PlayerModel>()
                             .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
 

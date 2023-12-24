@@ -32,10 +32,23 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class UpdatePlayerQuery : IRequest<bool>
+    {
+        public PlayerModel Player { get; }
+        public string ExternalUserId { get; }
+
+        public UpdatePlayerQuery(PlayerModel player, string userId)
+        {
+            Player = player;
+            ExternalUserId = userId;
+        }
+    }
+
     public class PlayerHandler :
         IRequestHandler<GetPlayerDetailQuery, PlayerModel>,
         IRequestHandler<GetPlayerListQuery, IEnumerable<PlayerModel>>,
-        IRequestHandler<GetPlayerProfileQuery, PlayerProfile>
+        IRequestHandler<GetPlayerProfileQuery, PlayerProfile>,
+        IRequestHandler<UpdatePlayerQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -112,6 +125,22 @@ namespace wcc.gateway.kernel.RequestHandlers
             model.Losses = losses;
 
             return model;
+        }
+
+        public async Task<bool> Handle(UpdatePlayerQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByExternalId(request.ExternalUserId);
+            if (user == null || user.RoleId == (long)Roles.User) return false;
+
+            var player = _db.GetPlayer(request.Player.Id);
+
+            if (player == null) return false;
+
+            player.Name = request.Player.Name;
+            player.CountryId = request.Player.CountryId ?? 255;
+            player.IsActive = request.Player.IsActive;
+
+            return _db.UpdatePlayer(player);
         }
     }
 }

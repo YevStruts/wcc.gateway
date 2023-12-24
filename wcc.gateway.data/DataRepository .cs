@@ -45,7 +45,7 @@ namespace wcc.gateway.data
         {
             // TODO: Check what returns.
             _context.Users.Update(user);
-            return _context.SaveChanges() == SingleEntry;
+            return _context.SaveChanges() > 0;
         }
 
         #endregion User
@@ -71,7 +71,7 @@ namespace wcc.gateway.data
         public bool UpdatePlayer(Player player)
         {
             _context.Players.Update(player);
-            return _context.SaveChanges() == SingleEntry;
+            return _context.SaveChanges() > 0;
         }
         #endregion Player
 
@@ -196,7 +196,7 @@ namespace wcc.gateway.data
         public bool UpdateYoutube(Youtube url)
         {
             _context.YoutubeUrls.Update(url);
-            return _context.SaveChanges() == SingleEntry;
+            return _context.SaveChanges() > 0;
         }
         #endregion Youtube
 

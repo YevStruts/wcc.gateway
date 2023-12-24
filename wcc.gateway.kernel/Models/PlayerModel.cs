@@ -7,6 +7,10 @@
         public string? Name { get; set; }
 
         public string? AvatarUrl { get; set; }
+
+        public int? CountryId { get; set; }
+
+        public bool IsActive { get; set; }
     }
 
     public class PlayerGameListModel : PlayerModel
