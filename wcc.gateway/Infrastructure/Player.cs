@@ -29,6 +29,9 @@ namespace wcc.gateway.Infrastructure
 
         public bool IsActive { get; set; }
 
+        [StringLength(100, ErrorMessage = "The Name value cannot exceed 100 characters. ")]
+        public string? Token { get; set; }
+
         public User User { get; set; }
 
         public List<Tournament> Tournament { get; set; }

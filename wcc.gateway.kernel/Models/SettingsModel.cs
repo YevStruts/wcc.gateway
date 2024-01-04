@@ -9,5 +9,6 @@ namespace wcc.gateway.kernel.Models
     public class SettingsModel
     {
         public string Nickname { get; set; }
+        public string Token { get; set; }
     }
 }

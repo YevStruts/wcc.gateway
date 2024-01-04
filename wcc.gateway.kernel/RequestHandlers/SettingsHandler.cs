@@ -47,7 +47,8 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             var model = new SettingsModel
             {
-                Nickname = user.Player?.Name ?? string.Empty
+                Nickname = user.Player?.Name ?? string.Empty,
+                Token = user.Player?.Token ?? string.Empty,
             };
 
             return Task.FromResult(model);
