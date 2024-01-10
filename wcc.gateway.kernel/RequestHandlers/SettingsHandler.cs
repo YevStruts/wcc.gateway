@@ -27,9 +27,19 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class RequestTokenQuery : IRequest<bool>
+    {
+        public string Username { get; }
+        public RequestTokenQuery(string username)
+        {
+            Username = username;
+        }
+    }
+
     public class SettingsHandler :
         IRequestHandler<GetSettingsQuery, SettingsModel>,
-        IRequestHandler<SaveSettingsQuery, bool>
+        IRequestHandler<SaveSettingsQuery, bool>,
+        IRequestHandler<RequestTokenQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -62,6 +72,30 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             user.Player.Name = request.Nickname;
             return Task.FromResult(_db.UpdatePlayer(user.Player));
+        }
+
+        public async Task<bool> Handle(RequestTokenQuery request, CancellationToken cancellationToken)
+        {
+            var user = _db.GetUserByUsername(request.Username);
+            if (user == null || !string.IsNullOrEmpty(user.Player.Token))
+                return false;
+
+            user.Player.Token = generateToken();
+
+            return _db.UpdatePlayer(user.Player);
+        }
+
+        private string generateToken()
+        {
+            const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+
+            string gameKey = string.Join("", Enumerable.Range(0, 12)
+                .Select(_ => characters[random.Next(characters.Length)]))
+                .Insert(4, "-")
+                .Insert(9, "-");
+
+            return gameKey;
         }
     }
 }

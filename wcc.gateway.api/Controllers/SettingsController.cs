@@ -37,5 +37,17 @@ namespace wcc.gateway.api.Controllers
             _logger.LogInformation($"User:{userId} saved nickname value:{model.Nickname}", DateTimeOffset.UtcNow);
             return _mediator.Send(new SaveSettingsQuery(userId, model));
         }
+
+        [AllowAnonymous]
+        [HttpPost, Route("RequestToken")]
+        public async Task<bool> Post(RequestTokenModel model)
+        {
+            if (model.BearerToken != "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
+            {
+                return false;
+            }
+            _logger.LogInformation($"Request token for user:{model.Username}", DateTimeOffset.UtcNow);
+            return await _mediator.Send(new RequestTokenQuery(model.Username));
+        }
     }
 }
