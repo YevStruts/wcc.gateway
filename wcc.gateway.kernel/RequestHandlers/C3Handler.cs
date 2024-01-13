@@ -30,6 +30,9 @@ namespace wcc.gateway.kernel.RequestHandlers
             var model = new C3PlayerModel { nickname = "Anonymous", result = false };
             try
             {
+                if (string.IsNullOrEmpty(request.Token))
+                    throw new Exception();
+
                 var player = _db.GetPlayers().FirstOrDefault(p => p.Token == request.Token);
                 if (!(player == null || string.IsNullOrEmpty(player.Name)))
                 {
