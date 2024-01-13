@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.api.Helpers;
+using wcc.gateway.Identity;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.Game;
 using wcc.gateway.kernel.RequestHandlers;
@@ -48,6 +49,17 @@ namespace wcc.gateway.api.Controllers
             var userId = User.GetUserId();
             _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
             return _mediator.Send(new UpdatePlayerQuery(model, userId));
+        }
+
+        [AllowAnonymous]
+        [HttpPost, Route("Register")]
+        public async Task<bool> Post(RegisterPlayerModel model)
+        {
+            if (model.BearerToken != "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
+            {
+                return false;
+            }
+            return await _mediator.Send(new RegisterPlayerQuery(model));
         }
     }
 }

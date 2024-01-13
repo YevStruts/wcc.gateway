@@ -80,22 +80,9 @@ namespace wcc.gateway.kernel.RequestHandlers
             if (user == null || !string.IsNullOrEmpty(user.Player.Token))
                 return false;
 
-            user.Player.Token = generateToken();
+            user.Player.Token = CommonHelper.GenerateToken();
 
             return _db.UpdatePlayer(user.Player);
-        }
-
-        private string generateToken()
-        {
-            const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            Random random = new Random();
-
-            string gameKey = string.Join("", Enumerable.Range(0, 12)
-                .Select(_ => characters[random.Next(characters.Length)]))
-                .Insert(4, "-")
-                .Insert(9, "-");
-
-            return gameKey;
         }
     }
 }

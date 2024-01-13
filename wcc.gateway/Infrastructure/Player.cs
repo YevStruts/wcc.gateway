@@ -12,6 +12,7 @@ namespace wcc.gateway.Infrastructure
         {
             CountryId = 254; /* Neutral */
             IsActive = true;
+            Token = string.Empty;
         }
 
         [Required]

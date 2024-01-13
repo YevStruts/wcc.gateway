@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using Newtonsoft.Json.Linq;
 using wcc.gateway.data;
+using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
@@ -44,11 +46,22 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class RegisterPlayerQuery : IRequest<bool>
+    {
+        public RegisterPlayerModel Player { get; }
+
+        public RegisterPlayerQuery(RegisterPlayerModel player)
+        {
+            Player = player;
+        }
+    }
+
     public class PlayerHandler :
         IRequestHandler<GetPlayerDetailQuery, PlayerModel>,
         IRequestHandler<GetPlayerListQuery, IEnumerable<PlayerModel>>,
         IRequestHandler<GetPlayerProfileQuery, PlayerProfile>,
-        IRequestHandler<UpdatePlayerQuery, bool>
+        IRequestHandler<UpdatePlayerQuery, bool>,
+        IRequestHandler<RegisterPlayerQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -141,6 +154,73 @@ namespace wcc.gateway.kernel.RequestHandlers
             player.IsActive = request.Player.IsActive;
 
             return _db.UpdatePlayer(player);
+        }
+
+        public async Task<bool> Handle(RegisterPlayerQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = _db.GetUserByExternalId(request.Player.ExternalId.ToString());
+                if (user == null)
+                {
+                    var role = _db.GetRole(request.Player.RoleId);
+                    var newUser = new User
+                    {
+                        ExternalId = request.Player.ExternalId.ToString(),
+                        Username = request.Player.Username,
+                        Avatar = request.Player.Avatar,
+                        Discriminator = request.Player.Discriminator,
+                        Email = request.Player.Email,
+                        Token = request.Player.Token,
+                        Role = role
+                    };
+                    if (!_db.AddUser(newUser))
+                        return false;
+
+                    var newPlayer = new Player
+                    {
+                        Name = request.Player.GlobalName,
+                        UserId = newUser.Id,
+                        User = newUser,
+                        Token = CommonHelper.GenerateToken()
+                    };
+                    if (!_db.AddPlayer(newPlayer))
+                        return false;
+                    return true;
+                }
+
+                user.Username = request.Player.Username;
+                user.Avatar = request.Player.Avatar;
+                user.Discriminator = request.Player.Discriminator;
+                user.Email = request.Player.Email;
+                user.Token = request.Player.Token;
+
+                if (user.Player == null)
+                {
+                    var newPlayer = new Player
+                    {
+                        Name = request.Player.GlobalName,
+                        UserId = user.Id,
+                        User = user,
+                        Token = CommonHelper.GenerateToken()
+                    };
+                    if (!_db.AddPlayer(newPlayer))
+                        return false;
+
+                    user.Player = newPlayer;
+                }
+                else
+                {
+                    user.Player.Name = request.Player.GlobalName;
+                }
+
+                return _db.UpdateUser(user);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
         }
     }
 }
