@@ -58,9 +58,9 @@ namespace wcc.gateway.kernel.RequestHandlers
             return model;
         }
 
-        public Task<bool> Handle(GameResultQuery request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(GameResultQuery request, CancellationToken cancellationToken)
         {
-            
+            return true;
         }
     }
 }
