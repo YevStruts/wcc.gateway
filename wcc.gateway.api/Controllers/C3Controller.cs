@@ -47,5 +47,12 @@ namespace wcc.gateway.api.Controllers
 
             return model;
         }
+
+        [HttpPost, Route("SaveGameResult")]
+        public async Task<bool> SaveGameResult(List<GameResultModel> model)
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} logins from c3", DateTimeOffset.UtcNow);
+            return await _mediator.Send(new GameResultQuery(model));
+        }
     }
 }

@@ -15,7 +15,18 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class C3Handler : IRequestHandler<LoginQuery, C3PlayerModel>
+    public class GameResultQuery : IRequest<bool>
+    {
+        public List<GameResultModel> Result { get; }
+        public GameResultQuery(List<GameResultModel> result)
+        {
+            Result = result;
+        }
+    }
+
+    public class C3Handler : IRequestHandler<LoginQuery, C3PlayerModel>,
+        IRequestHandler<GameResultQuery, bool>
+
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -45,6 +56,11 @@ namespace wcc.gateway.kernel.RequestHandlers
             {
             }
             return model;
+        }
+
+        public Task<bool> Handle(GameResultQuery request, CancellationToken cancellationToken)
+        {
+            
         }
     }
 }
