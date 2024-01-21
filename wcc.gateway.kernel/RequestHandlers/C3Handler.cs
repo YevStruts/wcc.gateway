@@ -36,6 +36,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 var player = _db.GetPlayers().FirstOrDefault(p => p.Token == request.Token);
                 if (!(player == null || string.IsNullOrEmpty(player.Name)))
                 {
+                    model.id = player.Id;
                     model.result = true;
                     model.nickname = player.Name;
                 }

@@ -8,6 +8,7 @@ namespace wcc.gateway.kernel.Models.C3
 {
     public class C3PlayerModel : ResultModel
     {
+        public long id { get; set; }
         public string nickname { get; set; }
     }
 }
