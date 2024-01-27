@@ -35,17 +35,7 @@ namespace wcc.gateway.api.Controllers
             var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} get's rating Id:{1}", DateTimeOffset.UtcNow);
             
-            var rating = await _mediator.Send(new GetRatingQuery(1, locale));
-
-            var model = new C3RatingModel() { result = true }; 
-            rating.ForEach(p => model.players.Add(new C3RatingItemModel
-            {
-                id = p.Id,
-                name = p.Name,
-                score = p.TotalPoints
-            }));
-
-            return model;
+            return await _mediator.Send(new C3GetRatingQuery());
         }
 
         [HttpPost, Route("SaveGameResult")]
