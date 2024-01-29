@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
+using System.Net;
+using System.Text;
 using wcc.gateway.data;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models.C3;
@@ -97,7 +99,18 @@ namespace wcc.gateway.kernel.RequestHandlers
         {
             if (request.Result.Count > 0)
             {
-                var response = await new ApiCaller(_ratingConfig.Url).PostAsync<List<GameResultModel>, string>("api/C3/Save", request.Result);
+                var playerIds = request.Result.Select(r => r.player_id).ToArray();
+                var players = _db.GetPlayers().Where(p => playerIds.Contains(p.Id)).ToList();
+
+                var result = await new ApiCaller(_ratingConfig.Url)
+                    .PostAsync<List<GameResultModel>, List<C3SaveRankModel>>("api/C3/Save", request.Result);
+
+                var payload = CommonHelper.CreateGameResultPayload(players, request.Result, result);
+
+                WebClient client = new WebClient();
+                client.Headers.Add("Content-Type", "application/json");
+                client.UploadData("https://discord.com/api/webhooks/1189043276708327504/oLsVBHxSZ9b5TIPdIaKC__stUNz5Gby9xlapGeLkZLv2uvlrTSsU__P1I0wATxyqi8kc",
+                    Encoding.UTF8.GetBytes(payload));
 
                 return true;
             }
