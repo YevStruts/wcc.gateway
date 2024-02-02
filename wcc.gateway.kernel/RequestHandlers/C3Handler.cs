@@ -17,6 +17,13 @@ namespace wcc.gateway.kernel.RequestHandlers
             Token = token;
         }
     }
+    
+    public class C3GetUsersQuery : IRequest<C3UsersModel>
+    {
+        public C3GetUsersQuery()
+        {
+        }
+    }
 
     public class C3GetRatingQuery : IRequest<C3RatingModel>
     {
@@ -35,6 +42,7 @@ namespace wcc.gateway.kernel.RequestHandlers
     }
 
     public class C3Handler : IRequestHandler<LoginQuery, C3PlayerModel>,
+        IRequestHandler<C3GetUsersQuery, C3UsersModel>,
         IRequestHandler<C3GetRatingQuery, C3RatingModel>,
         IRequestHandler<GameResultQuery, bool>
 
@@ -51,7 +59,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<C3PlayerModel> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
-            var model = new C3PlayerModel { nickname = "Anonymous", result = false };
+            var model = new C3PlayerModel { nickname = "Anonymous" };
             try
             {
                 if (string.IsNullOrEmpty(request.Token))
@@ -61,13 +69,21 @@ namespace wcc.gateway.kernel.RequestHandlers
                 if (!(player == null || string.IsNullOrEmpty(player.Name)))
                 {
                     model.id = player.Id;
-                    model.result = true;
                     model.nickname = player.Name;
                 }
             }
             catch (Exception ex)
             {
             }
+            return model;
+        }
+
+        public async Task<C3UsersModel> Handle(C3GetUsersQuery request, CancellationToken cancellationToken)
+        {
+            var players = _db.GetPlayers().Where(p => p.IsActive && !string.IsNullOrEmpty(p.Token)).ToList();
+
+            var model = new C3UsersModel() { result = true };
+            model.users = _mapper.Map<List<C3UserItemModel>>(players);            
             return model;
         }
 

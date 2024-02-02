@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace wcc.gateway.kernel.Models.C3
 {
-    public class C3PlayerModel
+    public class C3UsersModel : ResultModel
     {
-        public long id { get; set; }
-        public string nickname { get; set; }
+        public List<C3UserItemModel> users { get; set; }
     }
 }

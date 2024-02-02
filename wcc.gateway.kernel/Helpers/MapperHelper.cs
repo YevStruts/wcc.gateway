@@ -8,6 +8,7 @@ using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.Models.C3;
 
 namespace wcc.gateway.kernel.Helpers
 {
@@ -65,6 +66,11 @@ namespace wcc.gateway.kernel.Helpers
                             .ForMember(dest => dest.Avatar, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
 
                         cfg.CreateMap<IEnumerable<Game>, IEnumerable<LastFightsList>>();
+
+                        cfg.CreateMap<Player, C3UserItemModel>()
+                            .ForMember(dest => dest.id, act => act.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.nickname, act => act.MapFrom(src => src.Name))
+                            .ForMember(dest => dest.token, act => act.MapFrom(src => src.Token));
                     });
 
                     instance = new Mapper(config);

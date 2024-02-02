@@ -29,6 +29,13 @@ namespace wcc.gateway.api.Controllers
             return await _mediator.Send(new LoginQuery(model.Token));
         }
 
+        [HttpGet, Route("Users")]
+        public async Task<C3UsersModel> GetUsers()
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} get's users list", DateTimeOffset.UtcNow);
+            return await _mediator.Send(new C3GetUsersQuery());
+        }
+
         [HttpGet, Route("Rating")]
         public async Task<C3RatingModel> GetRating()
         {
