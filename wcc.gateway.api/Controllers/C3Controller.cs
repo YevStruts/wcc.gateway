@@ -36,13 +36,13 @@ namespace wcc.gateway.api.Controllers
             return await _mediator.Send(new C3GetUsersQuery());
         }
 
-        [HttpGet, Route("Rating")]
-        public async Task<C3RatingModel> GetRating()
+        [HttpGet, Route("Rating/{id}")]
+        public async Task<C3RatingModel> GetRating(int id)
         {
             var locale = Request.Headers["locale"].ToString() ?? "ua";
-            _logger.LogInformation($"User:{User.GetUserId()} get's rating Id:{1}", DateTimeOffset.UtcNow);
+            _logger.LogInformation($"User:{User.GetUserId()} get's rating Id:{id}", DateTimeOffset.UtcNow);
             
-            return await _mediator.Send(new C3GetRatingQuery());
+            return await _mediator.Send(new C3GetRatingQuery(id));
         }
 
         [HttpPost, Route("SaveGameResult")]

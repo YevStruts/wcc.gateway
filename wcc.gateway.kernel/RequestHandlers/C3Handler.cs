@@ -27,8 +27,10 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     public class C3GetRatingQuery : IRequest<C3RatingModel>
     {
-        public C3GetRatingQuery()
+        public int Id { get; private set; }
+        public C3GetRatingQuery(int id)
         {
+            Id = id;
         }
     }
 
@@ -89,7 +91,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<C3RatingModel> Handle(C3GetRatingQuery request, CancellationToken cancellationToken)
         {
-            var rating = await new ApiCaller(_ratingConfig.Url).GetAsync<List<C3RankModel>>("api/C3/Rating");
+            var rating = await new ApiCaller(_ratingConfig.Url).GetAsync<List<C3RankModel>>($"api/C3/Rating/{request.Id}");
 
             var players = _db.GetPlayers().Where(p => p.IsActive).ToList();
 
