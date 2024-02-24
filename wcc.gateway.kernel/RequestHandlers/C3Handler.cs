@@ -36,8 +36,8 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     public class GameResultQuery : IRequest<bool>
     {
-        public List<GameResultModel> Result { get; }
-        public GameResultQuery(List<GameResultModel> result)
+        public C3GameResultModel Result { get; }
+        public GameResultQuery(C3GameResultModel result)
         {
             Result = result;
         }
@@ -91,14 +91,14 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<C3RatingModel> Handle(C3GetRatingQuery request, CancellationToken cancellationToken)
         {
-            var rating = await new ApiCaller(_ratingConfig.Url).GetAsync<List<C3RankModel>>($"api/C3/Rating/{request.Id}");
+            var rating = await new ApiCaller(_ratingConfig.Url).GetAsync<C3RankModel>($"api/C3/Rating/{request.Id}");
 
             var players = _db.GetPlayers().Where(p => p.IsActive).ToList();
 
             var model = new C3RatingModel() { result = true };
             players.ForEach(p =>
             {
-                var pRank = rating.FirstOrDefault(r => r.PlayerId == p.Id);
+                var pRank = rating.Items.FirstOrDefault(r => r.PlayerId == p.Id);
                 if (pRank != null)
                 {
                     model.players.Add(new C3RatingItemModel
@@ -115,15 +115,15 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<bool> Handle(GameResultQuery request, CancellationToken cancellationToken)
         {
-            if (request.Result.Count > 0)
+            if (request.Result.Items.Count > 0)
             {
-                var playerIds = request.Result.Select(r => r.player_id).ToArray();
+                var playerIds = request.Result.Items.Select(r => r.player_id).ToArray();
                 var players = _db.GetPlayers().Where(p => playerIds.Contains(p.Id)).ToList();
 
                 var result = await new ApiCaller(_ratingConfig.Url)
-                    .PostAsync<List<GameResultModel>, List<C3SaveRankModel>>("api/C3/Save", request.Result);
+                    .PostAsync<C3GameResultModel, List<C3SaveRankModel>>("api/C3/Save", request.Result);
 
-                var payload = CommonHelper.CreateGameResultPayload(players, request.Result, result);
+                var payload = CommonHelper.CreateGameResultPayload(players, request.Result.Items, result);
 
                 WebClient client = new WebClient();
                 client.Headers.Add("Content-Type", "application/json");

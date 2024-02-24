@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace wcc.gateway.kernel.Models.C3
 {
-    public class C3RankModel
+    public class C3GameResultModel
     {
         public int RankId { get; set; }
-        public List<C3RankItemModel> Items { get; set; }
+        public List<C3GameItemResultModel> Items { get; set; }
     }
 }

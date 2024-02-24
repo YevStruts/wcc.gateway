@@ -24,7 +24,7 @@ namespace wcc.gateway.kernel.Helpers
             return gameKey;
         }
 
-        public static string CreateGameResultPayload(List<Player> players, List<GameResultModel> gameResults, List<C3SaveRankModel> rankResults)
+        public static string CreateGameResultPayload(List<Player> players, List<C3GameItemResultModel> gameResults, List<C3SaveRankModel> rankResults)
         {
             var payload = "{\"content\": null,\"embeds\":[{\"description\": \"Quick Game Result\",\"color\":2733953,\"fields\":[fields_template]}],\"username\":\"WCC Server\",\"avatar_url\": \"https://wcc-cossacks.s3.eu-central-1.amazonaws.com/images/wcc-logo-discord.png\",\"attachments\":[]}";
             var fields = string.Empty;

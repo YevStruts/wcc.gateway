@@ -46,7 +46,7 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpPost, Route("SaveGameResult")]
-        public async Task<bool> SaveGameResult(List<GameResultModel> model)
+        public async Task<bool> SaveGameResult(C3GameResultModel model)
         {
             _logger.LogInformation($"User:{User.GetUserId()} logins from c3", DateTimeOffset.UtcNow);
             return await _mediator.Send(new GameResultQuery(model));
