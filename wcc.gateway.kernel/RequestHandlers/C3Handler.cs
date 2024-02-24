@@ -3,6 +3,7 @@ using MediatR;
 using System.Net;
 using System.Text;
 using wcc.gateway.data;
+using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models.C3;
 using wcc.gateway.kernel.Models.Microservices;
@@ -105,7 +106,9 @@ namespace wcc.gateway.kernel.RequestHandlers
                     {
                         id = p.Id,
                         name = p.Name ?? string.Empty,
-                        score = pRank.Score
+                        score = pRank.Score,
+                        games = p.Statistic?.Games ?? 0,
+                        wins = p.Statistic?.Wins ?? 0
                     });
                 }
             });
@@ -122,6 +125,21 @@ namespace wcc.gateway.kernel.RequestHandlers
 
                 var result = await new ApiCaller(_ratingConfig.Url)
                     .PostAsync<C3GameResultModel, List<C3SaveRankModel>>("api/C3/Save", request.Result);
+
+                foreach (var item in request.Result.Items)
+                {
+                    var player = players.FirstOrDefault(p => p.Id == item.player_id);
+                    if (player != null)
+                    {
+                        if (player.Statistic == null)
+                            player.Statistic = new Statistic { PlayerId = item.player_id, Wins = 0, Games = 0 };
+
+                        player.Statistic.Games++;
+                        if (item.result == (int)GameResult.WIN)
+                            player.Statistic.Wins++;
+                        _db.UpdatePlayer(player);
+                    }
+                }
 
                 var payload = CommonHelper.CreateGameResultPayload(players, request.Result.Items, result);
 

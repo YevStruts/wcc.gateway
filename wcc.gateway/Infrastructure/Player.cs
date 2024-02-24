@@ -38,5 +38,7 @@ namespace wcc.gateway.Infrastructure
         public List<Tournament> Tournament { get; set; }
 
         public List<Team> Teams { get; set; }
+
+        public Statistic Statistic { get; set; }
     }
 }

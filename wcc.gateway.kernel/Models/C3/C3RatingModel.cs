@@ -11,6 +11,8 @@ namespace wcc.gateway.kernel.Models.C3
         public long id { get; set; }
         public string name { get; set; }
         public int score { get; set; }
+        public int games { get; set; }
+        public int wins { get; set; }
     }
 
     public class C3RatingModel : ResultModel
