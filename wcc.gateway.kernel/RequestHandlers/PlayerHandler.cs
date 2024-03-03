@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using wcc.gateway.data;
 using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
@@ -65,10 +68,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
+        private readonly ILogger<PlayerHandler> _logger;
 
-        public PlayerHandler(IDataRepository db)
+        public PlayerHandler(IDataRepository db, ILogger<PlayerHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public Task<PlayerModel> Handle(GetPlayerDetailQuery request, CancellationToken cancellationToken)
@@ -170,12 +175,16 @@ namespace wcc.gateway.kernel.RequestHandlers
                         Username = request.Player.Username,
                         Avatar = request.Player.Avatar,
                         Discriminator = request.Player.Discriminator,
-                        Email = request.Player.Email,
+                        Email = request.Player.Email ?? string.Empty,
                         Token = request.Player.Token,
                         Role = role
                     };
                     if (!_db.AddUser(newUser))
+                    {
+                        _logger.LogError($"Failed adding user:{newUser}",
+                            DateTimeOffset.UtcNow);
                         return false;
+                    }
 
                     var newPlayer = new Player
                     {
@@ -185,15 +194,20 @@ namespace wcc.gateway.kernel.RequestHandlers
                         Token = CommonHelper.GenerateToken()
                     };
                     if (!_db.AddPlayer(newPlayer))
+                    {
+                        _logger.LogError($"Failed adding player:{JsonSerializer.Serialize(newPlayer)}",
+                            DateTimeOffset.UtcNow);
                         return false;
+                    }
                     return true;
                 }
+
+                _logger.LogInformation($"User exists.", DateTimeOffset.UtcNow);
 
                 user.Username = request.Player.Username;
                 user.Avatar = request.Player.Avatar;
                 user.Discriminator = request.Player.Discriminator;
                 user.Email = request.Player.Email;
-                user.Token = request.Player.Token;
 
                 if (user.Player == null)
                 {
@@ -205,20 +219,36 @@ namespace wcc.gateway.kernel.RequestHandlers
                         Token = CommonHelper.GenerateToken()
                     };
                     if (!_db.AddPlayer(newPlayer))
+                    {
+                        _logger.LogError($"Failed adding player:{JsonSerializer.Serialize(newPlayer)}",
+                            DateTimeOffset.UtcNow);
                         return false;
+                    }
 
                     user.Player = newPlayer;
                 }
                 else
                 {
                     user.Player.Name = request.Player.GlobalName;
+                    if (string.IsNullOrEmpty(user.Player.Token))
+                    {
+                        user.Player.Token = string.IsNullOrEmpty(request.Player.Token) ?
+                            CommonHelper.GenerateToken() :
+                            request.Player.Token;
+                    }
                 }
 
-                return _db.UpdateUser(user);
+                if (!_db.UpdateUser(user))
+                {
+                    _logger.LogError($"Failed updating user:{JsonSerializer.Serialize(user)}",
+                        DateTimeOffset.UtcNow);
+                    return false;
+                }
+                return true;
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"{ex.Message}\n{ex.StackTrace ?? string.Empty}", DateTimeOffset.UtcNow);
             }
             return false;
         }
