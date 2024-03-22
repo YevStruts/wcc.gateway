@@ -123,34 +123,63 @@ namespace wcc.gateway.kernel.RequestHandlers
                 var playerIds = request.Result.Items.Select(r => r.player_id).ToArray();
                 var players = _db.GetPlayers().Where(p => playerIds.Contains(p.Id)).ToList();
 
-                var result = await new ApiCaller(_ratingConfig.Url)
-                    .PostAsync<C3GameResultModel, List<C3SaveRankModel>>("api/C3/Save", request.Result);
-
-                foreach (var item in request.Result.Items)
+                if (isRatingGame(request.Result.Description))
                 {
-                    var player = players.FirstOrDefault(p => p.Id == item.player_id);
-                    if (player != null)
+                    // calc rating
+                    var result = await new ApiCaller(_ratingConfig.Url)
+                        .PostAsync<C3GameResultModel, List<C3SaveRankModel>>("api/C3/Save", request.Result);
+
+                    foreach (var item in request.Result.Items)
                     {
-                        if (player.Statistic == null)
-                            player.Statistic = new Statistic { PlayerId = item.player_id, Wins = 0, Games = 0 };
+                        var player = players.FirstOrDefault(p => p.Id == item.player_id);
+                        if (player != null)
+                        {
+                            if (player.Statistic == null)
+                                player.Statistic = new Statistic { PlayerId = item.player_id, Wins = 0, Games = 0 };
 
-                        player.Statistic.Games++;
-                        if (item.result == (int)GameResult.WIN)
-                            player.Statistic.Wins++;
-                        _db.UpdatePlayer(player);
+                            player.Statistic.Games++;
+                            if (item.result == (int)GameResult.WIN)
+                                player.Statistic.Wins++;
+                            _db.UpdatePlayer(player);
+                        }
                     }
+
+                    // post results
+                    var payload = CommonHelper.CreateGameResultPayload(players, request.Result.Items, result);
+
+                    WebClient client = new WebClient();
+                    client.Headers.Add("Content-Type", "application/json");
+                    client.UploadData("https://discord.com/api/webhooks/1189043276708327504/oLsVBHxSZ9b5TIPdIaKC__stUNz5Gby9xlapGeLkZLv2uvlrTSsU__P1I0wATxyqi8kc",
+                        Encoding.UTF8.GetBytes(payload));
                 }
-
-                var payload = CommonHelper.CreateGameResultPayload(players, request.Result.Items, result);
-
-                WebClient client = new WebClient();
-                client.Headers.Add("Content-Type", "application/json");
-                client.UploadData("https://discord.com/api/webhooks/1189043276708327504/oLsVBHxSZ9b5TIPdIaKC__stUNz5Gby9xlapGeLkZLv2uvlrTSsU__P1I0wATxyqi8kc",
-                    Encoding.UTF8.GetBytes(payload));
 
                 return true;
             }
             return false;
+        }
+
+        private bool isRatingGame(string? description)
+        {
+            // TODO: Check description do we need to save game.
+            // request.Result.Description
+            //auto description = it->first;
+            //if ((WCCHelper::StartsWith(description, "\"qs=") ||
+            //    WCCHelper::StartsWith(description, "\"qz=") ||
+            //    WCCHelper::StartsWith(description, "\"qp=") ||
+            //    WCCHelper::StartsWith(description, "\"qt=")) &&
+            //    WCCHelper::Contains(description, "0000000000"))
+            //{
+            //}
+
+            if (string.IsNullOrEmpty(description))
+                return false;
+
+            return (description.StartsWith("\"qs=") ||
+                    description.StartsWith("\"qz=") ||
+                    description.StartsWith("\"qp=") ||
+                    description.StartsWith("\"qt=")) &&
+                    description.Contains("0000000000");
+                    
         }
     }
 }
