@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wcc.gateway.data;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
