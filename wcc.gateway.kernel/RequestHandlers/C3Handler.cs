@@ -6,7 +6,7 @@ using wcc.gateway.data;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models.C3;
-using wcc.gateway.kernel.Models.Microservices;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -52,12 +52,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
-        private readonly RatingConfig _ratingConfig;
+        private readonly Microservices.Config _mcsvcConfig;
 
-        public C3Handler(IDataRepository db, RatingConfig ratingConfig)
+        public C3Handler(IDataRepository db, Microservices.Config mcsvcConfig)
         {
             _db = db;
-            _ratingConfig = ratingConfig;
+            _mcsvcConfig = mcsvcConfig;
         }
 
         public async Task<C3PlayerModel> Handle(LoginQuery request, CancellationToken cancellationToken)
@@ -92,7 +92,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<C3RatingModel> Handle(C3GetRatingQuery request, CancellationToken cancellationToken)
         {
-            var rating = await new ApiCaller(_ratingConfig.Url).GetAsync<C3RankModel>($"api/C3/Rating/{request.Id}");
+            var rating = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<C3RankModel>($"api/C3/Rating/{request.Id}");
 
             var players = _db.GetPlayers().Where(p => p.IsActive).ToList();
 
@@ -126,7 +126,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 if (isRatingGame(request.Result.Description))
                 {
                     // calc rating
-                    var result = await new ApiCaller(_ratingConfig.Url)
+                    var result = await new ApiCaller(_mcsvcConfig.RatingUrl)
                         .PostAsync<C3GameResultModel, List<C3SaveRankModel>>("api/C3/Save", request.Result);
 
                     foreach (var item in request.Result.Items)

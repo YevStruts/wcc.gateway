@@ -7,7 +7,7 @@ using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
-using wcc.gateway.kernel.Models.Microservices;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -100,12 +100,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
-        private readonly RatingConfig _ratingConfig;
+        private readonly Microservices.Config _mcsvcConfig;
 
-        public TournamentHandler(IDataRepository db, RatingConfig ratingConfig)
+        public TournamentHandler(IDataRepository db, Microservices.Config mcsvcConfig)
         {
             _db = db;
-            _ratingConfig = ratingConfig;
+            _mcsvcConfig = mcsvcConfig;
         }
 
         public Task<TournamentModel> Handle(GetTournamentDetailQuery request, CancellationToken cancellationToken)
@@ -220,7 +220,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             var records = new List<SwitzTableItemModel>();
             var games = gamesDto.Where(g => g.HScore + g.VScore > 0).ToList();
 
-            var playerRatingData = await new ApiCaller(_ratingConfig.Url).GetAsync<List<PlayerData>>("api/rating");
+            var playerRatingData = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
             var rating = playerRatingData.OrderByDescending(r => r.Points).ToList();
 
             foreach (var player in players)

@@ -6,7 +6,7 @@ using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
-using wcc.gateway.kernel.Models.Microservices;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -90,12 +90,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
-        private readonly RatingConfig _ratingConfig;
+        private readonly Microservices.Config _mcsvcConfig;
 
-        public GameHandler(IDataRepository db, RatingConfig ratingConfig)
+        public GameHandler(IDataRepository db, Microservices.Config mcsvcConfig)
         {
             _db = db;
-            _ratingConfig = ratingConfig;
+            _mcsvcConfig = mcsvcConfig;
         }
 
         public async Task<GameListModel> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
@@ -273,7 +273,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                         gameModel.HParticipants = hTeam.Players.Select(p => p.Id).ToList();
                         gameModel.VParticipants = vTeam.Players.Select(p => p.Id).ToList();
                     }
-                    var response = await new ApiCaller(_ratingConfig.Url).PostAsync<Models.Microservices.Rating.GameModel, string>("api/Game/Save", gameModel);
+                    var response = await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<Models.Microservices.Rating.GameModel, string>("api/Game/Save", gameModel);
                 }
                 catch (Exception ex)
                 {

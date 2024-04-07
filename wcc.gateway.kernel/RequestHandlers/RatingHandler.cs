@@ -5,7 +5,7 @@ using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
-using wcc.gateway.kernel.Models.Microservices;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -26,12 +26,12 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
-        private readonly RatingConfig _ratingConfig;
+        private readonly Microservices.Config _mcsvcConfig;
 
-        public RatingHandler(IDataRepository db, RatingConfig ratingConfig)
+        public RatingHandler(IDataRepository db, Microservices.Config mcsvcConfig)
         {
             _db = db;
-            _ratingConfig = ratingConfig;
+            _mcsvcConfig = mcsvcConfig;
         }
 
         public async Task<List<RatingModel>> Handle(GetRatingQuery request, CancellationToken cancellationToken)
@@ -40,7 +40,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             var countries = _db.GetCountries();
 
-            var playerData = await new ApiCaller(_ratingConfig.Url).GetAsync<List<PlayerData>>("api/rating");
+            var playerData = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
 
             var rating = new List<RatingModel>();
             if (playerData != null && playerData.Count > 0)

@@ -1,0 +1,8 @@
+﻿namespace wcc.gateway.kernel.Models.Microservices
+{
+    public class Config
+    {
+        public string? RatingUrl { get; set; }
+        public string? CoreUrl { get; set; }
+    }
+}
