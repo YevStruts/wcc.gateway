@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.api.Helpers;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.Models.Schedule;
 using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
@@ -20,10 +21,10 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpGet]
-        public Task Get(long page = 1, long count = 20)
+        public async Task<ScheduleModel> Get(string? tournamentId = null, long page = 1, long count = 20)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's game Id:{1}", DateTimeOffset.UtcNow);
-            return _mediator.Send(new GetScheduleQuery(1));
+            return await _mediator.Send(new GetScheduleQuery(tournamentId, page, count));
         }
     }
 }
