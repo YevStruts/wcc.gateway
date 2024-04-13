@@ -9,6 +9,7 @@ namespace wcc.gateway.kernel.Models.Core
 {
     internal class TournamentModel
     {
+        public string? Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }

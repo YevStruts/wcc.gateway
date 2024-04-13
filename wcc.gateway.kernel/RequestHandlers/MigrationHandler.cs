@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using System.Text.RegularExpressions;
 using wcc.gateway.data;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
@@ -92,7 +93,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TeamModel, bool>("api/team",
                     new Core.TeamModel
                     {
-                        Name = team.Name,
+                        Name = team.Id + " - " + team.Name,
                         PlayerIds = players,
                         TournamentId = team.TournamentId
                     });
@@ -144,10 +145,10 @@ namespace wcc.gateway.kernel.RequestHandlers
             var corePlayers = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.PlayerModel>>("api/player");
             Thread.Sleep(1000);
 
-            var coreTeams = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.PlayerModel>>("api/team");
+            var coreTeams = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.TeamModel>>("api/team");
             Thread.Sleep(1000);
 
-            var coreTournaments = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.PlayerModel>>("api/tournament");
+            var coreTournaments = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.TournamentModel>>("api/tournament");
             Thread.Sleep(1000);
 
             foreach (var game in games)
@@ -164,8 +165,8 @@ namespace wcc.gateway.kernel.RequestHandlers
                 }
                 else if (type == GameType.Teams)
                 {
-                    sideA.AddRange(coreTeams.Where(p => p.UserId == game.HUserId.ToString()).Select(p => p.Id).ToList());
-                    sideB.AddRange(coreTeams.Where(p => p.UserId == game.VUserId.ToString()).Select(p => p.Id).ToList());
+                    sideA.AddRange(coreTeams.Where(p => p.Name.StartsWith(game.HUserId.ToString() + " - ")).Select(p => p.Id).ToList());
+                    sideB.AddRange(coreTeams.Where(p => p.Name.StartsWith(game.VUserId.ToString() + " - ")).Select(p => p.Id).ToList());
                 }
                 else
                 {
@@ -189,6 +190,43 @@ namespace wcc.gateway.kernel.RequestHandlers
                 {
                     return false;
                 }
+
+                Thread.Sleep(1000);
+            }
+
+            // update teams names
+            foreach (var coreTeam in coreTeams)
+            {
+                string pattern = "\\d* - ";
+                string newName = Regex.Replace(coreTeam.Name, pattern, string.Empty);
+
+                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TeamModel, bool>("api/team",
+                    new Core.TeamModel
+                    {
+                        Id = coreTeam.Id,
+                        Name = newName,
+                        PlayerIds = coreTeam.PlayerIds,
+                        TournamentId = coreTeam.TournamentId
+                    });
+
+                Thread.Sleep(1000);
+            }
+
+            // update touranments names
+            foreach(var coreTournament in coreTournaments)
+            {
+                string pattern = "\\d* - ";
+                string newName = Regex.Replace(coreTournament.Name, pattern, string.Empty);
+
+                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TournamentModel, bool>("api/tournament",
+                    new Core.TournamentModel
+                    {
+                        Id = coreTournament.Id,
+                        Name = newName,
+                        Description = coreTournament.Description,
+                        ImageUrl = coreTournament.ImageUrl,
+                        GameType = (GameType)coreTournament.GameType
+                    });
 
                 Thread.Sleep(1000);
             }
