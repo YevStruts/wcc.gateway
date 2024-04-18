@@ -12,10 +12,11 @@ using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.Schedule;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
+using Core = wcc.gateway.kernel.Models.Core;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class GetScheduleQuery : IRequest<ScheduleModel>
+    public class GetScheduleQuery : IRequest<IList<ScheduleModel>>
     {
         public string TournamentId { get; }
         public long Page { get; }
@@ -29,8 +30,19 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class GetScheduleCountQuery : IRequest<int>
+    {
+        public string TournamentId { get; }
+
+        public GetScheduleCountQuery(string tournamentId)
+        {
+            TournamentId = tournamentId;
+        }
+    }
+
     public class ScheduleHandler :
-        IRequestHandler<GetScheduleQuery, ScheduleModel>
+        IRequestHandler<GetScheduleQuery, IList<ScheduleModel>>,
+        IRequestHandler<GetScheduleCountQuery, int>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -42,16 +54,63 @@ namespace wcc.gateway.kernel.RequestHandlers
             _mcsvcConfig = mcsvcConfig;
         }
 
-        public async Task<ScheduleModel> Handle(GetScheduleQuery request, CancellationToken cancellationToken)
+        public async Task<IList<ScheduleModel>> Handle(GetScheduleQuery request, CancellationToken cancellationToken)
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);
-            parameters.Add("tournamentId", request.TournamentId);
+            if (!string.IsNullOrEmpty(request.TournamentId))
+            {
+                parameters.Add("tournamentId", request.TournamentId);
+            }
             parameters.Add("page", request.Page.ToString());
             parameters.Add("count", request.Count.ToString());
-
+                
             var games = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<GameData>>($"api/game?{parameters}");
 
-            return new ScheduleModel();
+            var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>($"api/player");
+
+            var teams = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.TeamModel>>($"api/team");
+
+            var schedule = new List<ScheduleModel>();
+            foreach (var game in games)
+            {
+                string sideA = game.GameType == GameType.Individual ?
+                    CreateSideTitle(game.SideA, players.Select(p => Tuple.Create(p.Id, p.Name)).ToList()) :
+                    CreateSideTitle(game.SideA, teams.Select(p => Tuple.Create(p.Id, p.Name)).ToList());
+
+                string sideB = game.GameType == GameType.Individual ?
+                    CreateSideTitle(game.SideB, players.Select(p => Tuple.Create(p.Id, p.Name)).ToList()) :
+                    CreateSideTitle(game.SideB, teams.Select(p => Tuple.Create(p.Id, p.Name)).ToList());
+
+                schedule.Add(new ScheduleModel
+                {
+                    Id = game.Id,
+                    Date = game.Scheduled,
+                    Name = "name",
+                    SideA = sideA,
+                    SideB = sideB,
+                    ScoreA = game.ScoreA,
+                    ScoreB = game.ScoreB,
+                    YouTube = game.Youtube.Where(y => !string.IsNullOrEmpty(y)).ToList()
+                });
+            }
+
+            return schedule;
+        }
+
+        public async Task<int> Handle(GetScheduleCountQuery request, CancellationToken cancellationToken)
+        {
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            if (!string.IsNullOrEmpty(request.TournamentId))
+            {
+                parameters.Add("tournamentId", request.TournamentId);
+            }
+            return await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<int>($"api/game/count?{parameters}");
+        }
+
+        private string CreateSideTitle(List<string>? side, List<Tuple<string? /* Id */, string? /* Name */>> list)
+        {
+            var participants = list.Where(l => side.Contains(l.Item1)).Select(l => l.Item2).ToList();
+            return string.Join("/", participants);
         }
     }
 }

@@ -2,6 +2,7 @@
 using MediatR;
 using System.Text.RegularExpressions;
 using wcc.gateway.data;
+using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
@@ -9,11 +10,11 @@ using Core = wcc.gateway.kernel.Models.Core;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class MigrateUserQuery : IRequest<bool>
+    public class MigratePlayerQuery : IRequest<bool>
     {
         public UserModel User { get; }
 
-        public MigrateUserQuery(UserModel user)
+        public MigratePlayerQuery(UserModel user)
         {
             User = user;
         }
@@ -40,7 +41,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class MigrationHandler : IRequestHandler<MigrateUserQuery, bool>,
+    public class MigrationHandler : IRequestHandler<MigratePlayerQuery, bool>,
         IRequestHandler<MigrateTeamsQuery, bool>,
         IRequestHandler<MigrateTournamentsQuery, bool>,
         IRequestHandler<MigrateGamesQuery, bool>
@@ -53,22 +54,27 @@ namespace wcc.gateway.kernel.RequestHandlers
             _db = db;
         }
 
-        public async Task<bool> Handle(MigrateUserQuery request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(MigratePlayerQuery request, CancellationToken cancellationToken)
         {
-            var user = _db.GetUserByExternalId(request.User.ExternalId);
-            if (user == null || user.Player == null) return false;
+            var players = _db.GetPlayers();
 
-            var token = string.IsNullOrEmpty(user.Player.Token) ?
-                CommonHelper.GenerateToken() : user.Player.Token;
+            foreach (var player in players)
+            {
+                var token = string.IsNullOrEmpty(player.Token) ? CommonHelper.GenerateToken() : player.Token;
 
-            var playerData = await new ApiCaller("http://localhost:6003").PostAsync<Core.PlayerModel, bool>("api/player", 
-                new Core.PlayerModel
-                {
-                    Name = request.User.PlayerName,
-                    UserId = user.Id.ToString(),
-                    IsActive = true,
-                    Token = token
-                });
+                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.PlayerModel, bool>("api/player",
+                    new Core.PlayerModel
+                    {
+                        Name = player.Name,
+                        UserId = player.UserId.ToString(),
+                        IsActive = true,
+                        Token = token
+                    });
+
+                if (!result) return false;
+                
+                Thread.Sleep(1000);
+            }
 
             return true;
         }
@@ -175,6 +181,15 @@ namespace wcc.gateway.kernel.RequestHandlers
 
                 var tournamentId = coreTournaments.FirstOrDefault(t => t.Name.StartsWith(game.TournamentId.ToString() + " - "))?.Id;
 
+                var youtube = new List<string>();
+                if (game.YoutubeUrls != null && game.YoutubeUrls.Any())
+                {
+                    foreach(var url in game.YoutubeUrls)
+                    {
+                        youtube.Add(url.Url ?? string.Empty);
+                    }
+                }
+
                 var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.GameModel, bool>("api/game",
                     new Core.GameModel
                     {
@@ -183,7 +198,9 @@ namespace wcc.gateway.kernel.RequestHandlers
                         SideB = sideB,
                         ScoreA = game.HScore,
                         ScoreB = game.VScore,
-                        TournamentId = tournamentId
+                        TournamentId = tournamentId,
+                        Scheduled = game.Scheduled.ToUniversalTime(),
+                        Youtube = youtube,
                     });
 
                 if (!result)
@@ -213,7 +230,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             }
 
             // update touranments names
-            foreach(var coreTournament in coreTournaments)
+            foreach (var coreTournament in coreTournaments)
             {
                 string pattern = "\\d* - ";
                 string newName = Regex.Replace(coreTournament.Name, pattern, string.Empty);

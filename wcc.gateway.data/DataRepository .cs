@@ -157,7 +157,7 @@ namespace wcc.gateway.data
 
         public List<Game> GetGames()
         {
-            return _context.Games.Include(g => g.Tournament).ToList();
+            return _context.Games.Include(g => g.Tournament).Include(g => g.YoutubeUrls).ToList();
         }
 
         public bool UpdateGame(Game game)

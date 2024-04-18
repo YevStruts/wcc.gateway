@@ -22,8 +22,16 @@ namespace wcc.gateway.api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
+        public async Task<IList<TournamentModel>> Get()
+        {
+            return await _mediator.Send(new GetTournamentsQuery());
+        }
+
+        #region old
+        [AllowAnonymous]
         [HttpGet, Route("{id}")]
-        public Task<TournamentModel> Get(int id)
+        public Task<TournamentModelOld> Get(int id)
         {
             var locale = Request.Headers["locale"].ToString() ?? "gb";
             _logger.LogInformation($"User:{User.GetUserId()} get's tournament Id:{id}", DateTimeOffset.UtcNow);
@@ -63,7 +71,7 @@ namespace wcc.gateway.api.Controllers
 
         [AllowAnonymous]
         [HttpGet, Route("List")]
-        public Task<IEnumerable<TournamentModel>> List()
+        public Task<IEnumerable<TournamentModelOld>> List()
         {
             var locale = Request.Headers["locale"].ToString() ?? "ua";
             _logger.LogInformation($"User:{User.GetUserId()} list of tournaments", DateTimeOffset.UtcNow);
@@ -77,5 +85,6 @@ namespace wcc.gateway.api.Controllers
             _logger.LogInformation($"User:{userId} get's participation status four tournament Id:{tournamentId}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetParticipationStatusQuery(tournamentId, userId));
         }
+        #endregion old
     }
 }

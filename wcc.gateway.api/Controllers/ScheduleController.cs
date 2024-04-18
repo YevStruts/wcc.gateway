@@ -21,10 +21,16 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpGet]
-        public async Task<ScheduleModel> Get(string? tournamentId = null, long page = 1, long count = 20)
+        public async Task<IList<ScheduleModel>> Get(string? tournamentId = null, long page = 1, long count = 20)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's game Id:{1}", DateTimeOffset.UtcNow);
             return await _mediator.Send(new GetScheduleQuery(tournamentId, page, count));
+        }
+
+        [HttpGet, Route("Count")]
+        public async Task<int> Count(string? tournamentId = null)
+        {
+            return await _mediator.Send(new GetScheduleCountQuery(tournamentId));
         }
     }
 }

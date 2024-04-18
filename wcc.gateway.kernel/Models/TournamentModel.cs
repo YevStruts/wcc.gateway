@@ -1,6 +1,17 @@
-﻿namespace wcc.gateway.kernel.Models
+﻿using wcc.gateway.Infrastructure;
+
+namespace wcc.gateway.kernel.Models
 {
     public class TournamentModel
+    {
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+        public GameType GameType { get; set; }
+    }
+
+    public class TournamentModelOld
     {
         public int Id { get; set; }
         public string? Name { get; set; }

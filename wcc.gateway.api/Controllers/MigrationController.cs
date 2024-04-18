@@ -20,10 +20,10 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost, Route("users")]
-        public async Task<bool> MigrateUsers(UserModel user)
+        [HttpPost, Route("players")]
+        public async Task<bool> MigrateUsers(UserModel players)
         {
-            return await _mediator.Send(new MigrateUserQuery(user));
+            return await _mediator.Send(new MigratePlayerQuery(players));
         }
 
         [HttpPost, Route("teams")]

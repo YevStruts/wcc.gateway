@@ -8,10 +8,16 @@ using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
+using Core = wcc.gateway.kernel.Models.Core;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class GetTournamentDetailQuery : IRequest<TournamentModel>
+    public class GetTournamentsQuery : IRequest<IList<TournamentModel>>
+    {
+
+    }
+
+    public class GetTournamentDetailQuery : IRequest<TournamentModelOld>
     {
         public long TournamentId { get; }
         public string Locale { get; }
@@ -33,7 +39,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class GetTournamentListQuery : IRequest<IEnumerable<TournamentModel>>
+    public class GetTournamentListQuery : IRequest<IEnumerable<TournamentModelOld>>
     {
         public string Locale { get; }
 
@@ -90,9 +96,10 @@ namespace wcc.gateway.kernel.RequestHandlers
     }
 
     public class TournamentHandler :
-        IRequestHandler<GetTournamentDetailQuery, TournamentModel>,
+        IRequestHandler<GetTournamentsQuery, IList<TournamentModel>>,
+        IRequestHandler<GetTournamentDetailQuery, TournamentModelOld>,
         IRequestHandler<GetTournamentParticipantsQuery, IEnumerable<PlayerModel>>,
-        IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModel>>,
+        IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModelOld>>,
         IRequestHandler<JoinToTournamentQuery, bool>,
         IRequestHandler<LeaveTournamentQuery, bool>,
         IRequestHandler<GetParticipationStatusQuery, bool>,
@@ -108,13 +115,19 @@ namespace wcc.gateway.kernel.RequestHandlers
             _mcsvcConfig = mcsvcConfig;
         }
 
-        public Task<TournamentModel> Handle(GetTournamentDetailQuery request, CancellationToken cancellationToken)
+        public async Task<IList<TournamentModel>> Handle(GetTournamentsQuery request, CancellationToken cancellationToken)
+        {
+            var tournaments = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.TournamentModel>>($"api/tournament");
+            return _mapper.Map<List<TournamentModel>>(tournaments);
+        }
+
+        public Task<TournamentModelOld> Handle(GetTournamentDetailQuery request, CancellationToken cancellationToken)
         {
             var tournamentDto = _db.GetTournament(request.TournamentId);
             if (tournamentDto == null)
                 throw new Exception("Can't retrieve tournament");
 
-            var tournament = _mapper.Map<TournamentModel>(tournamentDto);
+            var tournament = _mapper.Map<TournamentModelOld>(tournamentDto);
 
             var language = _db.GetLanguage(request.Locale);
             if (language != null)
@@ -144,13 +157,13 @@ namespace wcc.gateway.kernel.RequestHandlers
             return Task.FromResult(participants);
         }
 
-        public Task<IEnumerable<TournamentModel>> Handle(GetTournamentListQuery request, CancellationToken cancellationToken)
+        public Task<IEnumerable<TournamentModelOld>> Handle(GetTournamentListQuery request, CancellationToken cancellationToken)
         {
             var tournamentsDto = _db.GetTournaments();
             if (tournamentsDto == null)
                 throw new Exception("Can't retrieve tournament");
 
-            var tournaments = _mapper.Map<IEnumerable<TournamentModel>>(tournamentsDto);
+            var tournaments = _mapper.Map<IEnumerable<TournamentModelOld>>(tournamentsDto);
 
             var language = _db.GetLanguage(request.Locale);
             if (language != null)

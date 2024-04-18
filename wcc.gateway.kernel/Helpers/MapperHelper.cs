@@ -9,6 +9,7 @@ using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.C3;
+using Core = wcc.gateway.kernel.Models.Core;
 
 namespace wcc.gateway.kernel.Helpers
 {
@@ -45,11 +46,13 @@ namespace wcc.gateway.kernel.Helpers
                         cfg.CreateMap<Team, PlayerGameListModel>()
                                 .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => string.Empty));
 
-                        cfg.CreateMap<Tournament, TournamentModel>()
+                        cfg.CreateMap<Tournament, TournamentModelOld>()
                             .ForMember(dest => dest.Image_url, act => act.MapFrom(src => src.ImageUrl))
                             .ForMember(dest => dest.Count_players, act => act.MapFrom(src => src.CountPlayers))
                             .ForMember(dest => dest.Date_created, act => act.MapFrom(src => src.DateCreated))
                             .ForMember(dest => dest.Date_start, act => act.MapFrom(src => src.DateStart));
+
+                        cfg.CreateMap<Core.TournamentModel, TournamentModel>().ReverseMap();
 
                         cfg.CreateMap<List<PlayerModel>, IEnumerable<PlayerModel>>();
 
