@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 using wcc.gateway.api.Helpers;
 using wcc.gateway.data;
 using wcc.gateway.Infrastructure;
@@ -23,6 +24,17 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
+        [HttpDelete("{id}")]
+        public async Task<bool> Delete(string id)
+        {
+            var userId = User.GetUserId();
+            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+
+            string gameId = HttpUtility.UrlDecode(id);
+            return await _mediator.Send(new DeleteGameQuery(gameId, userId));
+        }
+
+        #region old
         [HttpGet, Route("{id}")]
         public Task<GameListModel> Get(int id)
         {
@@ -64,13 +76,14 @@ namespace wcc.gateway.api.Controllers
             return _mediator.Send(new EditGameQuery(new Game(), userId));
         }
 
-        [HttpPost, Authorize, Route("Delete")]
-        public Task EditGame(DeleteGameModel model)
-        {
-            var userId = User.GetUserId();
-            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+        //[HttpPost, Authorize, Route("Delete")]
+        //public Task EditGame(DeleteGameModel model)
+        //{
+        //    var userId = User.GetUserId();
+        //    _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
 
-            return _mediator.Send(new DeleteGameQuery(model.Id, userId));
-        }
+        //    return _mediator.Send(new DeleteGameQuery(model.Id, userId));
+        //}
+        #endregion old
     }
 }

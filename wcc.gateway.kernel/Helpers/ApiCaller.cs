@@ -54,5 +54,19 @@ namespace wcc.gateway.kernel.Helpers
 
             return responseObject;
         }
+
+        public async Task<bool> DeleteAsync(string endpoint)
+        {
+            var url = $"{_baseUrl}/{endpoint}";
+
+            var response = await _httpClient.DeleteAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"API request failed with status code {response.StatusCode}");
+            }
+
+            return response.IsSuccessStatusCode;
+        }
     }
 }

@@ -4,6 +4,6 @@ namespace wcc.gateway.kernel.Models.Game
 {
     public class DeleteGameModel
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
     }
 }

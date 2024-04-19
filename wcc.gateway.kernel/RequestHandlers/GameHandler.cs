@@ -7,6 +7,8 @@ using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
+using Core = wcc.gateway.kernel.Models.Core;
+using System.Web;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -70,10 +72,10 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     public class DeleteGameQuery : IRequest<bool>
     {
-        public long Id { get; }
+        public string Id { get; }
         public string ExternalUserId { get; }
 
-        public DeleteGameQuery(long id, string externalUserId)
+        public DeleteGameQuery(string id, string externalUserId)
         {
             Id = id;
             ExternalUserId = externalUserId;
@@ -316,7 +318,9 @@ namespace wcc.gateway.kernel.RequestHandlers
         {
             var user = _db.GetUserByExternalId(request.ExternalUserId);
             if (user == null || user.RoleId == (long)Roles.User) return false;
-            return _db.DeleteGame(request.Id);
+
+            var result = await new ApiCaller("http://localhost:6003").DeleteAsync($"api/game/{HttpUtility.UrlEncode(request.Id)}");
+            return true;
         }
     }
 }
