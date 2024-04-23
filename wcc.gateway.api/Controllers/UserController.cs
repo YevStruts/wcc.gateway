@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using wcc.gateway.api.Helpers;
 using wcc.gateway.kernel.Models;
+using wcc.gateway.kernel.Models.User;
 using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
@@ -25,6 +26,13 @@ namespace wcc.gateway.api.Controllers
         {
             _logger.LogInformation($"User:{User.GetUserId()} requests WhoAmI", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetUserWhoAmIQuery(User.GetUserId()));
+        }
+
+        [HttpGet, Route("ByUsername/{username}")]
+        public async Task<UserModel> GetByUsername(string username)
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} requests WhoAmI", DateTimeOffset.UtcNow);
+            return await _mediator.Send(new GetUserByUsernameQuery(username));
         }
     }
 }

@@ -12,9 +12,9 @@ namespace wcc.gateway.kernel.RequestHandlers
 {
     public class MigratePlayerQuery : IRequest<bool>
     {
-        public UserModel User { get; }
+        public UserModelOld User { get; }
 
-        public MigratePlayerQuery(UserModel user)
+        public MigratePlayerQuery(UserModelOld user)
         {
             User = user;
         }

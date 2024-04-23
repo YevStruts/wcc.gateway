@@ -5,6 +5,7 @@ using wcc.gateway.api.Helpers;
 using wcc.gateway.Identity;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.Game;
+using wcc.gateway.kernel.Models.Player;
 using wcc.gateway.kernel.RequestHandlers;
 
 namespace wcc.gateway.api.Controllers
@@ -22,15 +23,22 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet, Route("ByUserId/{userId}")]
+        public Task<PlayerModel> GetByUserId(string userId)
+        {
+            _logger.LogInformation($"User:{User.GetUserId()} get's player by userId:{userId}", DateTimeOffset.UtcNow);
+            return _mediator.Send(new GetPlayerByUserIdQuery(userId));
+        }
+
         [HttpGet, Route("{id}")]
-        public Task<PlayerModel> Get(int id)
+        public Task<PlayerModelOld> Get(int id)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's player Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetPlayerDetailQuery(id));
         }
 
         [HttpGet, Route("List")]
-        public Task<IEnumerable<PlayerModel>> List()
+        public Task<IEnumerable<PlayerModelOld>> List()
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's list of players", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetPlayerListQuery());
@@ -44,7 +52,7 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpPost, Authorize, Route("Update")]
-        public Task<bool> Update(PlayerModel model)
+        public Task<bool> Update(PlayerModelOld model)
         {
             var userId = User.GetUserId();
             _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);

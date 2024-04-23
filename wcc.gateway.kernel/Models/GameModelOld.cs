@@ -2,7 +2,7 @@
 
 namespace wcc.gateway.kernel.Models
 {
-    public class GameModel
+    public class GameModelOld
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
@@ -13,7 +13,7 @@ namespace wcc.gateway.kernel.Models
         public GameType GameType { get; set; }
     }
 
-    public class GameListModel : GameModel
+    public class GameListModelOld : GameModelOld
     {
         public List<string>? ReplayUrls { get; set; }
         public List<string>? YoutubeUrls { get; set; }

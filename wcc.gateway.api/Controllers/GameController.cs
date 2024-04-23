@@ -24,6 +24,12 @@ namespace wcc.gateway.api.Controllers
             _mediator = mediator;
         }
 
+        [HttpPost]
+        public async Task<bool> Post(GameModel game)
+        {
+            return await _mediator.Send(new SaveOrUpdateGameQuery(game));
+        }
+
         [HttpDelete("{id}")]
         public async Task<bool> Delete(string id)
         {
@@ -36,21 +42,21 @@ namespace wcc.gateway.api.Controllers
 
         #region old
         [HttpGet, Route("{id}")]
-        public Task<GameListModel> Get(int id)
+        public Task<GameListModelOld> Get(int id)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's game Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetGameDetailQuery(id));
         }
 
         [HttpGet, Route("Schedule/{tournamentId}")]
-        public Task<IEnumerable<GameListModel>> Schedule(long tournamentId)
+        public Task<IEnumerable<GameListModelOld>> Schedule(long tournamentId)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's games list", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetGameListQuery(tournamentId));
         }
 
         [HttpPost, Authorize, Route("Save")]
-        public Task SaveGame(GameListModel model)
+        public Task SaveGame(GameListModelOld model)
         {
             var userId = User.GetUserId();
             _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);

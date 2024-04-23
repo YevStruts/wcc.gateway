@@ -4,25 +4,25 @@ namespace wcc.gateway.kernel.Helpers
 {
     internal static class FakeDataHelper
     {
-        internal static IEnumerable<GameListModel> GetGames()
+        internal static IEnumerable<GameListModelOld> GetGames()
         {
-            return new List<GameListModel>()
+            return new List<GameListModelOld>()
             {
-                new GameListModel
+                new GameListModelOld
                 {
                     Id = 1, OrderId = 2, Name = "Game 1", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
                     Home = new PlayerGameListModel { Id = 1, Name = "Player 1", Score = 0 },
                     Visitor = new PlayerGameListModel { Id = 2, Name = "Player 2", Score = 2 },
                     YoutubeUrls = new List<string>() { "#", "#" }
                 },
-                new GameListModel
+                new GameListModelOld
                 {
                     Id = 2, OrderId = 3, Name = "Game 2", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
                     Home = new PlayerGameListModel { Id = 3, Name = "Player 3", Score = 2 },
                     Visitor = new PlayerGameListModel { Id = 4, Name = "Player 4", Score = 1 },
                     YoutubeUrls = new List<string>() { "#", "#", "#" }
                 },
-                new GameListModel
+                new GameListModelOld    
                 {
                     Id = 3, OrderId = 1, Name = "Game 3", Scheduled = ((DateTimeOffset)(new DateTime(2023, 01, 01))).ToUnixTimeMilliseconds(),
                     Home = new PlayerGameListModel { Id = 2, Name = "Player 2", Score = 0 },

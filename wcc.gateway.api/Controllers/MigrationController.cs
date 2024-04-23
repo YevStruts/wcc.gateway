@@ -21,7 +21,7 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpPost, Route("players")]
-        public async Task<bool> MigrateUsers(UserModel players)
+        public async Task<bool> MigrateUsers(UserModelOld players)
         {
             return await _mediator.Send(new MigratePlayerQuery(players));
         }

@@ -39,7 +39,7 @@ namespace wcc.gateway.api.Controllers
         }
 
         [HttpGet, Route("participant/{id}")]
-        public Task<IEnumerable<PlayerModel>> GetParticipants(int id)
+        public Task<IEnumerable<PlayerModelOld>> GetParticipants(int id)
         {
             _logger.LogInformation($"User:{User.GetUserId()} get's tournament's Id:{id} participants", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetTournamentParticipantsQuery(id));

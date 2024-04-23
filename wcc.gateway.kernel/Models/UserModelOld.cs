@@ -3,7 +3,7 @@ using wcc.gateway.Infrastructure;
 
 namespace wcc.gateway.kernel.Models
 {
-    public class UserModel
+    public class UserModelOld
     {
         public string ExternalId { get; set; }
 

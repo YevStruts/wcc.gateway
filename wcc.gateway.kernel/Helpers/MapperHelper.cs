@@ -9,6 +9,8 @@ using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.C3;
+using wcc.gateway.kernel.Models.Player;
+using wcc.gateway.kernel.Models.User;
 using Core = wcc.gateway.kernel.Models.Core;
 
 namespace wcc.gateway.kernel.Helpers
@@ -34,10 +36,14 @@ namespace wcc.gateway.kernel.Helpers
 
                         cfg.CreateMap<Country, CountryModel>();
 
-                        cfg.CreateMap<Player, PlayerModel>()
+                        cfg.CreateMap<Player, PlayerModelOld>()
                             .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));
 
-                        cfg.CreateMap<Team, PlayerModel>()
+                        cfg.CreateMap<Player, PlayerModel>();
+
+                        cfg.CreateMap<Core.PlayerModel, PlayerModel>();
+
+                        cfg.CreateMap<Team, PlayerModelOld>()
                             .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => string.Empty));
 
                         cfg.CreateMap<Player, PlayerGameListModel>()
@@ -54,16 +60,18 @@ namespace wcc.gateway.kernel.Helpers
 
                         cfg.CreateMap<Core.TournamentModel, TournamentModel>().ReverseMap();
 
-                        cfg.CreateMap<List<PlayerModel>, IEnumerable<PlayerModel>>();
+                        cfg.CreateMap<List<PlayerModelOld>, IEnumerable<PlayerModelOld>>();
 
-                        cfg.CreateMap<Game, GameModel>()
+                        cfg.CreateMap<Game, GameModelOld>()
                             .ForMember(dest => dest.Scheduled, act => act.MapFrom(src => ((DateTimeOffset)(src.Scheduled)).ToUnixTimeMilliseconds()));
 
-                        cfg.CreateMap<Game, GameListModel>()
+                        cfg.CreateMap<Game, GameListModelOld>()
                             .ForMember(dest => dest.Scheduled, act => act.MapFrom(src => ((DateTimeOffset)(src.Scheduled)).ToUnixTimeMilliseconds()));
 
                         cfg.CreateMap<User, WhoAmIModel>()
                             .ForMember(dest => dest.Role, act => act.MapFrom(src => src.Role.Name));
+
+                        cfg.CreateMap<User, UserModel>();
 
                         cfg.CreateMap<Player, PlayerProfile>()
                             .ForMember(dest => dest.Avatar, act => act.MapFrom(src => DiscordHelper.GetAvatarUrl(src.User.ExternalId, src.User.Avatar)));

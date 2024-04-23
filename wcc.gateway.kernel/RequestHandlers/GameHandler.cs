@@ -9,10 +9,11 @@ using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
 using Core = wcc.gateway.kernel.Models.Core;
 using System.Web;
+using wcc.gateway.kernel.Models.Game;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
-    public class GetGameDetailQuery : IRequest<GameListModel>
+    public class GetGameDetailQuery : IRequest<GameListModelOld>
     {
         public long Id { get; }
 
@@ -22,7 +23,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class GetGameListQuery : IRequest<IEnumerable<GameListModel>>
+    public class GetGameListQuery : IRequest<IEnumerable<GameListModelOld>>
     {
         public long TournamentId { get; }
 
@@ -34,10 +35,10 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     public class UpdateGameQuery : IRequest<bool>
     {
-        public GameListModel Game { get; }
+        public GameListModelOld Game { get; }
         public string ExternalUserId { get; }
 
-        public UpdateGameQuery(GameListModel game, string externalUserId)
+        public UpdateGameQuery(GameListModelOld game, string externalUserId)
         {
             Game = game;
             ExternalUserId = externalUserId;
@@ -82,13 +83,23 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class SaveOrUpdateGameQuery : IRequest<bool>
+    {
+        public GameModel Game { get; }
+        public SaveOrUpdateGameQuery(GameModel game)
+        {
+            this.Game = game;
+        }
+    }
+
     public class GameHandler :
-        IRequestHandler<GetGameDetailQuery, GameListModel>,
-        IRequestHandler<GetGameListQuery, IEnumerable<GameListModel>>,
+        IRequestHandler<GetGameDetailQuery, GameListModelOld>,
+        IRequestHandler<GetGameListQuery, IEnumerable<GameListModelOld>>,
         IRequestHandler<UpdateGameQuery, bool>,
         IRequestHandler<AddGameQuery, bool>,
         IRequestHandler<EditGameQuery, bool>,
-        IRequestHandler<DeleteGameQuery, bool>
+        IRequestHandler<DeleteGameQuery, bool>,
+        IRequestHandler<SaveOrUpdateGameQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -100,7 +111,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             _mcsvcConfig = mcsvcConfig;
         }
 
-        public async Task<GameListModel> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
+        public async Task<GameListModelOld> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
         {
             var gameDto = _db.GetGame(request.Id);
             if (gameDto == null)
@@ -113,7 +124,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             return mapGame(gameDto, players, teams, youtubes);
         }
 
-        public async Task<IEnumerable<GameListModel>> Handle(GetGameListQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<GameListModelOld>> Handle(GetGameListQuery request, CancellationToken cancellationToken)
         {
             var gamesDto = _db.GetGames().Where(g => g.TournamentId == request.TournamentId).ToList();
 
@@ -123,7 +134,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             var gamesIds = gamesDto.Select(g => g.Id).ToList();
             var youtubes = _db.GetYoutubes().Where(g => gamesIds.Contains(g.GameId)).ToList();
 
-            List<GameListModel> games = new List<GameListModel>();
+            List<GameListModelOld> games = new List<GameListModelOld>();
             foreach (var gameDto in gamesDto)
             {
                 games.Add(mapGame(gameDto, players, teams, youtubes));
@@ -132,9 +143,9 @@ namespace wcc.gateway.kernel.RequestHandlers
             return games;
         }
 
-        private GameListModel mapGame(Game gameDto, List<Player> players, List<Team> teams, List<Youtube> youtubes)
+        private GameListModelOld mapGame(Game gameDto, List<Player> players, List<Team> teams, List<Youtube> youtubes)
         {
-            var game = _mapper.Map<GameListModel>(gameDto);
+            var game = _mapper.Map<GameListModelOld>(gameDto);
 
             var hUserId = gameDto.HUserId;
             game.Home = game.GameType == GameType.Teams ?
@@ -321,6 +332,22 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             var result = await new ApiCaller("http://localhost:6003").DeleteAsync($"api/game/{HttpUtility.UrlEncode(request.Id)}");
             return true;
+        }
+
+        public async Task<bool> Handle(SaveOrUpdateGameQuery request, CancellationToken cancellationToken)
+        {
+            return await new ApiCaller("http://localhost:6003").PostAsync<Core.GameModel, bool>("api/game",
+                new Core.GameModel
+                {
+                    GameType = request.Game.GameType,
+                    SideA = request.Game.SideA,
+                    SideB = request.Game.SideB,
+                    ScoreA = request.Game.ScoreA,
+                    ScoreB = request.Game.ScoreB,
+                    TournamentId = request.Game.TournamentId,
+                    Scheduled = DateTime.UtcNow,
+                    Youtube = request.Game.Youtube,
+                }); ;
         }
     }
 }

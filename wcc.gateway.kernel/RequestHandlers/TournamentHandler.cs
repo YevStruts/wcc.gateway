@@ -29,7 +29,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class GetTournamentParticipantsQuery : IRequest<IEnumerable<PlayerModel>>
+    public class GetTournamentParticipantsQuery : IRequest<IEnumerable<PlayerModelOld>>
     {
         public long TournamentId { get; }
 
@@ -98,7 +98,7 @@ namespace wcc.gateway.kernel.RequestHandlers
     public class TournamentHandler :
         IRequestHandler<GetTournamentsQuery, IList<TournamentModel>>,
         IRequestHandler<GetTournamentDetailQuery, TournamentModelOld>,
-        IRequestHandler<GetTournamentParticipantsQuery, IEnumerable<PlayerModel>>,
+        IRequestHandler<GetTournamentParticipantsQuery, IEnumerable<PlayerModelOld>>,
         IRequestHandler<GetTournamentListQuery, IEnumerable<TournamentModelOld>>,
         IRequestHandler<JoinToTournamentQuery, bool>,
         IRequestHandler<LeaveTournamentQuery, bool>,
@@ -142,7 +142,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             return Task.FromResult(tournament);
         }
 
-        public Task<IEnumerable<PlayerModel>> Handle(GetTournamentParticipantsQuery request, CancellationToken cancellationToken)
+        public Task<IEnumerable<PlayerModelOld>> Handle(GetTournamentParticipantsQuery request, CancellationToken cancellationToken)
         {
             var tournamentDto = _db.GetTournament(request.TournamentId);
             if (tournamentDto == null)
@@ -151,8 +151,8 @@ namespace wcc.gateway.kernel.RequestHandlers
             bool isTeamsCompetition = tournamentDto.Games.Any(g => g.GameType == GameType.Teams);
 
             var participants = isTeamsCompetition ?
-                _mapper.Map<IEnumerable<PlayerModel>>(tournamentDto.Teams) :
-                _mapper.Map<IEnumerable<PlayerModel>>(tournamentDto.Participant);
+                _mapper.Map<IEnumerable<PlayerModelOld>>(tournamentDto.Teams) :
+                _mapper.Map<IEnumerable<PlayerModelOld>>(tournamentDto.Participant);
 
             return Task.FromResult(participants);
         }
