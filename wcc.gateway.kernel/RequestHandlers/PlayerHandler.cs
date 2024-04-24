@@ -12,6 +12,7 @@ using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.Player;
 using Core = wcc.gateway.kernel.Models.Core;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -81,11 +82,13 @@ namespace wcc.gateway.kernel.RequestHandlers
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
         private readonly ILogger<PlayerHandler> _logger;
+        private readonly Microservices.Config _mcsvcConfig;
 
-        public PlayerHandler(IDataRepository db, ILogger<PlayerHandler> logger)
+        public PlayerHandler(IDataRepository db, ILogger<PlayerHandler> logger, Microservices.Config mcsvcConfig)
         {
             _db = db;
             _logger = logger;
+            _mcsvcConfig = mcsvcConfig;
         }
 
         public async Task<PlayerModel> Handle(GetPlayerByUserIdQuery request, CancellationToken cancellationToken)
@@ -93,7 +96,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             PlayerModel tmp = null;
             try
             {
-                var player = await new ApiCaller("http://localhost:6003").GetAsync<Core.PlayerModel>($"api/player/ByUserId/{request.UserId}");
+                var player = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<Core.PlayerModel>($"api/player/ByUserId/{request.UserId}");
                 tmp = _mapper.Map<PlayerModel>(player);
             }
             catch (Exception e)

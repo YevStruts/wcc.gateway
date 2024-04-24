@@ -325,18 +325,19 @@ namespace wcc.gateway.kernel.RequestHandlers
             throw new NotImplementedException();
         }
 
+
         public async Task<bool> Handle(DeleteGameQuery request, CancellationToken cancellationToken)
         {
             var user = _db.GetUserByExternalId(request.ExternalUserId);
             if (user == null || user.RoleId == (long)Roles.User) return false;
 
-            var result = await new ApiCaller("http://localhost:6003").DeleteAsync($"api/game/{HttpUtility.UrlEncode(request.Id)}");
+            var result = await new ApiCaller(_mcsvcConfig.CoreUrl).DeleteAsync($"api/game/{HttpUtility.UrlEncode(request.Id)}");
             return true;
         }
 
         public async Task<bool> Handle(SaveOrUpdateGameQuery request, CancellationToken cancellationToken)
         {
-            return await new ApiCaller("http://localhost:6003").PostAsync<Core.GameModel, bool>("api/game",
+            return await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, bool>("api/game",
                 new Core.GameModel
                 {
                     GameType = request.Game.GameType,

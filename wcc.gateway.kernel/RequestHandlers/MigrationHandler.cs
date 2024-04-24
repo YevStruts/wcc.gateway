@@ -7,6 +7,7 @@ using wcc.gateway.Infrastructure;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Core = wcc.gateway.kernel.Models.Core;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -48,32 +49,41 @@ namespace wcc.gateway.kernel.RequestHandlers
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
+        private readonly Microservices.Config _mcsvcConfig;
 
-        public MigrationHandler(IDataRepository db)
+        public MigrationHandler(IDataRepository db, Microservices.Config mcsvcConfig)
         {
             _db = db;
+            _mcsvcConfig = mcsvcConfig;
         }
 
         public async Task<bool> Handle(MigratePlayerQuery request, CancellationToken cancellationToken)
         {
-            var players = _db.GetPlayers();
-
-            foreach (var player in players)
+            try
             {
-                var token = string.IsNullOrEmpty(player.Token) ? CommonHelper.GenerateToken() : player.Token;
+                var players = _db.GetPlayers();
 
-                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.PlayerModel, bool>("api/player",
-                    new Core.PlayerModel
-                    {
-                        Name = player.Name,
-                        UserId = player.UserId.ToString(),
-                        IsActive = true,
-                        Token = token
-                    });
+                foreach (var player in players)
+                {
+                    var token = string.IsNullOrEmpty(player.Token) ? CommonHelper.GenerateToken() : player.Token;
 
-                if (!result) return false;
-                
-                Thread.Sleep(1000);
+                    var result = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.PlayerModel, bool>("api/player",
+                        new Core.PlayerModel
+                        {
+                            Name = player.Name,
+                            UserId = player.UserId.ToString(),
+                            IsActive = true,
+                            Token = token
+                        });
+
+                    if (!result) return false;
+
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
 
             return true;
@@ -84,7 +94,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             var teams = _db.GetTeams();
             if (teams == null) return false;
 
-            var playerData = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.PlayerModel>>("api/player");
+            var playerData = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
 
             Thread.Sleep(1000);
 
@@ -96,7 +106,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
                 if (players == null) return false;
 
-                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TeamModel, bool>("api/team",
+                var result = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.TeamModel, bool>("api/team",
                     new Core.TeamModel
                     {
                         Name = team.Id + " - " + team.Name,
@@ -126,7 +136,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
                 var description = tournament.Translations.First(t => t.LanguageId == 1);
 
-                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TournamentModel, bool>("api/tournament",
+                var result = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.TournamentModel, bool>("api/tournament",
                     new Core.TournamentModel
                     {
                         Name = tournament.Id + " - " + description.Name,
@@ -148,13 +158,13 @@ namespace wcc.gateway.kernel.RequestHandlers
             var games = _db.GetGames();
             if (games == null) return false;
 
-            var corePlayers = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.PlayerModel>>("api/player");
+            var corePlayers = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
             Thread.Sleep(1000);
 
-            var coreTeams = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.TeamModel>>("api/team");
+            var coreTeams = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.TeamModel>>("api/team");
             Thread.Sleep(1000);
 
-            var coreTournaments = await new ApiCaller("http://localhost:6003").GetAsync<List<Core.TournamentModel>>("api/tournament");
+            var coreTournaments = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.TournamentModel>>("api/tournament");
             Thread.Sleep(1000);
 
             foreach (var game in games)
@@ -190,7 +200,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     }
                 }
 
-                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.GameModel, bool>("api/game",
+                var result = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, bool>("api/game",
                     new Core.GameModel
                     {
                         GameType = type,
@@ -217,7 +227,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 string pattern = "\\d* - ";
                 string newName = Regex.Replace(coreTeam.Name, pattern, string.Empty);
 
-                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TeamModel, bool>("api/team",
+                var result = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.TeamModel, bool>("api/team",
                     new Core.TeamModel
                     {
                         Id = coreTeam.Id,
@@ -235,7 +245,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 string pattern = "\\d* - ";
                 string newName = Regex.Replace(coreTournament.Name, pattern, string.Empty);
 
-                var result = await new ApiCaller("http://localhost:6003").PostAsync<Core.TournamentModel, bool>("api/tournament",
+                var result = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.TournamentModel, bool>("api/tournament",
                     new Core.TournamentModel
                     {
                         Id = coreTournament.Id,
