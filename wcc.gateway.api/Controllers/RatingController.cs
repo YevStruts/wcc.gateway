@@ -26,5 +26,11 @@ namespace wcc.gateway.api.Controllers
             _logger.LogInformation($"User:{User.GetUserId()} get's news Id:{id}", DateTimeOffset.UtcNow);
             return _mediator.Send(new GetRatingQuery(id, locale));
         }
+
+        [HttpPost, Route("update")]
+        public async Task<bool> Update()
+        {
+            return await _mediator.Send(new UpdateRatingQuery());
+        }
     }
 }

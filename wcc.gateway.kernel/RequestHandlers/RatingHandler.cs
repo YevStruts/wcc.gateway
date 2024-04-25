@@ -6,6 +6,7 @@ using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
+using Rating = wcc.gateway.kernel.Models.Rating;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -22,7 +23,13 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
-    public class RatingHandler : IRequestHandler<GetRatingQuery, List<RatingModel>>
+    public class UpdateRatingQuery : IRequest<bool>
+    {
+
+    }
+
+    public class RatingHandler : IRequestHandler<GetRatingQuery, List<RatingModel>>,
+        IRequestHandler<UpdateRatingQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -77,6 +84,39 @@ namespace wcc.gateway.kernel.RequestHandlers
                 }
             }
             return rating;
+        }
+
+        public async Task<bool> Handle(UpdateRatingQuery request, CancellationToken cancellationToken)
+        {
+            var players = _db.GetPlayers();
+
+            var countries = _db.GetCountries();
+
+            var playerData = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
+
+            var rating = new List<Rating.RatingModel>();
+            if (playerData != null && playerData.Count > 0)
+            {
+                int position = 0;
+                foreach (var rp in playerData.OrderByDescending(r => r.Points).ToList())
+                {
+                    var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
+                    if (player != null && player.Name != null && player.IsActive)
+                    {
+                        var nation = countries.FirstOrDefault(c => c.Id == player.CountryId);
+
+                        rating.Add(new Rating.RatingModel
+                        {
+                            PlayerId = rp.PlayerId,
+                            Points = rp.Points
+                        });
+                    }
+                }
+            }
+
+            await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<List<Rating.RatingModel>, string>("api/rating", rating);
+
+            return true;
         }
     }
 }
