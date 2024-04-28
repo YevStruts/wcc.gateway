@@ -43,5 +43,11 @@ namespace wcc.gateway.api.Controllers
         {
             return await _mediator.Send(new MigrateGamesQuery());
         }
+
+        [HttpPost, Route("rating")]
+        public async Task<bool> MigrateRating()
+        {
+            return await _mediator.Send(new MigrateRatingQuery());
+        }
     }
 }

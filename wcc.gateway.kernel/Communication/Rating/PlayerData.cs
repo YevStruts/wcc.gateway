@@ -2,7 +2,7 @@
 {
     internal class PlayerData
     {
-        public int PlayerId { get; set; }
+        public string PlayerId { get; set; }
         public int Points { get; set; }
     }
 }

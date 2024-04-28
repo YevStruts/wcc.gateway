@@ -8,6 +8,7 @@ using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
 using Core = wcc.gateway.kernel.Models.Core;
+using Rating = wcc.gateway.kernel.Models.Rating;
 using System.Web;
 using wcc.gateway.kernel.Models.Game;
 
@@ -337,7 +338,16 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<bool> Handle(SaveOrUpdateGameQuery request, CancellationToken cancellationToken)
         {
-            return await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, bool>("api/game",
+            return await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<Rating.GameModel, bool>("api/game/save",
+                new Rating.GameModel
+                {
+                    GameType = request.Game.GameType,
+                    SideA = request.Game.SideA,
+                    SideB = request.Game.SideB,
+                    ScoreA = request.Game.ScoreA,
+                    ScoreB = request.Game.ScoreB
+                }) && 
+            await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, bool>("api/game",
                 new Core.GameModel
                 {
                     GameType = request.Game.GameType,
@@ -348,7 +358,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     TournamentId = request.Game.TournamentId,
                     Scheduled = DateTime.UtcNow,
                     Youtube = request.Game.Youtube,
-                }); ;
+                });
         }
     }
 }

@@ -4,10 +4,12 @@ using System.Text.RegularExpressions;
 using wcc.gateway.data;
 using wcc.gateway.Identity;
 using wcc.gateway.Infrastructure;
+using wcc.gateway.kernel.Communication.Rating;
 using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Core = wcc.gateway.kernel.Models.Core;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
+using Rating = wcc.gateway.kernel.Models.Rating;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -42,10 +44,18 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+    public class MigrateRatingQuery : IRequest<bool>
+    {
+        public MigrateRatingQuery()
+        {
+        }
+    }
+
     public class MigrationHandler : IRequestHandler<MigratePlayerQuery, bool>,
         IRequestHandler<MigrateTeamsQuery, bool>,
         IRequestHandler<MigrateTournamentsQuery, bool>,
-        IRequestHandler<MigrateGamesQuery, bool>
+        IRequestHandler<MigrateGamesQuery, bool>,
+        IRequestHandler<MigrateRatingQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -257,6 +267,36 @@ namespace wcc.gateway.kernel.RequestHandlers
 
                 Thread.Sleep(1000);
             }
+
+            return true;
+        }
+
+        public async Task<bool> Handle(MigrateRatingQuery request, CancellationToken cancellationToken)
+        {
+            var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
+
+            var playersSql = _db.GetPlayers();
+
+            var ratingOld = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
+
+            var rating = new List<Rating.RatingModel>();
+            foreach (var r in ratingOld)
+            {
+                var playerSql = playersSql.FirstOrDefault(p => p.Id.ToString() == r.PlayerId);
+                if (playerSql == null) continue;
+
+                var player = players.FirstOrDefault(p => p.UserId == playerSql.UserId.ToString());
+                if (player == null) continue;
+
+                //r.PlayerId = player.Id;
+                rating.Add(new Rating.RatingModel()
+                {
+                    PlayerId = player.Id,
+                    Points = r.Points
+                });
+            }
+
+            await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<List<Rating.RatingModel>, string>("api/rating", rating);
 
             return true;
         }

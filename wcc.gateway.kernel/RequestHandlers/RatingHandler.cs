@@ -7,6 +7,7 @@ using wcc.gateway.kernel.Helpers;
 using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
 using Rating = wcc.gateway.kernel.Models.Rating;
+using Core = wcc.gateway.kernel.Models.Core;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -43,7 +44,11 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<List<RatingModel>> Handle(GetRatingQuery request, CancellationToken cancellationToken)
         {
-            var players = _db.GetPlayers();
+            var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
+
+            var playersSql = _db.GetPlayers();
+
+            var users = _db.GetUsers();
 
             var countries = _db.GetCountries();
 
@@ -58,13 +63,17 @@ namespace wcc.gateway.kernel.RequestHandlers
                     var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
                     if (player != null && player.Name != null && player.IsActive)
                     {
-                        var nation = countries.FirstOrDefault(c => c.Id == player.CountryId);
+                        var user = users.First(u => u.Id.ToString() == player.UserId);
+
+                        var playerSql = playersSql.First(p => p.UserId.ToString() == player.UserId);
+
+                        var nation = countries.FirstOrDefault(c => c.Id == playerSql.CountryId);
 
                         rating.Add(new RatingModel
                         {
                             Id = player.Id,
                             Name = player.Name,
-                            AvatarUrl = DiscordHelper.GetAvatarUrl(player.User.ExternalId, player.User.Avatar),
+                            AvatarUrl = DiscordHelper.GetAvatarUrl(user.ExternalId, user.Avatar),
                             Position = position++,
                             Progress = 0,
                             TotalPoints = rp.Points,
@@ -100,7 +109,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 int position = 0;
                 foreach (var rp in playerData.OrderByDescending(r => r.Points).ToList())
                 {
-                    var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
+                    var player = players.FirstOrDefault(p => p.Id.ToString() == rp.PlayerId);
                     if (player != null && player.Name != null && player.IsActive)
                     {
                         var nation = countries.FirstOrDefault(c => c.Id == player.CountryId);

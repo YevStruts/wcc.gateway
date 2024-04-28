@@ -298,7 +298,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             {
                 var player = players.First(p => p.UserId == oppUserId);
 
-                var ratingItem = rating.FirstOrDefault(r => r.PlayerId == player.Id);
+                var ratingItem = rating.FirstOrDefault(r => r.PlayerId == player.Id.ToString());
                 if (ratingItem != null)
                 {
                     var position = rating.IndexOf(ratingItem);

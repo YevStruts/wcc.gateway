@@ -23,6 +23,11 @@ namespace wcc.gateway.data
 
         #region User
 
+        public IList<User> GetUsers()
+        {
+            return _context.Users.ToList();
+        }
+
         public bool AddUser(User user)
         {
             _context.Users.Add(user);

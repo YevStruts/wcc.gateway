@@ -8,7 +8,7 @@ namespace wcc.gateway.kernel.Models
 {
     public class RatingModel
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string? AvatarUrl { get; set; }
         public int Position { get; internal set; }

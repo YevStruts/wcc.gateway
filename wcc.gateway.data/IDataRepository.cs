@@ -11,6 +11,7 @@ namespace wcc.gateway.data
 {
     public interface IDataRepository
     {
+        IList<User> GetUsers();
         bool AddUser(User user);
         bool UpdateUser(User user);
         User? GetUserByExternalId(string? id);
