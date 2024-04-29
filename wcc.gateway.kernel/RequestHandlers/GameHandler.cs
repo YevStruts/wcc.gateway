@@ -11,6 +11,7 @@ using Core = wcc.gateway.kernel.Models.Core;
 using Rating = wcc.gateway.kernel.Models.Rating;
 using System.Web;
 using wcc.gateway.kernel.Models.Game;
+using wcc.gateway.kernel.Models.Results;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -338,16 +339,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<bool> Handle(SaveOrUpdateGameQuery request, CancellationToken cancellationToken)
         {
-            return await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<Rating.GameModel, bool>("api/game/save",
-                new Rating.GameModel
-                {
-                    GameType = request.Game.GameType,
-                    SideA = request.Game.SideA,
-                    SideB = request.Game.SideB,
-                    ScoreA = request.Game.ScoreA,
-                    ScoreB = request.Game.ScoreB
-                }) && 
-            await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, bool>("api/game",
+            var gameResult = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, SaveOrUpdateResult<Core.GameModel>>("api/game",
                 new Core.GameModel
                 {
                     GameType = request.Game.GameType,
@@ -359,6 +351,21 @@ namespace wcc.gateway.kernel.RequestHandlers
                     Scheduled = DateTime.UtcNow,
                     Youtube = request.Game.Youtube,
                 });
+
+            if (gameResult.Success)
+            {
+                return await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<Rating.GameModel, bool>("api/game/save",
+                    new Rating.GameModel
+                    {
+                        GameId = gameResult.Value.Id,
+                        GameType = gameResult.Value.GameType,
+                        SideA = gameResult.Value.SideA,
+                        SideB = gameResult.Value.SideB,
+                        ScoreA = gameResult.Value.ScoreA,
+                        ScoreB = gameResult.Value.ScoreB
+                    });
+            }
+            return false;
         }
     }
 }

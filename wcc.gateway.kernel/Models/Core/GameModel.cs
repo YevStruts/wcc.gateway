@@ -7,8 +7,9 @@ using wcc.gateway.Infrastructure;
 
 namespace wcc.gateway.kernel.Models.Core
 {
-    internal class GameModel
+    public class GameModel
     {
+        public string? Id { get; set; }
         public GameType GameType { get; set; }
         public List<string> SideA { get; set; }
         public List<string> SideB { get; set; }
