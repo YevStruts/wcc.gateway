@@ -216,19 +216,31 @@ namespace wcc.gateway.kernel.RequestHandlers
                         return false;
                     }
 
-                    var newPlayer = new Player
+                    var newPlayer = new Core.PlayerModel()
                     {
                         Name = request.Player.GlobalName,
-                        UserId = newUser.Id,
-                        User = newUser,
-                        Token = CommonHelper.GenerateToken()
+                        UserId = newUser.Id.ToString(),
+                        Token = CommonHelper.GenerateToken(),
+                        Games = 0,
+                        Wins = 0,
+                        IsActive = true
                     };
-                    if (!_db.AddPlayer(newPlayer))
+
+                    if (!await AddPlayer(newPlayer))
                     {
                         _logger.LogError($"Failed adding player:{JsonSerializer.Serialize(newPlayer)}",
                             DateTimeOffset.UtcNow);
                         return false;
                     }
+
+                    _db.AddPlayer(new Player
+                    {
+                        Name = request.Player.GlobalName,
+                        UserId = newUser.Id,
+                        User = newUser,
+                        Token = CommonHelper.GenerateToken()
+                    });
+
                     return true;
                 }
 
@@ -241,21 +253,33 @@ namespace wcc.gateway.kernel.RequestHandlers
 
                 if (user.Player == null)
                 {
-                    var newPlayer = new Player
+                    var newPlayer = new Core.PlayerModel
                     {
                         Name = request.Player.GlobalName,
-                        UserId = user.Id,
-                        User = user,
-                        Token = CommonHelper.GenerateToken()
+                        UserId = user.ToString(),
+                        Token = CommonHelper.GenerateToken(),
+                        Games = 0,
+                        Wins = 0,
+                        IsActive = true
                     };
-                    if (!_db.AddPlayer(newPlayer))
+                    if (!await AddPlayer(newPlayer))
                     {
                         _logger.LogError($"Failed adding player:{JsonSerializer.Serialize(newPlayer)}",
                             DateTimeOffset.UtcNow);
                         return false;
                     }
 
-                    user.Player = newPlayer;
+                    var newPlayerSql = new Player
+                    {
+                        Name = request.Player.GlobalName,
+                        UserId = user.Id,
+                        User = user,
+                        Token = CommonHelper.GenerateToken()
+                    };
+
+                    _db.AddPlayer(newPlayerSql);
+
+                    user.Player = newPlayerSql;
                 }
                 else
                 {
@@ -281,6 +305,11 @@ namespace wcc.gateway.kernel.RequestHandlers
                 _logger.LogError($"{ex.Message}\n{ex.StackTrace ?? string.Empty}", DateTimeOffset.UtcNow);
             }
             return false;
+        }
+
+        private async Task<bool> AddPlayer(Core.PlayerModel player)
+        {
+            return await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.PlayerModel, bool>("api/player", player);
         }
     }
 }
