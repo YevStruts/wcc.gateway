@@ -12,6 +12,7 @@ using Rating = wcc.gateway.kernel.Models.Rating;
 using System.Web;
 using wcc.gateway.kernel.Models.Game;
 using wcc.gateway.kernel.Models.Results;
+using wcc.gateway.kernel.Communication.Core;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -73,6 +74,17 @@ namespace wcc.gateway.kernel.RequestHandlers
         }
     }
 
+
+    public class GetGameQuery : IRequest<GameModel>
+    {
+        public string GameId { get; private set; }
+
+        public GetGameQuery(string gameId)
+        {
+            GameId = gameId;
+        }
+    }
+
     public class DeleteGameQuery : IRequest<bool>
     {
         public string Id { get; }
@@ -100,6 +112,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         IRequestHandler<UpdateGameQuery, bool>,
         IRequestHandler<AddGameQuery, bool>,
         IRequestHandler<EditGameQuery, bool>,
+        IRequestHandler<GetGameQuery, GameModel>,
         IRequestHandler<DeleteGameQuery, bool>,
         IRequestHandler<SaveOrUpdateGameQuery, bool>
     {
@@ -325,6 +338,12 @@ namespace wcc.gateway.kernel.RequestHandlers
             //var game = _db.GetGame(request.Id);
             //game.Name = request.;
             throw new NotImplementedException();
+        }
+
+        public async Task<GameModel> Handle(GetGameQuery request, CancellationToken cancellationToken)
+        {
+            var game = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<Core.GameModel>($"api/game/{HttpUtility.UrlEncode(request.GameId)}");
+            return _mapper.Map<GameModel>(game);
         }
 
 

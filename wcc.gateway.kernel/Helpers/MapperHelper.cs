@@ -9,6 +9,7 @@ using wcc.gateway.Infrastructure;
 using wcc.gateway.integrations.Discord.Helpers;
 using wcc.gateway.kernel.Models;
 using wcc.gateway.kernel.Models.C3;
+using wcc.gateway.kernel.Models.Game;
 using wcc.gateway.kernel.Models.Player;
 using wcc.gateway.kernel.Models.User;
 using Core = wcc.gateway.kernel.Models.Core;
@@ -42,6 +43,8 @@ namespace wcc.gateway.kernel.Helpers
                         cfg.CreateMap<Player, PlayerModel>();
 
                         cfg.CreateMap<Core.PlayerModel, PlayerModel>();
+
+                        cfg.CreateMap<Core.GameModel, GameModel>();
 
                         cfg.CreateMap<Team, PlayerModelOld>()
                             .ForMember(dest => dest.AvatarUrl, act => act.MapFrom(src => string.Empty));
