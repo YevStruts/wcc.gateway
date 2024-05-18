@@ -84,7 +84,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                 schedule.Add(new ScheduleModel
                 {
                     Id = game.Id,
-                    Date = game.Scheduled,
+                    Scheduled = game.Scheduled,
                     Name = "name",
                     SideA = sideA,
                     SideB = sideB,

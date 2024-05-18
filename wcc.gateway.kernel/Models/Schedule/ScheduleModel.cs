@@ -9,7 +9,7 @@ namespace wcc.gateway.kernel.Models.Schedule
     public class ScheduleModel
     {
         public string? Id { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime Scheduled { get; set; }
         public string Name { get; set; }
         public string SideA { get; set; }
         public string SideB { get; set; }

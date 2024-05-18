@@ -368,7 +368,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     ScoreA = request.Game.ScoreA,
                     ScoreB = request.Game.ScoreB,
                     TournamentId = request.Game.TournamentId,
-                    Scheduled = DateTime.UtcNow,
+                    Scheduled = request.Game.Scheduled,
                     Youtube = request.Game.Youtube,
                 });
 
