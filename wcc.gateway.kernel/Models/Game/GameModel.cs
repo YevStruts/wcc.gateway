@@ -17,6 +17,6 @@ namespace wcc.gateway.kernel.Models.Game
         public int ScoreB { get; set; }
         public string TournamentId { get; set; }
         public DateTime Scheduled { get; set; }
-        public List<string> Youtube { get; set; }
+        public List<string> YouTube { get; set; }
     }
 }

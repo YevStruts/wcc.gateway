@@ -369,7 +369,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     ScoreB = request.Game.ScoreB,
                     TournamentId = request.Game.TournamentId,
                     Scheduled = request.Game.Scheduled,
-                    Youtube = request.Game.Youtube,
+                    Youtube = request.Game.YouTube,
                 });
 
             if (gameResult.Success)

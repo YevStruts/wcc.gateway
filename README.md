@@ -8,17 +8,17 @@
 # docker-compose -f "docker-compose.yml" up -d
 
 # add tag
-# docker tag wccgateway_wcc_gateway:latest yevstruts/wcc.gateway:2024.5.18.1
+# docker tag wccgateway_wcc_gateway:latest yevstruts/wcc.gateway:2024.5.18.2
 # push
-# docker push yevstruts/wcc.gateway:2024.5.18.1
+# docker push yevstruts/wcc.gateway:2024.5.18.2
 
 # -p <host_port>:<container_port>
 
 # Server
-# docker run --name wcc.ui -p 80:80 -p 433:433 -d yevstruts/wcc.ui:2024.5.18.1
+# docker run --name wcc.ui -p 80:80 -p 433:433 -d yevstruts/wcc.ui:2024.5.18.2
 # docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Pa$$word1234' --name mssql -p 1433:1433 -v /home/ubuntu/database:/media/Database --cpus="4.0" --memory="6G" -d mcr.microsoft.com/mssql/server:2022-latest
 # docker run --name ravendb -d -p 8080:8080 -p 38888:38888 -v /home/ubuntu/database/ravendb:/opt/RavenDB/Server/RavenData --name ravendb -e RAVEN_Setup_Mode=None -e RAVEN_License_Eula_Accepted=true -e RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork -d --restart unless-stopped ravendb/ravendb
-# docker run --name wcc.gateway -p 80:80 -p 433:433 -d yevstruts/wcc.gateway:2024.5.18.1
+# docker run --name wcc.gateway -p 80:80 -p 433:433 -d yevstruts/wcc.gateway:2024.5.18.2
 
 # docker run --name ravendb -d -p 8080:8080 -p 38888:38888 -e RAVEN_Setup_Mode=None -e RAVEN_License_Eula_Accepted=true -e RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork -d --restart unless-stopped ravendb/ravendb
 # docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Pa$$word1234' --name mssql -p 1433:1433 -v d:/Database/WCC/mssql:/media/database --cpus="4.0" --memory="6G" -d mcr.microsoft.com/mssql/server:2022-latest
@@ -26,25 +26,25 @@
 # docker run --name wcc.gateway -p 5001:5001 -d yevstruts/wcc.gateway:2023.3.5.2
 
 # -------------------------
-# docker tag wcc.ui.i:latest yevstruts/wcc.ui:2024.5.18.1
-# docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2024.5.18.1
-# docker tag wcc.rating.i:latest yevstruts/wcc.rating:2024.5.18.1
-# docker tag wcc.lanserver.i:latest yevstruts/wcc.lanserver:2024.5.18.1
+# docker tag wcc.ui.i:latest yevstruts/wcc.ui:2024.5.18.2
+# docker tag wcc.gateway.i:latest yevstruts/wcc.gateway:2024.5.18.2
+# docker tag wcc.rating.i:latest yevstruts/wcc.rating:2024.5.18.2
+# docker tag wcc.lanserver.i:latest yevstruts/wcc.lanserver:2024.5.18.2
 
-# docker push yevstruts/wcc.gateway:2024.5.18.1
-# docker push yevstruts/wcc.ui:2024.5.18.1
-# docker push yevstruts/wcc.rating:2024.5.18.1
-# docker push yevstruts/wcc.lanserver:2024.5.18.1
+# docker push yevstruts/wcc.gateway:2024.5.18.2
+# docker push yevstruts/wcc.ui:2024.5.18.2
+# docker push yevstruts/wcc.rating:2024.5.18.2
+# docker push yevstruts/wcc.lanserver:2024.5.18.2
 
 # docker stop wcc.ui;docker rm wcc.ui;docker stop wcc.gateway;docker rm wcc.gateway;docker stop wcc.rating;docker rm wcc.rating;
 # docker stop wcc.discord;docker rm wcc.discord;
-# docker run --name wcc.ui -p 3000:80 -d --restart unless-stopped yevstruts/wcc.ui:2024.5.18.1
-# docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d --restart unless-stopped yevstruts/wcc.gateway:2024.5.18.1
-# docker run --name wcc.rating -p 6001:80 -p 6002:433 -d --restart unless-stopped yevstruts/wcc.rating:2024.5.18.1
-# docker run --name wcc.core -p 6003:80 -p 6004:433 -d --restart unless-stopped yevstruts/wcc.core:2024.5.18.1
-# docker run --name wcc.lanserver -p 31523:31523 -d --restart unless-stopped yevstruts/wcc.lanserver:2024.5.18.1
-# docker run --name wcc.discord -d --restart unless-stopped yevstruts/wcc.discord:2024.5.18.1
-# docker run --name wcc.monobank -d --restart unless-stopped yevstruts/wcc.monobank:2024.5.18.1
+# docker run --name wcc.ui -p 3000:80 -d --restart unless-stopped yevstruts/wcc.ui:2024.5.18.2
+# docker run --name wcc.gateway -p 3001:80 -p 5002:433 -d --restart unless-stopped yevstruts/wcc.gateway:2024.5.18.2
+# docker run --name wcc.rating -p 6001:80 -p 6002:433 -d --restart unless-stopped yevstruts/wcc.rating:2024.5.18.2
+# docker run --name wcc.core -p 6003:80 -p 6004:433 -d --restart unless-stopped yevstruts/wcc.core:2024.5.18.2
+# docker run --name wcc.lanserver -p 31523:31523 -d --restart unless-stopped yevstruts/wcc.lanserver:2024.5.18.2
+# docker run --name wcc.discord -d --restart unless-stopped yevstruts/wcc.discord:2024.5.18.2
+# docker run --name wcc.monobank -d --restart unless-stopped yevstruts/wcc.monobank:2024.5.18.2
 
 # -------------------------
 # delete everything in docker
@@ -73,7 +73,7 @@ docker run --name teamcity-server -p 8111:8111 jetbrains/teamcity-server
 
 docker run -d --name teamcity-server-instance -v /opt/docker/teamCity/teamcity_server/datadir:/data/teamcity_server/datadir -v /opt/docker/teamCity/teamcity_server/logs:/opt/teamcity/logs -p 9111:8111 jetbrains/teamcity-server
 
-# dotnet cake --target=PushAll --version=2024.5.18.1
+# dotnet cake --target=PushAll --version=2024.5.18.2
 
 # build wcc.lanserver
 # g++ src/*.cpp -DNDEBUG -I asio/ -I json/include -lpthread -lcurl -o wcc.lanserver
