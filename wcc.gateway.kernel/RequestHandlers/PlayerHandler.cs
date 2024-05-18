@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using System.Numerics;
 using System.Text.Json;
 using wcc.gateway.data;
 using wcc.gateway.Identity;
@@ -23,6 +24,11 @@ namespace wcc.gateway.kernel.RequestHandlers
         {
             this.UserId = UserId;
         }
+    }
+
+    public class GetPlayersQuery : IRequest<IEnumerable<PlayerModel>>
+    {
+
     }
 
     public class GetPlayerDetailQuery : IRequest<PlayerModelOld>
@@ -73,6 +79,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     public class PlayerHandler :
         IRequestHandler<GetPlayerByUserIdQuery, PlayerModel>,
+        IRequestHandler<GetPlayersQuery, IEnumerable<PlayerModel>>,
         IRequestHandler<GetPlayerDetailQuery, PlayerModelOld>,
         IRequestHandler<GetPlayerListQuery, IEnumerable<PlayerModelOld>>,
         IRequestHandler<GetPlayerProfileQuery, PlayerProfile>,
@@ -104,6 +111,13 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             }
             return tmp;
+        }
+
+        public async Task<IEnumerable<PlayerModel>> Handle(GetPlayersQuery request, CancellationToken cancellationToken)
+        {
+            var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>($"api/player");
+            var model = _mapper.Map<IEnumerable<PlayerModel>>(players);
+            return model;
         }
 
         public Task<PlayerModelOld> Handle(GetPlayerDetailQuery request, CancellationToken cancellationToken)

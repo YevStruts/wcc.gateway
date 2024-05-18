@@ -63,32 +63,32 @@ namespace wcc.gateway.api.Controllers
             return _mediator.Send(new GetGameListQuery(tournamentId));
         }
 
-        [HttpPost, Authorize, Route("Save")]
-        public Task SaveGame(GameListModelOld model)
-        {
-            var userId = User.GetUserId();
-            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+        //[HttpPost, Authorize, Route("Save")]
+        //public Task SaveGame(GameListModelOld model)
+        //{
+        //    var userId = User.GetUserId();
+        //    _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
 
-            return _mediator.Send(new UpdateGameQuery(model, userId));
-        }
+        //    return _mediator.Send(new UpdateGameQuery(model, userId));
+        //}
 
-        [HttpPost, Authorize, Route("Add")]
-        public Task AddGame(AddGameModel model)
-        {
-            var userId = User.GetUserId();
-            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+        //[HttpPost, Authorize, Route("Add")]
+        //public Task AddGame(AddGameModel model)
+        //{
+        //    var userId = User.GetUserId();
+        //    _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
 
-            return _mediator.Send(new AddGameQuery(model.TournamentId, model.GameType, userId));
-        }
+        //    return _mediator.Send(new AddGameQuery(model.TournamentId, model.GameType, userId));
+        //}
 
-        [HttpPost, Authorize, Route("Edit")]
-        public Task EditGame(EditGameModel model)
-        {
-            var userId = User.GetUserId();
-            _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
+        //[HttpPost, Authorize, Route("Edit")]
+        //public Task EditGame(EditGameModel model)
+        //{
+        //    var userId = User.GetUserId();
+        //    _logger.LogInformation($"User:{userId} saves game", DateTimeOffset.UtcNow);
 
-            return _mediator.Send(new EditGameQuery(new Game(), userId));
-        }
+        //    return _mediator.Send(new EditGameQuery(new Game(), userId));
+        //}
 
         //[HttpPost, Authorize, Route("Delete")]
         //public Task EditGame(DeleteGameModel model)

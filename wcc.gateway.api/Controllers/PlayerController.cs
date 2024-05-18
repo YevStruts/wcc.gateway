@@ -30,6 +30,12 @@ namespace wcc.gateway.api.Controllers
             return _mediator.Send(new GetPlayerByUserIdQuery(userId));
         }
 
+        [HttpGet]
+        public async Task<IEnumerable<PlayerModel>> Get()
+        {
+            return await _mediator.Send(new GetPlayersQuery());
+        }
+
         [HttpGet, Route("{id}")]
         public Task<PlayerModelOld> Get(int id)
         {

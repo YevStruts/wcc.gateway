@@ -361,6 +361,7 @@ namespace wcc.gateway.kernel.RequestHandlers
             var gameResult = await new ApiCaller(_mcsvcConfig.CoreUrl).PostAsync<Core.GameModel, SaveOrUpdateResult<Core.GameModel>>("api/game",
                 new Core.GameModel
                 {
+                    Id = request.Game.Id,
                     GameType = request.Game.GameType,
                     SideA = request.Game.SideA,
                     SideB = request.Game.SideB,
