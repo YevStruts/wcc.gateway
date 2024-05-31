@@ -65,7 +65,7 @@ namespace wcc.gateway.kernel.RequestHandlers
         public async Task<LiveScoreModel> Handle(GetLiveScoreQuery request, CancellationToken cancellationToken)
         {
             var livescore = await new ApiCaller(_mcsvcConfig.WidgetUrl)
-                .GetAsync<List<Widget.LiveScoreModel>>($"api/livescore/{HttpUtility.UrlEncode(request.LiveScoreId)}");
+                .GetAsync<Widget.LiveScoreModel>($"api/livescore/{HttpUtility.UrlEncode(request.LiveScoreId)}");
             return _mapper.Map<LiveScoreModel>(livescore);
         }
 
