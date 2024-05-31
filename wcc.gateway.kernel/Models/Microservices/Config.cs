@@ -4,5 +4,6 @@
     {
         public string? RatingUrl { get; set; }
         public string? CoreUrl { get; set; }
+        public string? WidgetUrl { get; set; }
     }
 }
