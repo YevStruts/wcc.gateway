@@ -27,17 +27,17 @@ namespace wcc.gateway.api.Controllers
             return await _mediator.Send(new GetLiveScoreQuery(liveScoreId));
         }
 
-        [HttpPost]
-        public async Task<SaveOrUpdateResult<LiveScoreModel>> Post(LiveScoreModel game)
+        [HttpPost, Route("livescore")]
+        public async Task<SaveOrUpdateResult<LiveScoreModel>> Post(LiveScoreModel liveScore)
         {
-            return await _mediator.Send(new SaveOrUpdateLiveScoreQuery(game));
+            return await _mediator.Send(new SaveOrUpdateLiveScoreQuery(liveScore));
         }
 
         [HttpDelete("{id}")]
         public async Task<bool> Delete(string id)
         {
-            string gameId = HttpUtility.UrlDecode(id);
-            return await _mediator.Send(new DeleteLiveScoreQuery(gameId));
+            string liveScoreId = HttpUtility.UrlDecode(id);
+            return await _mediator.Send(new DeleteLiveScoreQuery(liveScoreId));
         }
     }
 }

@@ -2,16 +2,16 @@
 {
     public class LiveScoreModel
     {
-        public string? Id { get; set; }
-        public string? SideA { get; set; }
-        public string? SideB { get; set; }
-        public int ScoreA { get; set; }
-        public int ScoreB { get; set; }
+        public string? id { get; set; }
+        public string? sideA { get; set; }
+        public string? sideB { get; set; }
+        public int scoreA { get; set; }
+        public int scoreB { get; set; }
 
         #region settings
-        public int Width { get; set; }
-        public int MarginTop { get; set; }
-        public int MarginRight { get; set; }
+        public int width { get; set; }
+        public int marginTop { get; set; }
+        public int marginRight { get; set; }
         #endregion settings
     }
 }
