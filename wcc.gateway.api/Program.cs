@@ -9,6 +9,11 @@ using wcc.gateway.api.Models.Jwt;
 using wcc.gateway.data;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
 using wcc.gateway.kernel.RequestHandlers;
+using Amazon.Runtime;
+using Amazon.SimpleSystemsManagement;
+using Amazon;
+using Amazon.SimpleSystemsManagement.Model;
+using wcc.gateway.api.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,19 +25,38 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
-Microservices.Config mcsvcConfig = new Microservices.Config();
-builder.Configuration.GetSection("Microservices").Bind(mcsvcConfig);
+var environment = builder.Configuration.GetValue("Environment", "dev");
+
+string microservicesSettingsPath = $"/{environment}/microservices";
+var microservicesSettings = await AWSParameterStore.Instance().GetParametersByPathAsync(microservicesSettingsPath);
+Microservices.Config mcsvcConfig = new Microservices.Config
+{
+    CoreUrl = microservicesSettings[$"{microservicesSettingsPath}/core-url"],
+    RatingUrl = microservicesSettings[$"{microservicesSettingsPath}/rating-url"],
+    WidgetUrl = microservicesSettings[$"{microservicesSettingsPath}/widget-url"]
+};
 builder.Services.AddSingleton<Microservices.Config>(mcsvcConfig);
 
-DiscordConfig discordConfig = new DiscordConfig();
-builder.Configuration.GetSection("Discord").Bind(discordConfig);
+string discordSettingsPath = $"/{environment}/discord";
+var discordSettings = await AWSParameterStore.Instance().GetParametersByPathAsync(discordSettingsPath);
+DiscordConfig discordConfig = new DiscordConfig
+{
+    ClientID = discordSettings[$"{discordSettingsPath}/client-id"],
+    ClientSecret = discordSettings[$"{discordSettingsPath}/client-secret"],
+    RedirectUrl = discordSettings[$"{discordSettingsPath}/redirect-url"]
+};
 builder.Services.AddSingleton<DiscordConfig>(discordConfig);
 
-JwtConfig jwtConfig = new JwtConfig();
-builder.Configuration.GetSection("Jwt").Bind(jwtConfig);
+string jwtSettingsPath = $"/{environment}/jwt";
+var jwtSettings = await AWSParameterStore.Instance().GetParametersByPathAsync(jwtSettingsPath);
+JwtConfig jwtConfig = new JwtConfig
+{
+    Audience = jwtSettings[$"{jwtSettingsPath}/audience"],
+    Issuer = jwtSettings[$"{jwtSettingsPath}/issuer"],
+    Key = jwtSettings[$"{jwtSettingsPath}/key"]
+};
 builder.Services.AddSingleton<JwtConfig>(jwtConfig);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,9 +66,11 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Ping>());
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetNewsDetailQuery).Assembly));
 
+string gatewaySettingsPath = $"/{environment}/wcc-gateway";
+var gatewaySettings = await AWSParameterStore.Instance().GetParametersByPathAsync(gatewaySettingsPath);
 builder.Services.AddTransient<IDataRepository, DataRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(gatewaySettings[$"{gatewaySettingsPath}/mssql"]));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,9 +81,9 @@ builder.Services.AddAuthentication(options =>
 {
     o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidIssuer = jwtConfig.Issuer,
+        ValidAudience = jwtConfig.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key)),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = false,
