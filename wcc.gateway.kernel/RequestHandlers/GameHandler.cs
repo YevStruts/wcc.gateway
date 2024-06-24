@@ -346,14 +346,14 @@ namespace wcc.gateway.kernel.RequestHandlers
             return _mapper.Map<GameModel>(game);
         }
 
-
         public async Task<bool> Handle(DeleteGameQuery request, CancellationToken cancellationToken)
         {
             var user = _db.GetUserByExternalId(request.ExternalUserId);
             if (user == null || user.RoleId == (long)Roles.User) return false;
 
-            var result = await new ApiCaller(_mcsvcConfig.CoreUrl).DeleteAsync($"api/game/{HttpUtility.UrlEncode(request.Id)}");
-            return true;
+            return
+                await new ApiCaller(_mcsvcConfig.CoreUrl).DeleteAsync($"api/game/{HttpUtility.UrlEncode(request.Id)}") &&
+                await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<string, bool>($"api/game/ByCoreGameId/{HttpUtility.UrlEncode(request.Id)}", "");
         }
 
         public async Task<bool> Handle(SaveOrUpdateGameQuery request, CancellationToken cancellationToken)
