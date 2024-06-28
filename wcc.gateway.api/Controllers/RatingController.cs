@@ -32,5 +32,11 @@ namespace wcc.gateway.api.Controllers
         {
             return await _mediator.Send(new UpdateRatingQuery());
         }
+
+        [HttpPost, Route("evolve")]
+        public async Task<bool> Evolve()
+        {
+            return await _mediator.Send(new EvolveRatingQuery());
+        }
     }
 }

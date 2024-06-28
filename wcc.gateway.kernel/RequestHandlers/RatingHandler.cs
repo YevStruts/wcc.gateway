@@ -29,8 +29,14 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     }
 
+    public class EvolveRatingQuery : IRequest<bool>
+    {
+
+    }
+
     public class RatingHandler : IRequestHandler<GetRatingQuery, List<RatingModel>>,
-        IRequestHandler<UpdateRatingQuery, bool>
+        IRequestHandler<UpdateRatingQuery, bool>,
+        IRequestHandler<EvolveRatingQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -121,6 +127,31 @@ namespace wcc.gateway.kernel.RequestHandlers
                         });
                     }
                 }
+            }
+
+            await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<List<Rating.RatingModel>, string>("api/rating", rating);
+
+            return true;
+        }
+
+        public async Task<bool> Handle(EvolveRatingQuery request, CancellationToken cancellationToken)
+        {
+            var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
+
+            var ratingOld = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
+
+            var rating = new List<Rating.RatingModel>();
+            foreach (var r in ratingOld)
+            {
+                var player = players.FirstOrDefault(p => p.Id == r.PlayerId);
+                if (player == null) continue;
+
+                //r.PlayerId = player.Id;
+                rating.Add(new Rating.RatingModel()
+                {
+                    PlayerId = player.Id,
+                    Points = r.Points
+                });
             }
 
             await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<List<Rating.RatingModel>, string>("api/rating", rating);
