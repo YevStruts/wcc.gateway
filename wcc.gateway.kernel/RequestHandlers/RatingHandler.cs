@@ -29,14 +29,8 @@ namespace wcc.gateway.kernel.RequestHandlers
 
     }
 
-    public class EvolveRatingQuery : IRequest<bool>
-    {
-
-    }
-
     public class RatingHandler : IRequestHandler<GetRatingQuery, List<RatingModel>>,
-        IRequestHandler<UpdateRatingQuery, bool>,
-        IRequestHandler<EvolveRatingQuery, bool>
+        IRequestHandler<UpdateRatingQuery, bool>
     {
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
@@ -130,11 +124,6 @@ namespace wcc.gateway.kernel.RequestHandlers
             }
 
             return await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<List<Rating.RatingModel>, bool>("api/rating", rating);
-        }
-
-        public async Task<bool> Handle(EvolveRatingQuery request, CancellationToken cancellationToken)
-        {
-            return await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<string, bool>("api/rating/evolve", string.Empty);
         }
     }
 }
