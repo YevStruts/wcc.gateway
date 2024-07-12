@@ -372,7 +372,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     Youtube = request.Game.YouTube,
                 });
 
-            if (gameResult.Success)
+            if (gameResult.Success && request.Game.CountRating)
             {
                 return await new ApiCaller(_mcsvcConfig.RatingUrl).PostAsync<Rating.GameModel, bool>("api/game/save",
                     new Rating.GameModel
