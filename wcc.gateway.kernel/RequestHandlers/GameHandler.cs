@@ -13,6 +13,7 @@ using System.Web;
 using wcc.gateway.kernel.Models.Game;
 using wcc.gateway.kernel.Models.Results;
 using wcc.gateway.kernel.Communication.Core;
+using wcc.gateway.kernel.Interfaces;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -119,11 +120,13 @@ namespace wcc.gateway.kernel.RequestHandlers
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
         private readonly Microservices.Config _mcsvcConfig;
+        private readonly ICache _cache;
 
-        public GameHandler(IDataRepository db, Microservices.Config mcsvcConfig)
+        public GameHandler(IDataRepository db, Microservices.Config mcsvcConfig, ICache cache)
         {
             _db = db;
             _mcsvcConfig = mcsvcConfig;
+            _cache = cache;
         }
 
         public async Task<GameListModelOld> Handle(GetGameDetailQuery request, CancellationToken cancellationToken)
@@ -372,8 +375,13 @@ namespace wcc.gateway.kernel.RequestHandlers
                     Youtube = request.Game.YouTube,
                 });
 
-            if (gameResult.Success && !request.Game.CountRating)
-                return true;
+            if (gameResult.Success)
+            {
+                await _cache.RemoveAsync("rating");
+
+                if (!request.Game.CountRating)
+                    return true;
+            }
 
             if (gameResult.Success)
             {

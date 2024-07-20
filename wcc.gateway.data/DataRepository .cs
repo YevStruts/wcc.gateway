@@ -64,7 +64,7 @@ namespace wcc.gateway.data
         
         public IEnumerable<Player> GetPlayers()
         {
-            return _context.Players.Include(p => p.User).Include(p => p.Tournament).Include(p => p.Statistic).ToList();
+            return _context.Players.Include(p => p.User).Include(p => p.Tournament).ToList();
         }
 
         public bool AddPlayer(Player player)

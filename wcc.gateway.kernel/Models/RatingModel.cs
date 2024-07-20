@@ -11,9 +11,9 @@ namespace wcc.gateway.kernel.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string? AvatarUrl { get; set; }
-        public int Position { get; internal set; }
-        public int Progress { get; internal set; }
-        public int TotalPoints { get; internal set; }
+        public int Position { get; set; }
+        public int Progress { get; set; }
+        public int TotalPoints { get; set; }
         public string? Nation { get; set; }
     }
 }

@@ -14,6 +14,9 @@ using Amazon.SimpleSystemsManagement;
 using Amazon;
 using Amazon.SimpleSystemsManagement.Model;
 using wcc.gateway.api.Helpers;
+using StackExchange.Redis;
+using wcc.gateway.kernel.Helpers;
+using wcc.gateway.kernel.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +61,10 @@ JwtConfig jwtConfig = new JwtConfig
     Key = jwtSettings[$"{jwtSettingsPath}/key"]
 };
 builder.Services.AddSingleton<JwtConfig>(jwtConfig);
+
+string redisUrlPath = $"/{environment}/common/redis";
+var redisUrl = await AWSParameterStore.Instance().GetParameterAsync(redisUrlPath);
+builder.Services.AddSingleton<ICache>(sp => new RedisCache(redisUrl));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

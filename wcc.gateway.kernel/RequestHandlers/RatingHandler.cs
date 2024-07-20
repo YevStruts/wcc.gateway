@@ -8,6 +8,7 @@ using wcc.gateway.kernel.Models;
 using Microservices = wcc.gateway.kernel.Models.Microservices;
 using Rating = wcc.gateway.kernel.Models.Rating;
 using Core = wcc.gateway.kernel.Models.Core;
+using wcc.gateway.kernel.Interfaces;
 
 namespace wcc.gateway.kernel.RequestHandlers
 {
@@ -35,62 +36,79 @@ namespace wcc.gateway.kernel.RequestHandlers
         private readonly IDataRepository _db;
         private readonly IMapper _mapper = MapperHelper.Instance;
         private readonly Microservices.Config _mcsvcConfig;
+        private readonly ICache _cache;
 
-        public RatingHandler(IDataRepository db, Microservices.Config mcsvcConfig)
+        public RatingHandler(IDataRepository db, Microservices.Config mcsvcConfig, ICache cache)
         {
             _db = db;
             _mcsvcConfig = mcsvcConfig;
+            _cache = cache;
         }
 
         public async Task<List<RatingModel>> Handle(GetRatingQuery request, CancellationToken cancellationToken)
         {
-            var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
-
-            var playersSql = _db.GetPlayers();
-
-            var users = _db.GetUsers();
-
-            var countries = _db.GetCountries();
-
-            var playerData = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
-
-            var rating = new List<RatingModel>();
-            if (playerData != null && playerData.Count > 0)
+            var rating = await _cache.TryGetValueAsync<List<RatingModel>>("rating");
+            if (rating == null)
             {
-                int position = 0;
-                foreach (var rp in playerData.OrderByDescending(r => r.Points).ToList())
+                rating = new List<RatingModel>();
+
+                var players = await new ApiCaller(_mcsvcConfig.CoreUrl).GetAsync<List<Core.PlayerModel>>("api/player");
+
+                var playersSql = _db.GetPlayers();
+
+                var users = _db.GetUsers();
+
+                var countries = _db.GetCountries();
+
+                var playerData = await new ApiCaller(_mcsvcConfig.RatingUrl).GetAsync<List<PlayerData>>("api/rating");
+
+                if (playerData != null && playerData.Count > 0)
                 {
-                    var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
-                    if (player != null && player.Name != null && player.IsActive)
+                    int position = 0;
+                    foreach (var rp in playerData.OrderByDescending(r => r.Points).ToList())
                     {
-                        var user = users.First(u => u.Id.ToString() == player.UserId);
-
-                        var playerSql = playersSql.First(p => p.UserId.ToString() == player.UserId);
-
-                        var nation = countries.FirstOrDefault(c => c.Id == playerSql.CountryId);
-
-                        rating.Add(new RatingModel
+                        var player = players.FirstOrDefault(p => p.Id == rp.PlayerId);
+                        if (player != null && player.Name != null && player.IsActive)
                         {
-                            Id = player.Id,
-                            Name = player.Name,
-                            AvatarUrl = DiscordHelper.GetAvatarUrl(user.ExternalId, user.Avatar),
-                            Position = position++,
-                            Progress = 0,
-                            TotalPoints = rp.Points,
-                            Nation = nation?.Code ?? "xx"
-                        });
+                            var user = users.FirstOrDefault(u => u.Id.ToString() == player.UserId);
+                            if (user != null)
+                            {
+                                var playerSql = playersSql.FirstOrDefault(p => p.UserId.ToString() == player.UserId);
+
+                                if (playerSql != null)
+                                {
+                                    var nation = countries.FirstOrDefault(c => c.Id == playerSql.CountryId);
+
+                                    if (nation != null)
+                                    {
+                                        rating.Add(new RatingModel
+                                        {
+                                            Id = player.Id,
+                                            Name = player.Name,
+                                            AvatarUrl = DiscordHelper.GetAvatarUrl(user.ExternalId, user.Avatar),
+                                            Position = position++,
+                                            Progress = 0,
+                                            TotalPoints = rp.Points,
+                                            Nation = nation?.Code ?? "xx"
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    var language = _db.GetLanguage(request.Locale);
+                    if (language != null)
+                    {
+                        //var translation = ratingDto.Translations.FirstOrDefault(t => t.LanguageId == language.Id);
+                        //if (translation != null)
+                        //{
+                        //    rating.Name = translation.Name;
+                        //}
                     }
                 }
 
-                var language = _db.GetLanguage(request.Locale);
-                if (language != null)
-                {
-                    //var translation = ratingDto.Translations.FirstOrDefault(t => t.LanguageId == language.Id);
-                    //if (translation != null)
-                    //{
-                    //    rating.Name = translation.Name;
-                    //}
-                }
+                await _cache.AddOrUpdateAsync("rating", rating);
             }
             return rating;
         }
