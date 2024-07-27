@@ -377,10 +377,10 @@ namespace wcc.gateway.kernel.RequestHandlers
 
             if (gameResult.Success)
             {
-                await _cache.RemoveAsync("rating");
-
                 if (!request.Game.CountRating)
                     return true;
+
+                await _cache.RemoveAsync("rating");
             }
 
             if (gameResult.Success)
