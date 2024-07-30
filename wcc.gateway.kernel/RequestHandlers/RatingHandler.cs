@@ -47,7 +47,7 @@ namespace wcc.gateway.kernel.RequestHandlers
 
         public async Task<List<RatingModel>> Handle(GetRatingQuery request, CancellationToken cancellationToken)
         {
-            var rating = await _cache.TryGetValueAsync<List<RatingModel>>("rating");
+            List<RatingModel> rating = await _cache.TryGetValueAsync<List<RatingModel>>("rating");
             if (rating == null)
             {
                 rating = new List<RatingModel>();
@@ -108,7 +108,7 @@ namespace wcc.gateway.kernel.RequestHandlers
                     }
                 }
 
-                await _cache.AddOrUpdateAsync("rating", rating);
+                await _cache.AddOrUpdateAsync("rating", rating, TimeSpan.FromMinutes(1));
             }
             return rating;
         }

@@ -27,6 +27,12 @@ namespace wcc.gateway.kernel.Helpers
             await _db.StringSetAsync(GetRedisKey(key), serializedValue);
         }
 
+        public async Task AddOrUpdateAsync<TValue>(string key, TValue value, TimeSpan expiry)
+        {
+            var serializedValue = JsonSerializer.Serialize(value);
+            await _db.StringSetAsync(GetRedisKey(key), serializedValue, expiry);
+        }
+
         // Try to get a value from the cache
         public async Task<TValue> TryGetValueAsync<TValue>(string key)
         {
