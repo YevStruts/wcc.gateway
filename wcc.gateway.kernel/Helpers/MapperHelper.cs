@@ -13,6 +13,7 @@ using wcc.gateway.kernel.Models.Game;
 using wcc.gateway.kernel.Models.Player;
 using wcc.gateway.kernel.Models.User;
 using Core = wcc.gateway.kernel.Models.Core;
+using Microservices = wcc.gateway.kernel.Models.Microservices;
 
 namespace wcc.gateway.kernel.Helpers
 {
@@ -85,6 +86,9 @@ namespace wcc.gateway.kernel.Helpers
                             .ForMember(dest => dest.id, act => act.MapFrom(src => src.Id))
                             .ForMember(dest => dest.nickname, act => act.MapFrom(src => src.Name))
                             .ForMember(dest => dest.token, act => act.MapFrom(src => src.Token));
+
+                        cfg.CreateMap<wcc.gateway.kernel.Models.RatingGame.RatingGame1x1Model, Microservices.Rating.RatingGame.RatingGame1x1Model>().ReverseMap();
+                        cfg.CreateMap<wcc.gateway.kernel.Models.RatingGame.RatingGameSettings1x1Model, Microservices.Rating.RatingGame.RatingGameSettings1x1Model>().ReverseMap();
                     });
 
                     instance = new Mapper(config);
