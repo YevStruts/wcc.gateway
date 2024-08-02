@@ -8,6 +8,6 @@ namespace wcc.gateway.kernel.Models.RatingGame
         public WCCOptions Option { get; set; }
         public OpponentRating OpponentRating { get; set; }
         public Availability Availability { get; set; }
-        public WinRule GameType { get; set; }
+        public WinRule WinRule { get; set; }
     }
 }
